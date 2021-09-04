@@ -13,17 +13,11 @@ body {
 }
 h1 {
     color: #bb9af7;
-    font-size: 4em;
+    font-size: 5em;
     font-family: "Cascadia Mono Italic";
     font-feature-settings: "calt" on, "ss01" on;
     text-align: center;
     text-shadow: 5px 5px #1a1b26;
-}
-h2 {
-    color: #7dcfff;
-    font-size: 2em;
-    font-family: "Cascadia Mono";
-    text-align: center;
 }
 img {
     height: 1em;
@@ -31,7 +25,16 @@ img {
 
 .warning {
     color: #e0af68;
+    font-size: 2em;
+    font-family: "Cascadia Mono";
+    text-align: center;
     text-decoration: underline;
+}
+.socials {
+    color: #7dcfff;
+    font-size: 3em;
+    font-family: "Cascadia Mono";
+    text-align: center;
 }
 .social-icons {
     display: flex;
@@ -40,13 +43,37 @@ img {
     align-items: center;
 }
 .social-icon {
-    color: #a9b1d6;
-    text-decoration: none;
-    font-size: 3em;
+    color: #24283b;
+
+    font-size: 2em;
     margin: 0.5em;
-    text-shadow: 0px 0px #1a1b26;
+    padding: 0.5em;
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 50%;
+
+    background: #a9b1d6;
+
+    text-decoration: none;
+
+    text-align: center;
+    line-height: 1.5em;
+    vertical-align: middle;
+
     transition: 0.25s;
 }
 .social-icon:hover {
-    color: #bb9af7;
+    background-color: #24283b;
+}
+.fa-twitter:hover {
+    color: #1da1f2;
+}
+.fa-discord:hover {
+    color: #5865f2;
+}
+.fa-github:hover {
+    color: #fafafa;
+}
+.fa-linkedin:hover {
+    color: #0077b5;
 }
