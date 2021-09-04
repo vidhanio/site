@@ -6,8 +6,9 @@
 body {
     background-color: #24283b;
 }
-h1 {
+H1 {
     color: #bb9af7;
+    font-size: 2em;
     font-style: italic;
     font-family: "CascadiaMonoItalic";
     font-feature-settings: "calt" on, "ss01" on;
