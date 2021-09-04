@@ -25,6 +25,11 @@ h2 {
     font-family: "Cascadia Mono";
     text-align: center;
 }
+
+.warning {
+    color: #e0af68;
+    text-decoration: underline;
+}
 img {
     height: 1em;
 }
