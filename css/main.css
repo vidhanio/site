@@ -17,6 +17,7 @@ h1 {
     font-family: "Cascadia Mono Italic";
     font-feature-settings: "calt" on, "ss01" on;
     text-align: center;
+    text-shadow: 5px 5px #1a1b26;
 }
 h2 {
     color: #7dcfff;
