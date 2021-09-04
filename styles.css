@@ -12,3 +12,6 @@ h1 {
     font-family: "CascadiaMonoItalic";
     font-feature-settings: "calt" on, "ss01" on;
 }
+img {
+    height: 1em;
+}
