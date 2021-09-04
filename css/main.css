@@ -1,39 +1,36 @@
-@font-face {
-    font-family: "Cascadia Mono";
-    src: url(../fonts/CascadiaMono.woff2);
-}
-
-@font-face {
-    font-family: "Cascadia Mono Italic";
-    src: url(../fonts/CascadiaMonoItalic.woff2);
-}
-
 body {
     background-color: #24283b;
 }
 h1 {
     color: #bb9af7;
     font-size: 5em;
-    font-family: "Cascadia Mono Italic";
-    font-feature-settings: "calt" on, "ss01" on;
+    font-weight: bold;
+    font-family: "Sora";
     text-align: center;
     text-shadow: 5px 5px #1a1b26;
 }
 img {
     height: 1em;
 }
+hr {
+    color: #a9b1d6;
+    margin-left: 10em;
+    margin-right: 10em;
+}
 
 .warning {
     color: #e0af68;
     font-size: 2em;
-    font-family: "Cascadia Mono";
+    font-weight: normal;
+    font-family: "Sora";
     text-align: center;
     text-decoration: underline;
 }
 .socials {
     color: #7dcfff;
     font-size: 3em;
-    font-family: "Cascadia Mono";
+    font-weight: normal;
+    font-family: "Sora";
     text-align: center;
 }
 .social-icons {
