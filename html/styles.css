@@ -1,0 +1,14 @@
+@font-face {
+    font-family: CascadiaMonoItalic;
+    src: url(fonts/CascadiaMonoItalic.woff2);
+}
+
+body {
+    background-color: #24283b;
+}
+h1 {
+    color: #bb9af7;
+    font-style: italic;
+    font-family: "CascadiaMonoItalic";
+    font-feature-settings: "calt" on, "ss01" on;
+}
