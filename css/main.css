@@ -1,17 +1,28 @@
 @font-face {
-    font-family: CascadiaMonoItalic;
+    font-family: "Cascadia Mono";
+    src: url(../fonts/CascadiaMono.woff2);
+}
+
+@font-face {
+    font-family: "Cascadia Mono Italic";
     src: url(../fonts/CascadiaMonoItalic.woff2);
 }
 
 body {
     background-color: #24283b;
 }
-H1 {
+h1 {
     color: #bb9af7;
-    font-size: 2em;
-    font-style: italic;
-    font-family: "CascadiaMonoItalic";
+    font-size: 4em;
+    font-family: "Cascadia Mono Italic";
     font-feature-settings: "calt" on, "ss01" on;
+    text-align: center;
+}
+h2 {
+    color: #7dcfff;
+    font-size: 2em;
+    font-family: "Cascadia Mono";
+    text-align: center;
 }
 img {
     height: 1em;
