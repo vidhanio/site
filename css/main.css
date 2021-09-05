@@ -7,7 +7,7 @@ h1 {
     font-weight: bold;
     font-family: "Sora";
     text-align: center;
-    text-shadow: 5px 5px #1a1b26;
+    text-shadow: 5px 5px #5a4a78;
 }
 img {
     height: 1em;
@@ -27,11 +27,12 @@ hr {
     text-decoration: underline;
 }
 .socials {
-    color: #7dcfff;
+    color: #7aa2f7;
     font-size: 3em;
-    font-weight: normal;
+    font-weight: bold;
     font-family: "Sora";
     text-align: center;
+    text-shadow: 5px 5px #34548a;
 }
 .social-icons {
     display: flex;
@@ -73,4 +74,7 @@ hr {
 }
 .fa-linkedin:hover {
     color: #0077b5;
+}
+.fa-stack-overflow:hover {
+    color: #f48024;
 }
