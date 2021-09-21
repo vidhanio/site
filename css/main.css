@@ -1,80 +1,169 @@
 body {
-    background-color: #24283b;
+  color: #a9b1d6;
+  font-family: "Roboto Mono";
+  background-color: #000000;
 }
 h1 {
-    color: #bb9af7;
-    font-size: 5em;
-    font-weight: bold;
-    font-family: "Sora";
-    text-align: center;
-    text-shadow: 5px 5px #5a4a78;
+  color: #bb9af7;
+  font-size: 5em;
+  font-weight: bold;
+  font-family: "Sora";
+  text-align: center;
+  text-shadow: 5px 5px #5a4a78;
 }
 img {
-    height: 1em;
+  height: 1em;
 }
 hr {
-    color: #a9b1d6;
-    margin-left: 10em;
-    margin-right: 10em;
+  color: #a9b1d6;
+  margin-left: 10em;
+  margin-right: 10em;
 }
 
 .warning {
-    color: #e0af68;
-    font-size: 2em;
-    font-weight: normal;
-    font-family: "Sora";
-    text-align: center;
-    text-decoration: underline;
+  color: #e0af68;
+  font-size: 2em;
+  font-weight: normal;
+  font-family: "Sora";
+  text-align: center;
+  text-decoration: underline;
 }
 .socials {
-    color: #7aa2f7;
-    font-size: 3em;
-    font-weight: bold;
-    font-family: "Sora";
-    text-align: center;
-    text-shadow: 5px 5px #34548a;
+  color: #7aa2f7;
+  font-size: 3em;
+  font-weight: bold;
+  font-family: "Sora";
+  text-align: center;
+  text-shadow: 5px 5px #34548a;
 }
 .social-icons {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
 }
 .social-icon {
-    color: #24283b;
+  color: #24283b;
 
-    font-size: 2em;
-    margin: 0.5em;
-    padding: 0.5em;
-    width: 1.5em;
-    height: 1.5em;
-    border-radius: 50%;
+  font-size: 2em;
+  margin: 0.5em;
+  padding: 0.5em;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
 
-    background: #a9b1d6;
+  background: #a9b1d6;
 
-    text-decoration: none;
+  text-decoration: none;
 
-    text-align: center;
-    line-height: 1.5em;
-    vertical-align: middle;
+  text-align: center;
+  line-height: 1.5em;
+  vertical-align: middle;
 
-    transition: 0.25s;
+  transition: 0.25s;
 }
 .social-icon:hover {
-    background-color: #24283b;
+  background-color: #24283b;
 }
 .fa-twitter:hover {
-    color: #1da1f2;
+  color: #1da1f2;
 }
 .fa-discord:hover {
-    color: #5865f2;
+  color: #5865f2;
 }
 .fa-github:hover {
-    color: #fafafa;
+  color: #fafafa;
 }
 .fa-linkedin:hover {
-    color: #0077b5;
+  color: #0077b5;
 }
 .fa-stack-overflow:hover {
-    color: #f48024;
+  color: #f48024;
+}
+
+.grid-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "dni-header body body"
+    "dni-item body body"
+    "dni-item body body"
+    "dni-item body body";
+  width: 75vw;
+  height: 50vh;
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  grid-area: header;
+
+  color: #ffffff;
+  background-color: #000000;
+
+  border: 0.5em solid #ffffff;
+}
+
+.info-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  grid-area: body;
+
+  color: #000000;
+  background-color: #ffffff;
+
+  border: 0.5 solid #000000;
+}
+
+.dni-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  grid-area: dni-header;
+
+  color: #ffffff;
+  background-color: #000000;
+
+  border: 0.5em solid #ffffff;
+}
+
+.dni-items {
+  display: flex;
+  align-items: center;
+  flex-flow: column wrap;
+  justify-content: space-around;
+  text-align: center;
+
+  grid-area: dni-item;
+
+  color: #000000;
+  background-color: #ffffff;
+
+  border: 0.5 solid #000000;
+}
+
+.dni-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: 25vw;
+
+  color: #000000;
+  background-color: #ffffff;
 }
