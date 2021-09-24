@@ -1,19 +1,21 @@
 body {
-  color: #a9b1d6;
+  color: #ffffff;
   font-family: "Roboto Mono";
   background-color: #000000;
 }
+
 h1 {
-  color: #bb9af7;
+  color: #ffffff;
   font-size: 5em;
   font-weight: bold;
-  font-family: "Sora";
+  font-family: "Roboto Mono";
   text-align: center;
-  text-shadow: 5px 5px #5a4a78;
 }
+
 img {
   height: 1em;
 }
+
 hr {
   color: #a9b1d6;
   margin-left: 10em;
@@ -21,62 +23,65 @@ hr {
 }
 
 .warning {
-  color: #e0af68;
+  color: #ffff00;
   font-size: 2em;
   font-weight: normal;
-  font-family: "Sora";
+  font-family: "Roboto Mono";
   text-align: center;
   text-decoration: underline;
 }
+
 .socials {
-  color: #7aa2f7;
+  color: #ffffff;
   font-size: 3em;
   font-weight: bold;
-  font-family: "Sora";
+  font-family: "Roboto Mono";
   text-align: center;
-  text-shadow: 5px 5px #34548a;
 }
+
 .social-icons {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
   align-items: center;
 }
-.social-icon {
-  color: #24283b;
 
+.social-icon {
+  color: #000000;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
   font-size: 2em;
   margin: 0.5em;
   padding: 0.5em;
   width: 1.5em;
   height: 1.5em;
-  border-radius: 50%;
-
-  background: #a9b1d6;
-
+  box-shadow: inset 0em 0em 0em 1.5em #ffffff;
   text-decoration: none;
-
-  text-align: center;
-  line-height: 1.5em;
-  vertical-align: middle;
-
   transition: 0.25s;
 }
+
 .social-icon:hover {
-  background-color: #24283b;
+  box-shadow: inset 0em 0em 0em 0.1em #ffffff;
 }
+
 .fa-twitter:hover {
   color: #1da1f2;
 }
+
 .fa-discord:hover {
   color: #5865f2;
 }
+
 .fa-github:hover {
   color: #fafafa;
 }
+
 .fa-linkedin:hover {
   color: #0077b5;
 }
+
 .fa-stack-overflow:hover {
   color: #f48024;
 }
@@ -88,20 +93,12 @@ hr {
   left: 0;
   right: 0;
   margin: auto;
-
   display: grid;
-
-  grid-template-rows:
-    [header-start] 4em
-    [header-end dni-header-start] 3em
-    [dni-header-end]
-    repeat(auto-fill, [info-start] 1.5em [info-end]);
-
-  grid-template-columns:
-    [outer-start dni-start] 1fr
-    [dni-end other-start] 1fr
-    [other-end outer-end];
-
+  grid-template-rows: [header-start] 10vh [header-end dni-header-start] 5vh [dni-header-end] repeat(
+      auto-fill,
+      [info-start] 2.5vh [info-end]
+    );
+  grid-template-columns: [outer-start dni-start] 1fr [dni-end other-start] 1fr [other-end outer-end];
   width: 75vw;
   height: 50vh;
   gap: 0.5em;
@@ -114,9 +111,7 @@ hr {
   align-items: center;
   justify-content: center;
   text-align: center;
-
   grid-area: header / outer;
-
   color: #ffffff;
   background-color: #000000;
 }
@@ -126,9 +121,7 @@ hr {
   align-items: center;
   justify-content: center;
   text-align: center;
-
   grid-area: dni-header / dni;
-
   color: #ffffff;
   background-color: #000000;
 }
@@ -138,9 +131,7 @@ hr {
   align-items: center;
   justify-content: center;
   text-align: center;
-
   grid-area: dni-header / other;
-
   color: #ffffff;
   background-color: #000000;
 }
@@ -150,9 +141,7 @@ hr {
   align-items: center;
   justify-content: center;
   text-align: center;
-
   grid-area: info-start / dni-start / info-end / dni-end;
-
   color: #000000;
   background-color: #ffffff;
 }
@@ -162,9 +151,7 @@ hr {
   align-items: center;
   justify-content: center;
   text-align: center;
-
   grid-area: info-start 2 / dni-start / info-end 2 / dni-end;
-
   color: #000000;
   background-color: #ffffff;
 }
@@ -174,9 +161,7 @@ hr {
   align-items: center;
   justify-content: center;
   text-align: center;
-
   grid-area: info-start 3 / dni-start / info-end 3 / dni-end;
-
   color: #000000;
   background-color: #ffffff;
 }
@@ -186,9 +171,7 @@ hr {
   align-items: center;
   justify-content: center;
   text-align: center;
-
   grid-area: info-start 4 / dni-start / info-end 4 / dni-end;
-
   color: #000000;
   background-color: #ffffff;
 }
@@ -198,9 +181,7 @@ hr {
   align-items: center;
   justify-content: center;
   text-align: center;
-
   grid-area: info-start 5 / dni-start / info-end 5 / dni-end;
-
   color: #000000;
   background-color: #ffffff;
 }
