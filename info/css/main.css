@@ -94,10 +94,9 @@ hr {
   right: 0;
   margin: auto;
   display: grid;
-  grid-template-rows: [header-start] 10vh [header-end dni-header-start] 5vh [dni-header-end] repeat(
-      auto-fill,
-      [info-start] 2.5vh [info-end]
-    );
+  grid-template-rows:
+    [header-start] 8vh [header-end dni-header-start] 4vh
+    [dni-header-end] repeat(auto-fill, [info-start] 6vh [info-end]);
   grid-template-columns: [outer-start dni-start] 1fr [dni-end other-start] 1fr [other-end outer-end];
   width: 75vw;
   height: 50vh;
