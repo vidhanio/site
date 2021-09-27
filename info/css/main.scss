@@ -104,7 +104,7 @@ hr {
   align-items: center;
   justify-content: center;
   text-align: center;
-  grid-area: header/outer;
+  grid-area: header / outer;
   color: #ffffff;
   background-color: #000000;
 }
@@ -114,7 +114,7 @@ hr {
   align-items: center;
   justify-content: center;
   text-align: center;
-  grid-area: dni-header/dni;
+  grid-area: dni-header / dni;
   color: #ffffff;
   background-color: #000000;
 }
@@ -124,7 +124,7 @@ hr {
   align-items: center;
   justify-content: center;
   text-align: center;
-  grid-area: dni-header/other;
+  grid-area: dni-header / other;
   color: #ffffff;
   background-color: #000000;
 }
@@ -134,11 +134,14 @@ hr {
   align-items: center;
   justify-content: space-around;
   flex-flow: column wrap;
-  grid-area: info/dni;
+
+  grid-area: info / dni;
+
   background-color: #ffffff;
-}
-.dni-items div {
-  color: #000000;
+
+  div {
+    color: #000000;
+  }
 }
 
 .dni-item1 {
@@ -146,9 +149,7 @@ hr {
   align-items: center;
   justify-content: center;
   text-align: center;
-  grid-area: info-start/dni-start/info-end/dni-end;
+  grid-area: info-start / dni-start / info-end / dni-end;
   color: #000000;
   background-color: #ffffff;
 }
-
-/*# sourceMappingURL=main.css.map */
