@@ -1,3 +1,15 @@
+@font-face {
+  font-family: "Roboto Mono";
+  src: url("https://vidhan.io/fonts/RobotoMono-VariableFont_wght.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Roboto Mono Italic";
+  src: url("https://vidhan.io/fonts/RobotoMono-Italic-VariableFont_wght.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Roboto Slab";
+  src: url("https://vidhan.io/fonts/RobotoSlab-VariableFont_wght.ttf") format("truetype");
+}
 body {
   color: #ffffff;
   font-family: "Roboto Mono";
