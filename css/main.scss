@@ -45,7 +45,6 @@ hr {
 .social-icon {
   color: #000000;
   display: flex;
-  flex-flow: row wrap;
   justify-content: center;
   align-items: center;
   font-size: 2em;
@@ -82,15 +81,15 @@ hr {
   color: #f48024;
 }
 
-.grid-container {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
+.info-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.info-grid {
   display: grid;
-  grid-template-rows: [header-start] 0.5fr [header-end dni-header-start] 0.25fr [dni-header-end info-start] 1fr [info-end];
+  grid-template-rows: [info-header-start] 0.25fr [info-header-end info-start] 1fr [info-end];
   grid-template-columns: [outer-start dni-start] 1fr [dni-end other-start] 1fr [other-end outer-end];
   width: 75vw;
   height: 50vh;
@@ -99,22 +98,12 @@ hr {
   background-color: #ffffff;
 }
 
-.title-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  grid-area: header / outer;
-  color: #ffffff;
-  background-color: #000000;
-}
-
 .dni-header {
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  grid-area: dni-header / dni;
+  grid-area: info-header / dni;
   color: #ffffff;
   background-color: #000000;
 }
@@ -124,7 +113,7 @@ hr {
   align-items: center;
   justify-content: center;
   text-align: center;
-  grid-area: dni-header / other;
+  grid-area: info-header / other;
   color: #ffffff;
   background-color: #000000;
 }
@@ -134,22 +123,9 @@ hr {
   align-items: center;
   justify-content: space-around;
   flex-flow: column wrap;
-
   grid-area: info / dni;
-
   background-color: #ffffff;
-
   div {
     color: #000000;
   }
-}
-
-.dni-item1 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  grid-area: info-start / dni-start / info-end / dni-end;
-  color: #000000;
-  background-color: #ffffff;
 }
