@@ -8,8 +8,8 @@
 }
 body {
   font-family: "Roboto Mono";
-  color: #fbff0a;
-  background-color: #000000;
+  color: #4d0c05;
+  background-color: #db807d;
 }
 
 h1 {
@@ -40,12 +40,12 @@ h2 {
   width: 1.5em;
   height: 1.5em;
   text-decoration: none;
-  color: #000000;
-  box-shadow: inset 0em 0em 0em 1.5em #fbff0a;
+  color: #db807d;
+  box-shadow: inset 0em 0em 0em 1.5em #4d0c05;
   transition: box-shadow 0.25s, color 0.25s;
 }
 .social-icons a:hover {
-  box-shadow: inset 0em 0em 0em 0.1em #fbff0a;
+  box-shadow: inset 0em 0em 0em 0.1em #4d0c05;
 }
 .social-icons .fa-twitter:hover {
   color: #1da1f2;
