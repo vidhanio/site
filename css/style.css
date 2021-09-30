@@ -4,43 +4,23 @@
 }
 @font-face {
   font-family: "Roboto Mono Italic";
-  src: url("../fonts/RobotoMono-Italic-VariableFont_wght.ttf")
-    format("truetype");
+  src: url("../fonts/RobotoMono-Italic-VariableFont_wght.ttf") format("truetype");
 }
 body {
-  color: #ffffff;
   font-family: "Roboto Mono";
+  color: #ffffff;
   background-color: #000000;
 }
 
 h1 {
-  color: #ffffff;
   font-size: 5em;
   font-weight: bold;
-  font-family: "Roboto Mono";
   text-align: center;
 }
 
-hr {
-  color: #a9b1d6;
-  margin-left: 10em;
-  margin-right: 10em;
-}
-
-.warning {
-  color: #ffff00;
-  font-size: 2em;
-  font-weight: normal;
-  font-family: "Roboto Mono";
-  text-align: center;
-  text-decoration: underline;
-}
-
-.socials {
-  color: #ffffff;
+h2 {
   font-size: 3em;
-  font-weight: bold;
-  font-family: "Roboto Mono";
+  font-weight: normal;
   text-align: center;
 }
 
@@ -50,9 +30,7 @@ hr {
   justify-content: center;
   align-items: center;
 }
-
-.social-icon {
-  color: #000000;
+.social-icons a {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -61,82 +39,31 @@ hr {
   padding: 0.5em;
   width: 1.5em;
   height: 1.5em;
-  box-shadow: inset 0em 0em 0em 1.5em #ffffff;
   text-decoration: none;
-  transition: 0.25s;
+  color: #000000;
+  box-shadow: inset 0em 0em 0em 1.5em #ffffff;
+  transition: box-shadow 0.25s, color 0.25s;
 }
-
-.social-icon:hover {
+.social-icons a:hover {
   box-shadow: inset 0em 0em 0em 0.1em #ffffff;
 }
-
-.fa-twitter:hover {
+.social-icons .fa-twitter:hover {
   color: #1da1f2;
 }
-
-.fa-discord:hover {
+.social-icons .fa-discord:hover {
   color: #5865f2;
 }
-
-.fa-github:hover {
+.social-icons .fa-github:hover {
   color: #fafafa;
 }
-
-.fa-linkedin:hover {
+.social-icons .fa-linkedin:hover {
   color: #0077b5;
 }
-
-.fa-stack-overflow:hover {
+.social-icons .fa-stack-overflow:hover {
   color: #f48024;
 }
-
-.info-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.info-grid {
-  display: grid;
-  grid-template-rows: [info-header-start] 0.25fr [info-header-end info-start] 1fr [info-end];
-  grid-template-columns: [outer-start dni-start] 1fr [dni-end other-start] 1fr [other-end outer-end];
-  width: 75vw;
-  height: 50vh;
-  gap: 0.5em;
-  border: 0.5em solid #ffffff;
-  background-color: #ffffff;
-}
-
-.dni-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  grid-area: info-header/dni;
-  color: #ffffff;
-  background-color: #000000;
-}
-
-.other-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  grid-area: info-header/other;
-  color: #ffffff;
-  background-color: #000000;
-}
-
-.dni-items {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  flex-flow: column wrap;
-  grid-area: info/dni;
-  background-color: #ffffff;
-}
-.dni-items div {
-  color: #000000;
+.social-icons .fa-spotify:hover {
+  color: #1db954;
 }
 
 /*# sourceMappingURL=style.css.map */
