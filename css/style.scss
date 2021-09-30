@@ -1,4 +1,4 @@
-$fg: #ffffff;
+$fg: #fbff0a;
 $bg: #000000;
 
 @font-face {
@@ -85,4 +85,14 @@ h2 {
   .fa-spotify:hover {
     color: #1db954;
   }
+}
+
+.mood {
+  display: block;
+  margin: auto;
+  padding-top: 3em;
+
+  width: 5em;
+  filter: invert(100%) sepia(51%) saturate(3021%) hue-rotate(322deg)
+    brightness(121%) contrast(106%);
 }

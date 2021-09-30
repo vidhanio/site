@@ -8,7 +8,7 @@
 }
 body {
   font-family: "Roboto Mono";
-  color: #ffffff;
+  color: #fbff0a;
   background-color: #000000;
 }
 
@@ -41,11 +41,11 @@ h2 {
   height: 1.5em;
   text-decoration: none;
   color: #000000;
-  box-shadow: inset 0em 0em 0em 1.5em #ffffff;
+  box-shadow: inset 0em 0em 0em 1.5em #fbff0a;
   transition: box-shadow 0.25s, color 0.25s;
 }
 .social-icons a:hover {
-  box-shadow: inset 0em 0em 0em 0.1em #ffffff;
+  box-shadow: inset 0em 0em 0em 0.1em #fbff0a;
 }
 .social-icons .fa-twitter:hover {
   color: #1da1f2;
@@ -64,6 +64,14 @@ h2 {
 }
 .social-icons .fa-spotify:hover {
   color: #1db954;
+}
+
+.mood {
+  display: block;
+  margin: auto;
+  padding-top: 3em;
+  width: 5em;
+  filter: invert(100%) sepia(51%) saturate(3021%) hue-rotate(322deg) brightness(121%) contrast(106%);
 }
 
 /*# sourceMappingURL=style.css.map */
