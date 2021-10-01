@@ -63,12 +63,9 @@ h2 {
       box-shadow: inset 0em 0em 0em 0.1em $fg;
     }
   }
-  .fa-twitter:hover {
-    color: #1da1f2;
-  }
 
-  .fa-discord:hover {
-    color: #5865f2;
+  .fa-envelope:hover {
+    color: #53b7f1;
   }
 
   .fa-github:hover {
@@ -79,9 +76,18 @@ h2 {
     color: #0077b5;
   }
 
+  .fa-twitter:hover {
+    color: #1da1f2;
+  }
+
+  .fa-discord:hover {
+    color: #5865f2;
+  }
+
   .fa-stack-overflow:hover {
     color: #f48024;
   }
+
   .fa-spotify:hover {
     color: #1db954;
   }

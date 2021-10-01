@@ -47,17 +47,20 @@ h2 {
 .social-icons a:hover {
   box-shadow: inset 0em 0em 0em 0.1em #ffffff;
 }
-.social-icons .fa-twitter:hover {
-  color: #1da1f2;
-}
-.social-icons .fa-discord:hover {
-  color: #5865f2;
+.social-icons .fa-envelope:hover {
+  color: #53b7f1;
 }
 .social-icons .fa-github:hover {
   color: #fafafa;
 }
 .social-icons .fa-linkedin:hover {
   color: #0077b5;
+}
+.social-icons .fa-twitter:hover {
+  color: #1da1f2;
+}
+.social-icons .fa-discord:hover {
+  color: #5865f2;
 }
 .social-icons .fa-stack-overflow:hover {
   color: #f48024;
