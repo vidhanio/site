@@ -2,14 +2,17 @@
   font-family: "Roboto Mono";
   src: url("../fonts/RobotoMono-VariableFont_wght.ttf") format("truetype");
 }
+
 @font-face {
   font-family: "Roboto Mono Italic";
-  src: url("../fonts/RobotoMono-Italic-VariableFont_wght.ttf") format("truetype");
+  src: url("../fonts/RobotoMono-Italic-VariableFont_wght.ttf")
+    format("truetype");
 }
+
 body {
   font-family: "Roboto Mono";
-  color: #ffffff;
-  background-color: #000000;
+  color: #a9b2c0;
+  background-color: #272c35;
 }
 
 h1 {
@@ -25,14 +28,30 @@ h2 {
 }
 
 .social-icons {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-flow: row wrap;
   flex-flow: row wrap;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
 }
+
 .social-icons a {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   font-size: 2em;
   margin: 0.5em;
@@ -40,31 +59,44 @@ h2 {
   width: 1.5em;
   height: 1.5em;
   text-decoration: none;
-  color: #000000;
-  box-shadow: inset 0em 0em 0em 1.5em #ffffff;
+  color: #272c35;
+  -webkit-box-shadow: inset 0em 0em 0em 1.5em #a9b2c0;
+  box-shadow: inset 0em 0em 0em 1.5em #a9b2c0;
+  -webkit-transition: color 0.25s, -webkit-box-shadow 0.25s;
+  transition: color 0.25s, -webkit-box-shadow 0.25s;
   transition: box-shadow 0.25s, color 0.25s;
+  transition: box-shadow 0.25s, color 0.25s, -webkit-box-shadow 0.25s;
 }
+
 .social-icons a:hover {
-  box-shadow: inset 0em 0em 0em 0.1em #ffffff;
+  -webkit-box-shadow: inset 0em 0em 0em 0.1em #a9b2c0;
+  box-shadow: inset 0em 0em 0em 0.1em #a9b2c0;
 }
+
 .social-icons .fa-envelope:hover {
   color: #53b7f1;
 }
+
 .social-icons .fa-github:hover {
   color: #fafafa;
 }
+
 .social-icons .fa-linkedin:hover {
   color: #0077b5;
 }
+
 .social-icons .fa-twitter:hover {
   color: #1da1f2;
 }
+
 .social-icons .fa-discord:hover {
   color: #5865f2;
 }
+
 .social-icons .fa-stack-overflow:hover {
   color: #f48024;
 }
+
 .social-icons .fa-spotify:hover {
   color: #1db954;
 }
@@ -74,7 +106,9 @@ h2 {
   margin: auto;
   padding-top: 3em;
   width: 5em;
-  filter: invert(100%) sepia(51%) saturate(3021%) hue-rotate(322deg) brightness(121%) contrast(106%);
+  -webkit-filter: invert(100%) sepia(51%) saturate(3021%) hue-rotate(322deg)
+    brightness(121%) contrast(106%);
+  filter: invert(100%) sepia(51%) saturate(3021%) hue-rotate(322deg)
+    brightness(121%) contrast(106%);
 }
-
 /*# sourceMappingURL=style.css.map */
