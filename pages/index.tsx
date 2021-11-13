@@ -6,9 +6,21 @@ import o from "../public/images/o.png";
 import t from "../public/images/t.png";
 
 type Winner = true | false | null | undefined;
-type SmallBoard = Winner[][];
-type MediumBoard = SmallBoard[][];
-type LargeBoard = MediumBoard[][];
+type SmallBoard = [
+  [Winner, Winner, Winner],
+  [Winner, Winner, Winner],
+  [Winner, Winner, Winner]
+];
+type MediumBoard = [
+  [SmallBoard, SmallBoard, SmallBoard],
+  [SmallBoard, SmallBoard, SmallBoard],
+  [SmallBoard, SmallBoard, SmallBoard]
+];
+type LargeBoard = [
+  [MediumBoard, MediumBoard, MediumBoard],
+  [MediumBoard, MediumBoard, MediumBoard],
+  [MediumBoard, MediumBoard, MediumBoard]
+];
 
 interface TTTProps {
   coords: [number, number];
@@ -39,7 +51,7 @@ interface MediumProps extends TTTProps {
     smallProps: SmallProps,
     boxProps: BoxProps
   ) => void;
-  activeCoords: [number, number];
+  activeCoords: [number, number][];
   onPreviewTurn: (
     mediumProps: MediumProps,
     smallProps: SmallProps,
@@ -57,15 +69,15 @@ interface LargeState {
   board: LargeBoard;
   winner: Winner;
   turn: true | false;
-  activeCoords: [number, number];
-  activeSmallCoords: [number, number];
+  activeCoords: [number, number][];
+  activeSmallCoords: [number, number][];
   previewCoords?: [number, number];
   previewSmallCoords?: [number, number];
 }
 
-function genBoard(
+function newBoard(
   size: "large" | "medium" | "small",
-  fill: Winner
+  fill?: Winner
 ): LargeBoard | MediumBoard | SmallBoard {
   switch (size) {
     case "large":
@@ -75,14 +87,18 @@ function genBoard(
             _.times(3, () => _.times(3, () => _.times(3, () => fill)))
           )
         )
-      );
+      ) as LargeBoard;
     case "medium":
       return _.times(3, () =>
         _.times(3, () => _.times(3, () => _.times(3, () => fill)))
-      );
+      ) as MediumBoard;
     case "small":
-      return _.times(3, () => _.times(3, () => fill));
+      return _.times(3, () => _.times(3, () => fill)) as SmallBoard;
   }
+}
+
+function arrayContainsArray<T>(array: T[][], subArray: T[]): boolean {
+  return array.some((array) => _.isEqual(array, subArray));
 }
 
 class Box extends React.Component<BoxProps> {
@@ -110,13 +126,13 @@ class Box extends React.Component<BoxProps> {
       <button
         className={`font-mono transition-colors w-4 h-4 text-xs rounded-sm ${
           this.props.winner !== undefined && this.props.active
-            ? "bg-blue-300"
+            ? "bg-blue-200"
             : this.props.active
             ? "bg-blue-400"
             : this.props.winner !== undefined
             ? "bg-gray-200"
             : "bg-gray-300"
-        } ${this.props.previewed ? "bg-green-300" : ""}`}
+        } ${this.props.previewed ? "bg-green-400" : ""}`}
         onClick={
           this.props.winner === undefined && this.props.active
             ? this.finishTurn
@@ -248,8 +264,7 @@ class MediumTTT extends React.Component<MediumProps, {}> {
         winner={undefined}
         active={
           this.props.active &&
-          this.props.activeCoords[0] === coords[0] &&
-          this.props.activeCoords[1] === coords[1]
+          arrayContainsArray(this.props.activeCoords, coords)
         }
         board={this.props.board[coords[1]][coords[0]]}
       />
@@ -285,9 +300,9 @@ class LargeTTT extends React.Component<{}, LargeState> {
 
     this.state = {
       previewCoords: [0, 0],
-      activeCoords: [1, 1],
-      activeSmallCoords: [1, 1],
-      board: genBoard("large", undefined) as LargeBoard,
+      activeCoords: [[1, 1]],
+      activeSmallCoords: [[1, 1]],
+      board: newBoard("large", undefined) as LargeBoard,
       winner: undefined,
       turn: true,
     };
@@ -298,7 +313,7 @@ class LargeTTT extends React.Component<{}, LargeState> {
     this.setLargeWinner = this.setLargeWinner.bind(this);
     this.setMediumWinner = this.setMediumWinner.bind(this);
     this.setSmallWinner = this.setSmallWinner.bind(this);
-    this.checkSmallWinner = this.checkSmallWinner.bind(this);
+    this.getSmallWinner = this.getSmallWinner.bind(this);
   }
 
   finishTurn(
@@ -310,10 +325,44 @@ class LargeTTT extends React.Component<{}, LargeState> {
     board[mediumProps.coords[1]][mediumProps.coords[0]][smallProps.coords[1]][
       smallProps.coords[0]
     ][boxProps.coords[1]][boxProps.coords[0]] = this.state.turn;
+
+    const activeCoords: [number, number][] = [];
+    if (
+      this.getMediumWinner(
+        this.state.board[smallProps.coords[1]][smallProps.coords[0]]
+      ) !== undefined
+    ) {
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          activeCoords.push([i, j]);
+        }
+      }
+    } else {
+      activeCoords.push(smallProps.coords);
+    }
+
+    const activeSmallCoords: [number, number][] = [];
+
+    if (
+      this.getSmallWinner(
+        this.state.board[smallProps.coords[1]][smallProps.coords[0]][
+          boxProps.coords[1]
+        ][boxProps.coords[0]]
+      ) !== undefined
+    ) {
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          activeSmallCoords.push([i, j]);
+        }
+      }
+    } else {
+      activeSmallCoords.push(boxProps.coords);
+    }
+
     this.setState({
       board: board,
-      activeCoords: smallProps.coords,
-      activeSmallCoords: boxProps.coords,
+      activeCoords: activeCoords,
+      activeSmallCoords: activeSmallCoords,
     });
 
     this.setSmallWinner(mediumProps, smallProps);
@@ -346,56 +395,62 @@ class LargeTTT extends React.Component<{}, LargeState> {
   }
 
   setLargeWinner() {
-    const smallWinnerBoard: MediumBoard = [];
+    const smallWinnerBoard: MediumBoard = newBoard("medium") as MediumBoard;
     for (let i = 0; i < 3; i++) {
-      const smallRow: SmallBoard[] = [];
+      const smallRow: [SmallBoard, SmallBoard, SmallBoard] = [
+        newBoard("small") as SmallBoard,
+        newBoard("small") as SmallBoard,
+        newBoard("small") as SmallBoard,
+      ];
       for (let j = 0; j < 3; j++) {
-        const boxWinnerBoard: SmallBoard = [];
+        const boxWinnerBoard: SmallBoard = newBoard("small") as SmallBoard;
         for (let k = 0; k < 3; k++) {
-          const boxRow: Winner[] = [];
+          const boxRow: [Winner, Winner, Winner] = [
+            undefined,
+            undefined,
+            undefined,
+          ];
           for (let l = 0; l < 3; l++) {
-            boxRow.push(this.checkSmallWinner(this.state.board[i][j][k][l]));
+            boxRow[l] = this.getSmallWinner(this.state.board[i][j][k][l]);
           }
-          boxWinnerBoard.push(boxRow);
+          boxWinnerBoard[k] = boxRow;
         }
-        smallRow.push(boxWinnerBoard);
+        smallRow[j] = boxWinnerBoard;
       }
-      smallWinnerBoard.push(smallRow);
+      smallWinnerBoard[i] = smallRow;
+
+      const winner = this.getMediumWinner(smallWinnerBoard);
+
+      if (winner !== undefined) {
+        this.setState({ board: newBoard("large", winner) as LargeBoard });
+      }
     }
 
-    const winnerBoard: SmallBoard = [];
+    const winnerBoard: SmallBoard = newBoard("small") as SmallBoard;
     for (let i = 0; i < 3; i++) {
-      const row: Winner[] = [];
+      const row: [Winner, Winner, Winner] = [undefined, undefined, undefined];
       for (let j = 0; j < 3; j++) {
-        row.push(this.checkSmallWinner(smallWinnerBoard[i][j]));
+        row.push(this.getSmallWinner(smallWinnerBoard[i][j]));
       }
-      winnerBoard.push(row);
+      winnerBoard[i] = row;
     }
 
-    const winner = this.checkSmallWinner(winnerBoard);
+    const winner = this.getSmallWinner(winnerBoard);
 
     if (winner !== undefined) {
       this.setState({
-        board: genBoard("large", winner) as LargeBoard,
+        board: newBoard("large", winner) as LargeBoard,
       });
     }
   }
 
   setMediumWinner(mediumProps: MediumProps) {
     const coords = mediumProps.coords;
-    const winnerBoard: SmallBoard = [];
-    for (let i = 0; i < 3; i++) {
-      const row: Winner[] = [];
-      for (let j = 0; j < 3; j++) {
-        row.push(this.checkSmallWinner(mediumProps.board[i][j]));
-      }
-      winnerBoard.push(row);
-    }
-    const winner = this.checkSmallWinner(winnerBoard);
+    const winner = this.getMediumWinner(mediumProps.board);
 
     if (winner !== undefined) {
       const board = this.state.board;
-      board[coords[1]][coords[0]] = genBoard("medium", winner) as MediumBoard;
+      board[coords[1]][coords[0]] = newBoard("medium", winner) as MediumBoard;
       this.setState({
         board: board,
       });
@@ -405,10 +460,10 @@ class LargeTTT extends React.Component<{}, LargeState> {
   setSmallWinner(mediumProps: MediumProps, smallProps: SmallProps) {
     const coords = mediumProps.coords;
     const smallCoords = smallProps.coords;
-    const winner = this.checkSmallWinner(smallProps.board);
+    const winner = this.getSmallWinner(smallProps.board);
     if (winner !== undefined) {
       const board = this.state.board;
-      board[coords[1]][coords[0]][smallCoords[1]][smallCoords[0]] = genBoard(
+      board[coords[1]][coords[0]][smallCoords[1]][smallCoords[0]] = newBoard(
         "small",
         winner
       ) as SmallBoard;
@@ -418,7 +473,20 @@ class LargeTTT extends React.Component<{}, LargeState> {
     }
   }
 
-  checkSmallWinner(board: SmallBoard): Winner {
+  getMediumWinner(board: MediumBoard): Winner {
+    const winnerBoard: SmallBoard = newBoard("small") as SmallBoard;
+    for (let i = 0; i < 3; i++) {
+      const row: [Winner, Winner, Winner] = [undefined, undefined, undefined];
+      for (let j = 0; j < 3; j++) {
+        row[j] = this.getSmallWinner(board[i][j]);
+      }
+      winnerBoard[i] = row;
+    }
+
+    return this.getSmallWinner(winnerBoard);
+  }
+
+  getSmallWinner(board: SmallBoard): Winner {
     if (board.flat().filter((x) => x === undefined).length === 9) {
       return undefined;
     }
@@ -477,10 +545,7 @@ class LargeTTT extends React.Component<{}, LargeState> {
         coords={coords}
         turn={this.state.turn}
         winner={undefined}
-        active={
-          this.state.activeCoords[0] === coords[0] &&
-          this.state.activeCoords[1] === coords[1]
-        }
+        active={arrayContainsArray(this.state.activeCoords, coords)}
         board={this.state.board[coords[1]][coords[0]]}
         activeCoords={this.state.activeSmallCoords}
       />
