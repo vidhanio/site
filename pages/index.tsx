@@ -3,17 +3,29 @@ import Head from "next/head";
 import Image from "next/image";
 import React from "react";
 
-interface BoxProps {
+type winnerValue = "X" | "O" | null | undefined;
+type smallBoard = winnerValue[][];
+type MediumBoard = smallBoard[][];
+
+interface TTTProps {
   coords: [number, number];
   turn: "X" | "O";
-  onFinishTurn: (coords: [number, number]) => void;
-  winner: "X" | "O" | null | undefined;
+  winner: winnerValue;
 }
 
-interface SmallTTTState {
+interface BoxProps extends TTTProps {
+  onFinishTurn: (boxProps: BoxProps) => void;
+}
+
+interface SmallTTTProps extends TTTProps {
+  board: smallBoard;
+  onFinishTurn: (smallProps: SmallTTTProps, boxProps: BoxProps) => void;
+}
+
+interface MediumTTTState {
+  board: MediumBoard;
+  winner: winnerValue;
   turn: "X" | "O";
-  board: ("X" | "O" | null | undefined)[][];
-  winner: "X" | "O" | null | undefined;
 }
 
 class Box extends React.Component<BoxProps> {
@@ -23,7 +35,7 @@ class Box extends React.Component<BoxProps> {
   }
 
   handleFinishTurn() {
-    this.props.onFinishTurn(this.props.coords);
+    this.props.onFinishTurn(this.props);
   }
 
   render() {
@@ -48,8 +60,8 @@ class Box extends React.Component<BoxProps> {
   }
 }
 
-class SmallTTT extends React.Component<{}, SmallTTTState> {
-  constructor(props: {}) {
+class SmallTTT extends React.Component<SmallTTTProps> {
+  constructor(props: SmallTTTProps) {
     super(props);
     this.state = {
       board: [
@@ -61,78 +73,13 @@ class SmallTTT extends React.Component<{}, SmallTTTState> {
       turn: "X",
     };
 
-    this.toggleTurn = this.toggleTurn.bind(this);
     this.finishTurn = this.finishTurn.bind(this);
   }
 
-  toggleTurn() {
-    this.setState({ turn: this.state.turn === "X" ? "O" : "X" });
-  }
-
-  finishTurn(coords: [number, number]) {
-    const newBoard = this.state.board;
-    newBoard[coords[1]][coords[0]] = this.state.turn;
-    this.setState({ board: newBoard });
-    this.toggleTurn();
-    this.checkWinner();
-  }
-
-  setWinner(winner: "X" | "O" | null | undefined) {
-    this.setState({ winner: winner }, () => {
-      if (this.state.winner !== undefined) {
-        const winner = this.state.winner;
-        this.setState({
-          board: [
-            [winner, winner, winner],
-            [winner, winner, winner],
-            [winner, winner, winner],
-          ],
-        });
-      }
-    });
-  }
-
-  checkWinner() {
-    const board = this.state.board;
-    for (let i = 0; i < 3; i++) {
-      if (
-        board[i][0] != undefined &&
-        board[i][0] === board[i][1] &&
-        board[i][0] === board[i][2]
-      ) {
-        this.setWinner(board[i][0]);
-        return;
-      }
-    }
-    for (let i = 0; i < 3; i++) {
-      if (
-        board[0][i] != undefined &&
-        board[0][i] === board[1][i] &&
-        board[0][i] === board[2][i]
-      ) {
-        this.setWinner(board[0][i]);
-        return;
-      }
-    }
-    if (
-      board[0][0] != undefined &&
-      board[0][0] === board[1][1] &&
-      board[0][0] === board[2][2]
-    ) {
-      this.setWinner(board[0][0]);
-      return;
-    }
-    if (
-      board[0][2] != undefined &&
-      board[0][2] === board[1][1] &&
-      board[0][2] === board[2][0]
-    ) {
-      this.setWinner(board[0][2]);
-      return;
-    }
-    if (board.flat().filter((x) => x === undefined).length === 0) {
-      this.setWinner(null);
-    }
+  finishTurn(boxProps: BoxProps) {
+    const newBoard = this.props.board;
+    newBoard[boxProps.coords[1]][boxProps.coords[0]] = this.props.turn;
+    this.props.onFinishTurn(this.props, boxProps);
   }
 
   renderBox(coords: [number, number]) {
@@ -140,8 +87,8 @@ class SmallTTT extends React.Component<{}, SmallTTTState> {
       <Box
         onFinishTurn={this.finishTurn}
         coords={coords}
-        turn={this.state.turn}
-        winner={this.state.board[coords[1]][coords[0]]}
+        turn={this.props.turn}
+        winner={this.props.board[coords[1]][coords[0]]}
       />
     );
   }
@@ -169,28 +116,171 @@ class SmallTTT extends React.Component<{}, SmallTTTState> {
   }
 }
 
-class MediumTicTacToe extends React.Component<{}, {}> {
+class MediumTicTacToe extends React.Component<{}, MediumTTTState> {
   constructor(props: {}) {
     super(props);
+
+    this.state = {
+      board: [
+        [
+          [
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+          ],
+          [
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+          ],
+          [
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+          ],
+        ],
+        [
+          [
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+          ],
+          [
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+          ],
+          [
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+          ],
+        ],
+        [
+          [
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+          ],
+          [
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+          ],
+          [
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+            [undefined, undefined, undefined],
+          ],
+        ],
+      ],
+      winner: undefined,
+      turn: "X",
+    };
+
+    this.finishTurn = this.finishTurn.bind(this);
+  }
+
+  finishTurn(smallProps: SmallTTTProps, boxProps: BoxProps) {
+    const board = this.state.board;
+    board[smallProps.coords[1]][smallProps.coords[0]][boxProps.coords[1]][
+      boxProps.coords[0]
+    ] = smallProps.turn;
+    this.setState({ board: board });
+
+    this.checkSmallWinner(smallProps);
+
+    this.setState({ turn: this.state.turn === "X" ? "O" : "X" });
+  }
+
+  setSmallWinner(smallProps: SmallTTTProps, winner: winnerValue) {
+    const coords = smallProps.coords;
+    if (winner !== undefined) {
+      const board = this.state.board;
+      board[coords[1]][coords[0]] = [
+        [winner, winner, winner],
+        [winner, winner, winner],
+        [winner, winner, winner],
+      ];
+      this.setState({
+        board: board,
+      });
+    }
+  }
+
+  checkSmallWinner(smallProps: SmallTTTProps) {
+    const coords = smallProps.coords;
+    const board = this.state.board[coords[1]][coords[0]];
+    for (let i = 0; i < 3; i++) {
+      if (
+        board[i][0] !== undefined &&
+        board[i][0] === board[i][1] &&
+        board[i][0] === board[i][2]
+      ) {
+        this.setSmallWinner(smallProps, board[i][0]);
+        return;
+      }
+    }
+    for (let i = 0; i < 3; i++) {
+      if (
+        board[0][i] !== undefined &&
+        board[0][i] === board[1][i] &&
+        board[0][i] === board[2][i]
+      ) {
+        this.setSmallWinner(smallProps, board[0][i]);
+        return;
+      }
+    }
+    if (
+      board[0][0] !== undefined &&
+      board[0][0] === board[1][1] &&
+      board[0][0] === board[2][2]
+    ) {
+      this.setSmallWinner(smallProps, board[0][0]);
+      return;
+    }
+    if (
+      board[0][2] !== undefined &&
+      board[0][2] === board[1][1] &&
+      board[0][2] === board[2][0]
+    ) {
+      this.setSmallWinner(smallProps, board[0][2]);
+      return;
+    }
+    if (board.flat().filter((x) => x === undefined).length === 0) {
+      this.setSmallWinner(smallProps, null);
+    }
+  }
+
+  renderSmallTTT(coords: [number, number]) {
+    return (
+      <SmallTTT
+        onFinishTurn={this.finishTurn}
+        coords={coords}
+        turn={this.state.turn}
+        winner={undefined}
+        board={this.state.board[coords[1]][coords[0]]}
+      />
+    );
   }
 
   render() {
     return (
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-row gap-4">
-          <SmallTTT />
-          <SmallTTT />
-          <SmallTTT />
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-row gap-2">
+          {this.renderSmallTTT([0, 0])}
+          {this.renderSmallTTT([1, 0])}
+          {this.renderSmallTTT([2, 0])}
         </div>
-        <div className="flex flex-row gap-4">
-          <SmallTTT />
-          <SmallTTT />
-          <SmallTTT />
+        <div className="flex flex-row gap-2">
+          {this.renderSmallTTT([0, 1])}
+          {this.renderSmallTTT([1, 1])}
+          {this.renderSmallTTT([2, 1])}
         </div>
-        <div className="flex flex-row gap-4">
-          <SmallTTT />
-          <SmallTTT />
-          <SmallTTT />
+        <div className="flex flex-row gap-2">
+          {this.renderSmallTTT([0, 2])}
+          {this.renderSmallTTT([1, 2])}
+          {this.renderSmallTTT([2, 2])}
         </div>
       </div>
     );
