@@ -118,7 +118,7 @@ class Box extends React.Component<BoxProps> {
             : "bg-gray-300"
         } ${this.props.previewed ? "bg-green-300" : ""}`}
         onClick={
-          this.props.winner === undefined || this.props.active
+          this.props.winner === undefined && this.props.active
             ? this.finishTurn
             : () => undefined
         }
