@@ -9,7 +9,7 @@ on:
 env:
   CLOUD_RUN_PROJECT_ID: ${{ secrets.CLOUD_RUN_PROJECT_NAME }}
   CLOUD_RUN_REGION: us-east1
-  REPO_NAME: vidhan.io
+  REPO_NAME: vidhanio
 
 jobs:
   build-and-deploy:
