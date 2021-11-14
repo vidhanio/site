@@ -2,21 +2,15 @@ import React from "react";
 import { isEqual, times } from "lodash";
 
 type Winner = true | false | null | undefined;
-type SmallBoard = [
-  [Winner, Winner, Winner],
-  [Winner, Winner, Winner],
-  [Winner, Winner, Winner]
-];
-type MediumBoard = [
-  [SmallBoard, SmallBoard, SmallBoard],
-  [SmallBoard, SmallBoard, SmallBoard],
-  [SmallBoard, SmallBoard, SmallBoard]
-];
-type LargeBoard = [
-  [MediumBoard, MediumBoard, MediumBoard],
-  [MediumBoard, MediumBoard, MediumBoard],
-  [MediumBoard, MediumBoard, MediumBoard]
-];
+type WinnerRow = [Winner, Winner, Winner];
+
+type SmallBoard = [WinnerRow, WinnerRow, WinnerRow];
+type SmallRow = [SmallBoard, SmallBoard, SmallBoard];
+
+type MediumBoard = [SmallRow, SmallRow, SmallRow];
+type MediumRow = [MediumBoard, MediumBoard, MediumBoard];
+
+type LargeBoard = [MediumRow, MediumRow, MediumRow];
 
 interface TTTProps {
   coords: [number, number];
@@ -122,10 +116,18 @@ class Box extends React.Component<BoxProps> {
           this.props.active && this.props.winner === undefined
             ? "bg-blue-400 dark:bg-blue-400"
             : this.props.previewed && this.props.winner === undefined
-            ? "bg-purple-400 dark:bg-purple-400"
+            ? this.props.turn
+              ? "bg-red-300 dark:bg-red-300"
+              : "bg-green-300 dark:bg-green-300"
             : this.props.winner !== undefined
             ? "bg-gray-200 dark:bg-gray-800"
             : "bg-gray-300 dark:bg-gray-700"
+        } ${
+          this.props.winner === undefined
+            ? this.props.turn
+              ? "hover:bg-green-400"
+              : "hover:bg-red-400"
+            : ""
         }`}
         onClick={
           this.props.winner === undefined && this.props.active
