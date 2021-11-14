@@ -1,7 +1,7 @@
-# Ultimate Ultimate Tic-Tac-Toe
+# Triple-Tac-Toe
 
 ## 🔧 Work-In-Progress
 
 ## Introduction
 
-A Next.js game of triple-layered, ultimate tic-tac-toe.
+A Next.js game of triple-layered ultimate tic-tac-toe.

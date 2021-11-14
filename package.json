@@ -1,5 +1,5 @@
 {
-  "name": "triple-ttt",
+  "name": "triple-tac-toe",
   "private": true,
   "scripts": {
     "dev": "next dev",
