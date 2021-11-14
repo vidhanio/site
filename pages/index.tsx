@@ -1,5 +1,6 @@
 import React from "react";
 import { isEqual, times } from "lodash";
+import "tailwindcss/tailwind.css";
 
 type Winner = true | false | null | undefined;
 type WinnerRow = [Winner, Winner, Winner];
