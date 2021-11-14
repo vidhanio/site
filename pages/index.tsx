@@ -7,6 +7,7 @@ import {
   faGithub,
 } from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope, faGlobe } from "@fortawesome/free-solid-svg-icons";
+import "tailwindcss/tailwind.css";
 
 interface SocialProps {
   icon: IconProp;
