@@ -6,7 +6,7 @@ on:
 name: Build and Deploy a Container to Cloud Run
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
-  SERVICE: triple-tac-toe
+  SERVICE: ${{ github.event.repository.name }}
   REGION: us-east1
 
 jobs:
