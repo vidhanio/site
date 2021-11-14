@@ -3,7 +3,7 @@ on:
     branches:
       - main
 
-name: Build and Deploy a Container
+name: Build and Deploy a Container to Cloud Run
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   SERVICE: triple-tac-toe
@@ -38,7 +38,6 @@ jobs:
         service: ${{ env.SERVICE }}
         image: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}
         region: ${{ env.REGION }}
-        flags: --allow-unauthenticated
 
     - name: Show Output
       run: echo ${{ steps.deploy.outputs.url }}
