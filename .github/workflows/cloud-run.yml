@@ -1,19 +1,43 @@
-- name: Set up Cloud SDK
-  uses: google-github-actions/setup-gcloud@master
-  with:
-    project_id: ${{ secrets.GCP_PROJECT_ID }}
-    service_account_key: ${{ secrets.GCP_SA_KEY }}
-    export_default_credentials: true
+on:
+  push:
+    branches:
+      - main
 
-- name: Use gcloud CLI
-  run: gcloud info
+name: Build and Deploy a Container
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT }}
+  SERVICE: triple-tac-toe
+  REGION: us-east1
 
-- name: Deploy to Cloud Run
-  id: deploy-to-cloud-run
-  uses: google-github-actions/deploy-cloudrun@v0.3.0
-  with:
-    service: ttt
-    image: gcr.io/vidhanio/ttt
-  
-- name: Use Output
-  run: curl "${{ steps.deploy.outputs.url }}"
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        project_id: ${{ env.PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: Authorize Docker push
+      run: gcloud auth configure-docker
+
+    - name: Build and Push Container
+      run: |-
+        docker build -t gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }} app/
+        docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}
+        
+    - name: Deploy to Cloud Run
+      id: deploy
+      uses: google-github-actions/deploy-cloudrun@v0.4.0
+      with:
+        service: ${{ env.SERVICE }}
+        image: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}
+        region: ${{ env.REGION }}
+
+    - name: Show Output
+      run: echo ${{ steps.deploy.outputs.url }}
