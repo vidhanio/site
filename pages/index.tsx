@@ -17,7 +17,7 @@ class Social extends React.Component<SocialProps> {
   render() {
     return (
       <a
-        className="flex flex-row items-center justify-center gap-2 text-lg text-blue-500 transition-all hover:text-blue-400"
+        className="flex flex-row items-center justify-center gap-2 text-lg text-blue-500 transition-colors hover:text-blue-400"
         href={this.props.url}
       >
         <FontAwesomeIcon icon={this.props.icon}></FontAwesomeIcon>
@@ -30,25 +30,42 @@ class Social extends React.Component<SocialProps> {
 class Home extends React.Component {
   render() {
     return (
-      <div className="flex flex-row w-screen h-screen justify-center items-center">
-        <div className="flex flex-col justify-center items-center width gap-8">
-          <h1 className="text-8xl font-black">vidhan</h1>
-          <div className="flex flex-row gap-4 font-bold">
-            <Social icon={faEnvelope} url="mailto:me@vidhan.io">
-              me@vidhan.io
-            </Social>
-            <Social icon={faGithub} url="https://github.com/vidhanio">
-              vidhanio
-            </Social>
-            <Social icon={faLinkedin} url="https://linkedin.com/in/vidhanio">
-              vidhanio
-            </Social>
-            <Social icon={faTwitter} url="https://twitter.com/vidhanio">
-              vidhanio
-            </Social>
-            <Social icon={faGlobe} url="https://vidhan.io">
-              vidhan.io
-            </Social>
+      <div>
+        <>
+          <title>vidhan</title>
+          <link rel="icon" href="/favicon.ico" />
+
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+          <meta property="og:title" content="vidhan" />
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content="https://vidhan.io" />
+          <meta property="og:image" content="/og-image.png" />
+          <meta
+            property="og:description"
+            content="vidhan's home on the internet."
+          />
+        </>
+        <div className="flex flex-row items-center justify-center w-screen h-screen">
+          <div className="flex flex-col items-center justify-center gap-8 width">
+            <h1 className="font-black text-8xl">vidhan</h1>
+            <div className="flex flex-row gap-4 font-bold">
+              <Social icon={faEnvelope} url="mailto:me@vidhan.io">
+                me@vidhan.io
+              </Social>
+              <Social icon={faGithub} url="https://github.com/vidhanio">
+                vidhanio
+              </Social>
+              <Social icon={faLinkedin} url="https://linkedin.com/in/vidhanio">
+                vidhanio
+              </Social>
+              <Social icon={faTwitter} url="https://twitter.com/vidhanio">
+                vidhanio
+              </Social>
+              <Social icon={faGlobe} url="https://vidhan.io">
+                vidhan.io
+              </Social>
+            </div>
           </div>
         </div>
       </div>
