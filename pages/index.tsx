@@ -1,9 +1,5 @@
 import React from "react";
-import _ from "lodash";
-import Image from "next/image";
-import x from "../public/images/x.png";
-import o from "../public/images/o.png";
-import t from "../public/images/t.png";
+import { isEqual, times } from "lodash";
 
 type Winner = true | false | null | undefined;
 type SmallBoard = [
@@ -81,24 +77,22 @@ function newBoard(
 ): LargeBoard | MediumBoard | SmallBoard {
   switch (size) {
     case "large":
-      return _.times(3, () =>
-        _.times(3, () =>
-          _.times(3, () =>
-            _.times(3, () => _.times(3, () => _.times(3, () => fill)))
-          )
+      return times(3, () =>
+        times(3, () =>
+          times(3, () => times(3, () => times(3, () => times(3, () => fill))))
         )
       ) as LargeBoard;
     case "medium":
-      return _.times(3, () =>
-        _.times(3, () => _.times(3, () => _.times(3, () => fill)))
+      return times(3, () =>
+        times(3, () => times(3, () => times(3, () => fill)))
       ) as MediumBoard;
     case "small":
-      return _.times(3, () => _.times(3, () => fill)) as SmallBoard;
+      return times(3, () => times(3, () => fill)) as SmallBoard;
   }
 }
 
 function arrayContainsArray<T>(array: T[][], subArray: T[]): boolean {
-  return array.some((array) => _.isEqual(array, subArray));
+  return array.some((array) => isEqual(array, subArray));
 }
 
 class Box extends React.Component<BoxProps> {
@@ -124,15 +118,15 @@ class Box extends React.Component<BoxProps> {
   render() {
     return (
       <button
-        className={`font-mono transition-colors w-4 h-4 text-xs rounded-sm ${
-          this.props.winner !== undefined && this.props.active
-            ? "bg-blue-200"
-            : this.props.active
-            ? "bg-blue-400"
+        className={`font-sans transition-colors font-black w-4 h-4 text-sm rounded-sm flex justify-center items-center text-center ${
+          this.props.active && this.props.winner === undefined
+            ? "bg-blue-400 dark:bg-blue-400"
+            : this.props.previewed && this.props.winner === undefined
+            ? "bg-purple-400 dark:bg-purple-400"
             : this.props.winner !== undefined
-            ? "bg-gray-200"
-            : "bg-gray-300"
-        } ${this.props.previewed ? "bg-green-400" : ""}`}
+            ? "bg-gray-200 dark:bg-gray-800"
+            : "bg-gray-300 dark:bg-gray-700"
+        }`}
         onClick={
           this.props.winner === undefined && this.props.active
             ? this.finishTurn
@@ -149,15 +143,17 @@ class Box extends React.Component<BoxProps> {
             : () => undefined
         }
       >
-        {this.props.winner === undefined ? (
-          ""
-        ) : this.props.winner === null ? (
-          <Image src={t} alt="t" />
-        ) : this.props.winner ? (
-          <Image src={x} alt="x" />
-        ) : (
-          <Image src={o} alt="o" />
-        )}
+        <div
+          className={`flex flex-col w-3 h-3 rounded-sm justify-center items-center text-center transition-colors ${
+            this.props.winner === undefined
+              ? ""
+              : this.props.winner === null
+              ? "bg-yellow-400"
+              : this.props.winner
+              ? "bg-green-400"
+              : "bg-red-400"
+          }`}
+        ></div>
       </button>
     );
   }
@@ -554,8 +550,8 @@ class LargeTTT extends React.Component<{}, LargeState> {
 
   render() {
     return (
-      <div className="flex flex-col items-center justify-center w-screen h-screen">
-        <div className="flex flex-col gap-4 p-8 transition-shadow bg-gray-100 shadow-md rounded-xl">
+      <div className="flex flex-col items-center justify-center w-screen h-screen bg-white dark:bg-black">
+        <div className="flex flex-col gap-4 p-8 transition-shadow bg-gray-100 shadow-md rounded-xl dark:bg-gray-900">
           <div className="flex flex-row gap-4">
             {this.renderMedium([0, 0])}
             {this.renderMedium([1, 0])}
