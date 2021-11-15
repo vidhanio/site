@@ -4,42 +4,43 @@ on:
   pull_request:
     branches: [main]
 
-name: Build and Deploy a Container to Cloud Run
+name: Build and Deploy the Container to Google Cloud Run
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   SERVICE: ${{ github.event.repository.name }}
   REGION: us-east1
 
 jobs:
-  deploy:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.4.0
 
-      - name: Setup Cloud SDK
+      - name: Setup the Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0.2.0
         with:
           project_id: ${{ env.PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 
-      - name: Authorize Docker Push
+      - name: Register Google Cloud SDK as a Docker credential helper
         run: gcloud auth configure-docker
 
-      - name: Build Docker Image
+      - name: Build the Docker image
         run: docker build . -t gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}
 
-      - name: Push Docker Image
+      - name: Publish the Docker image
         run: docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}
 
-      - name: Deploy to Cloud Run
-        id: deploy
+      - name: Deploy the container to Google Cloud Run
         uses: google-github-actions/deploy-cloudrun@v0.3.0
         with:
           service: ${{ env.SERVICE }}
           image: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}
           region: ${{ env.REGION }}
 
-      - name: Show Cloud Run URL
+      - name: Show the Google Cloud Run URL
         run: echo ${{ steps.deploy.outputs.url }}
