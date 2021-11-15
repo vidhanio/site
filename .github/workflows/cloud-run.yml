@@ -1,14 +1,12 @@
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
 name: Build and Deploy the Container to Google Cloud Run
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   SERVICE: ${{ github.event.repository.name }}
   REGION: us-east1
+
+on:
+  push:
+    branches: [main]
 
 jobs:
   setup-build-publish-deploy:
