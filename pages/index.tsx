@@ -102,11 +102,6 @@ class Home extends React.Component {
                 vidhan.io
               </Social>
             </div>
-            <GitHubProject
-              title="Checkpoint"
-              url="github.com/vidhanio/checkpoint"
-              imageSrc={ImageTest}
-            ></GitHubProject>
           </div>
         </div>
       </>
