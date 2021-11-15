@@ -39,6 +39,13 @@ jobs:
     needs: build
 
     steps:
+      - name: Set up the Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0.2.0
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
       - name: Deploy the container to Google Cloud Run
         uses: google-github-actions/deploy-cloudrun@v0.3.0
         with:
