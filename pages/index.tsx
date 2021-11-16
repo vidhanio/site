@@ -64,45 +64,30 @@ class GitHubProject extends React.Component<{
 class Home extends React.Component {
   render() {
     return (
-      <>
-        <Head>
-          <title>vidhan</title>
-          <link rel="icon" href="favicon.ico" />
-
-          <meta property="og:title" content="vidhan" />
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content="https://vidhan.io" />
-          <meta property="og:image" content="https://vidhan.io/og.png" />
-          <meta
-            property="og:description"
-            content="vidhan's home on the internet."
-          />
-        </Head>
-        <div className="flex flex-row items-center justify-center w-screen h-screen">
-          <div className="flex flex-col items-center justify-center gap-8 width">
-            <h1 className="font-black text-black text-8xl dark:text-white">
-              vidhan
-            </h1>
-            <div className="flex flex-row gap-4 font-bold">
-              <Social icon={faEnvelope} url="mailto:me@vidhan.io">
-                me@vidhan.io
-              </Social>
-              <Social icon={faGithub} url="https://github.com/vidhanio">
-                vidhanio
-              </Social>
-              <Social icon={faLinkedin} url="https://linkedin.com/in/vidhanio">
-                vidhanio
-              </Social>
-              <Social icon={faTwitter} url="https://twitter.com/vidhanio">
-                vidhanio
-              </Social>
-              <Social icon={faGlobe} url="https://vidhan.io">
-                vidhan.io
-              </Social>
-            </div>
+      <div className="flex flex-row items-center justify-center w-screen h-screen">
+        <div className="flex flex-col items-center justify-center gap-8 width">
+          <h1 className="font-black text-black text-8xl dark:text-white">
+            vidhan
+          </h1>
+          <div className="flex flex-row gap-4 font-bold">
+            <Social icon={faEnvelope} url="mailto:me@vidhan.io">
+              me@vidhan.io
+            </Social>
+            <Social icon={faGithub} url="https://github.com/vidhanio">
+              vidhanio
+            </Social>
+            <Social icon={faLinkedin} url="https://linkedin.com/in/vidhanio">
+              vidhanio
+            </Social>
+            <Social icon={faTwitter} url="https://twitter.com/vidhanio">
+              vidhanio
+            </Social>
+            <Social icon={faGlobe} url="https://vidhan.io">
+              vidhan.io
+            </Social>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 }
