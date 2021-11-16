@@ -1,6 +1,5 @@
 import React from "react";
 import { isEqual, times } from "lodash";
-import "tailwindcss/tailwind.css";
 
 type Winner = true | false | null | undefined;
 type WinnerRow = [Winner, Winner, Winner];
@@ -553,7 +552,7 @@ class LargeTTT extends React.Component<{}, LargeState> {
 
   render() {
     return (
-      <div className="flex flex-col items-center justify-center w-screen h-screen bg-white dark:bg-black">
+      <div className="flex flex-col items-center justify-center w-screen h-screen">
         <div className="flex flex-col gap-4 p-8 transition-shadow bg-gray-100 shadow-md rounded-xl dark:bg-gray-900">
           <div className="flex flex-row gap-4">
             {this.renderMedium([0, 0])}
