@@ -553,31 +553,25 @@ class LargeTTT extends React.Component<{}, LargeState> {
 
   render() {
     return (
-      <>
-        <Head>
-          <title>Triple Tac Toe</title>
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-        <div className="flex flex-col items-center justify-center w-screen h-screen">
-          <div className="flex flex-col gap-4 p-8 transition-shadow bg-gray-100 shadow-md rounded-xl dark:bg-gray-900">
-            <div className="flex flex-row gap-4">
-              {this.renderMedium([0, 0])}
-              {this.renderMedium([1, 0])}
-              {this.renderMedium([2, 0])}
-            </div>
-            <div className="flex flex-row gap-4">
-              {this.renderMedium([0, 1])}
-              {this.renderMedium([1, 1])}
-              {this.renderMedium([2, 1])}
-            </div>
-            <div className="flex flex-row gap-4">
-              {this.renderMedium([0, 2])}
-              {this.renderMedium([1, 2])}
-              {this.renderMedium([2, 2])}
-            </div>
+      <div className="flex flex-col items-center justify-center w-screen h-screen">
+        <div className="flex flex-col gap-4 p-8 transition-shadow bg-gray-100 shadow-md rounded-xl dark:bg-gray-900">
+          <div className="flex flex-row gap-4">
+            {this.renderMedium([0, 0])}
+            {this.renderMedium([1, 0])}
+            {this.renderMedium([2, 0])}
+          </div>
+          <div className="flex flex-row gap-4">
+            {this.renderMedium([0, 1])}
+            {this.renderMedium([1, 1])}
+            {this.renderMedium([2, 1])}
+          </div>
+          <div className="flex flex-row gap-4">
+            {this.renderMedium([0, 2])}
+            {this.renderMedium([1, 2])}
+            {this.renderMedium([2, 2])}
           </div>
         </div>
-      </>
+      </div>
     );
   }
 }
