@@ -1,3 +1,0 @@
-[submodule "submodules/triple-tac-toe"]
-	path = submodules/triple-tac-toe
-	url = https://github.com/vidhanio/triple-tac-toe.git
