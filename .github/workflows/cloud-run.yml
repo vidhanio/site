@@ -61,4 +61,5 @@ jobs:
           region: ${{ env.REGION }}
 
       - name: Show the Google Cloud Run URL
-        run: echo ${{ steps.deploy.outputs.url }}
+        id: show-url
+        run: echo ${{ steps.deploy-container.outputs.url }}
