@@ -90,7 +90,7 @@ function arrayContainsArray<T>(array: T[][], subArray: T[]): boolean {
   return array.some((array) => isEqual(array, subArray));
 }
 
-class Box extends React.Component<BoxProps> {
+class BoxTTT extends React.Component<BoxProps> {
   constructor(props: BoxProps) {
     super(props);
     this.finishTurn = this.finishTurn.bind(this);
@@ -169,7 +169,7 @@ class SmallTTT extends React.Component<SmallProps> {
     this.finishTurn = this.finishTurn.bind(this);
     this.previewTurn = this.previewTurn.bind(this);
     this.unpreviewTurn = this.unpreviewTurn.bind(this);
-    this.renderBox = this.renderBox.bind(this);
+    this.BoxTTT = this.BoxTTT.bind(this);
   }
 
   finishTurn(boxProps: BoxProps) {
@@ -186,9 +186,9 @@ class SmallTTT extends React.Component<SmallProps> {
     this.props.onUnpreviewTurn(this.props, boxProps);
   }
 
-  renderBox(coords: [number, number]) {
+  BoxTTT({ coords }: { coords: [number, number] }) {
     return (
-      <Box
+      <BoxTTT
         previewed={this.props.previewed}
         onPreviewTurn={this.previewTurn}
         onUnpreviewTurn={this.unpreviewTurn}
@@ -205,19 +205,19 @@ class SmallTTT extends React.Component<SmallProps> {
     return (
       <div className="flex flex-col gap-1">
         <div className="flex flex-row gap-1">
-          {this.renderBox([0, 0])}
-          {this.renderBox([1, 0])}
-          {this.renderBox([2, 0])}
+          <this.BoxTTT coords={[0, 0]} />
+          <this.BoxTTT coords={[1, 0]} />
+          <this.BoxTTT coords={[2, 0]} />
         </div>
         <div className="flex flex-row gap-1">
-          {this.renderBox([0, 1])}
-          {this.renderBox([1, 1])}
-          {this.renderBox([2, 1])}
+          <this.BoxTTT coords={[0, 1]} />
+          <this.BoxTTT coords={[1, 1]} />
+          <this.BoxTTT coords={[2, 1]} />
         </div>
         <div className="flex flex-row gap-1">
-          {this.renderBox([0, 2])}
-          {this.renderBox([1, 2])}
-          {this.renderBox([2, 2])}
+          <this.BoxTTT coords={[0, 2]} />
+          <this.BoxTTT coords={[1, 2]} />
+          <this.BoxTTT coords={[2, 2]} />
         </div>
       </div>
     );
@@ -231,7 +231,7 @@ class MediumTTT extends React.Component<MediumProps, {}> {
     this.finishTurn = this.finishTurn.bind(this);
     this.previewTurn = this.previewTurn.bind(this);
     this.unpreviewTurn = this.unpreviewTurn.bind(this);
-    this.renderSmall = this.renderSmall.bind(this);
+    this.SmallTTT = this.SmallTTT.bind(this);
   }
 
   finishTurn(smallProps: SmallProps, boxProps: BoxProps) {
@@ -246,7 +246,7 @@ class MediumTTT extends React.Component<MediumProps, {}> {
     this.props.onUnpreviewTurn(this.props, smallProps, boxProps);
   }
 
-  renderSmall(coords: [number, number]) {
+  SmallTTT({ coords }: { coords: [number, number] }) {
     return (
       <SmallTTT
         previewed={
@@ -274,19 +274,19 @@ class MediumTTT extends React.Component<MediumProps, {}> {
     return (
       <div className="flex flex-col gap-2">
         <div className="flex flex-row gap-2">
-          {this.renderSmall([0, 0])}
-          {this.renderSmall([1, 0])}
-          {this.renderSmall([2, 0])}
+          <this.SmallTTT coords={[0, 0]} />
+          <this.SmallTTT coords={[1, 0]} />
+          <this.SmallTTT coords={[2, 0]} />
         </div>
         <div className="flex flex-row gap-2">
-          {this.renderSmall([0, 1])}
-          {this.renderSmall([1, 1])}
-          {this.renderSmall([2, 1])}
+          <this.SmallTTT coords={[0, 1]} />
+          <this.SmallTTT coords={[1, 1]} />
+          <this.SmallTTT coords={[2, 1]} />
         </div>
         <div className="flex flex-row gap-2">
-          {this.renderSmall([0, 2])}
-          {this.renderSmall([1, 2])}
-          {this.renderSmall([2, 2])}
+          <this.SmallTTT coords={[0, 2]} />
+          <this.SmallTTT coords={[1, 2]} />
+          <this.SmallTTT coords={[2, 2]} />
         </div>
       </div>
     );
@@ -312,7 +312,9 @@ class LargeTTT extends React.Component<{}, LargeState> {
     this.setLargeWinner = this.setLargeWinner.bind(this);
     this.setMediumWinner = this.setMediumWinner.bind(this);
     this.setSmallWinner = this.setSmallWinner.bind(this);
+    this.getMediumWinner = this.getMediumWinner.bind(this);
     this.getSmallWinner = this.getSmallWinner.bind(this);
+    this.MediumTTT = this.MediumTTT.bind(this);
   }
 
   finishTurn(
@@ -527,7 +529,7 @@ class LargeTTT extends React.Component<{}, LargeState> {
     return undefined;
   }
 
-  renderMedium(coords: [number, number]) {
+  MediumTTT({ coords }: { coords: [number, number] }) {
     return (
       <MediumTTT
         previewCoords={
@@ -556,19 +558,19 @@ class LargeTTT extends React.Component<{}, LargeState> {
       <div className="flex flex-col items-center justify-center w-screen h-screen">
         <div className="flex flex-col gap-4 p-8 transition-shadow bg-gray-100 shadow-md rounded-xl dark:bg-gray-900">
           <div className="flex flex-row gap-4">
-            {this.renderMedium([0, 0])}
-            {this.renderMedium([1, 0])}
-            {this.renderMedium([2, 0])}
+            <this.MediumTTT coords={[0, 0]} />
+            <this.MediumTTT coords={[1, 0]} />
+            <this.MediumTTT coords={[2, 0]} />
           </div>
           <div className="flex flex-row gap-4">
-            {this.renderMedium([0, 1])}
-            {this.renderMedium([1, 1])}
-            {this.renderMedium([2, 1])}
+            <this.MediumTTT coords={[0, 1]} />
+            <this.MediumTTT coords={[1, 1]} />
+            <this.MediumTTT coords={[2, 1]} />
           </div>
           <div className="flex flex-row gap-4">
-            {this.renderMedium([0, 2])}
-            {this.renderMedium([1, 2])}
-            {this.renderMedium([2, 2])}
+            <this.MediumTTT coords={[0, 2]} />
+            <this.MediumTTT coords={[1, 2]} />
+            <this.MediumTTT coords={[2, 2]} />
           </div>
         </div>
       </div>
