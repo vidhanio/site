@@ -10,7 +10,6 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope, faGlobe } from "@fortawesome/free-solid-svg-icons";
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import "tailwindcss/tailwind.css";
 import ImageTest from "../public/imagetest.png";
 
 interface SocialProps {
@@ -69,7 +68,6 @@ class Home extends React.Component {
         <Head>
           <title>vidhan</title>
           <link rel="icon" href="favicon.ico" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
 
           <meta property="og:title" content="vidhan" />
           <meta property="og:type" content="website" />
@@ -80,7 +78,7 @@ class Home extends React.Component {
             content="vidhan's home on the internet."
           />
         </Head>
-        <div className="flex flex-row items-center justify-center w-screen h-screen bg-white dark:bg-black">
+        <div className="flex flex-row items-center justify-center w-screen h-screen">
           <div className="flex flex-col items-center justify-center gap-8 width">
             <h1 className="font-black text-black text-8xl dark:text-white">
               vidhan
