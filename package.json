@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.177",
-    "@types/node": "^16.11.7",
+    "@types/node": "^16.11.9",
     "@types/react": "^17.0.36",
     "autoprefixer": "^10.4.0",
     "eslint": "<8.0.0",
