@@ -70,7 +70,7 @@ function GitHubProject({ url, imageSrc, body }: GitHubProjectProps) {
 class Home extends React.Component {
   render() {
     return (
-      <div className="flex flex-col items-center justify-center w-screen min-h-screen">
+      <div className="flex flex-col items-center justify-center w-full min-h-screen">
         <div className="flex flex-col items-center justify-center min-h-screen gap-16 p-16">
           <div className="flex flex-col items-center justify-center gap-4">
             <h1 className="font-black text-black text-8xl dark:text-white">
