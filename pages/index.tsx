@@ -87,7 +87,7 @@ function Section({ title, subtitle, children }: SectionProps) {
 class Home extends React.Component {
   render() {
     return (
-      <div className="flex flex-col justify-center items-center w-screen min-h-screen">
+      <div className="flex flex-col justify-center items-center w-full min-h-screen">
         <Section title="vidhan">
           <div className="flex flex-col gap-2 font-bold md:flex-row md:gap-4">
             <Social
