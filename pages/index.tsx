@@ -45,14 +45,14 @@ function Social({ icon, url, name }: SocialProps) {
 function GitHubProject({ url, imageSrc, body }: GitHubProjectProps) {
   return (
     <a href={url}>
-      <div className="flex flex-col gap-4 justify-center items-center p-8 w-96 text-lg text-black bg-white rounded-xl md:w-auto md:max-h-64">
-        <div className="flex flex-row gap-2 items-center">
+      <div className="grid gridflow-col grid-rows-1 gap-4 justify-stretch items-center p-8 text-lg text-black bg-gray-100 dark:bg-white rounded-xl max-w-sm md:w-96 md:h-48">
+        <div className="flex flex-row gap-2 items-center justify-center">
           <FontAwesomeIcon icon={faGithub}></FontAwesomeIcon>
           <div className="text-sm">/</div>
           <h3 className="text-xl font-bold">{url.split("/").pop()}</h3>
         </div>
-        <div className="flex flex-col gap-4 items-center text-center md:text-left md:flex-row">
-          <div className="w-32 h-32">
+        <div className="flex flex-col gap-4 items-center text-center md:text-left md:flex-row md:content-start md:self-start">
+          <div className="w-3/5 h-3/5 md:w-1/3 md:h-1/3">
             <Image
               src={imageSrc}
               alt="project"
@@ -60,7 +60,7 @@ function GitHubProject({ url, imageSrc, body }: GitHubProjectProps) {
               className="rounded-lg shadow-xl"
             />
           </div>
-          <div className="w-64">{body}</div>
+          <div className="md:w-2/3">{body}</div>
         </div>
       </div>
     </a>
@@ -75,8 +75,8 @@ interface SectionProps {
 
 function Section({ title, subtitle, children }: SectionProps) {
   return (
-    <div className="flex flex-col gap-16 justify-center items-center p-16 min-h-screen">
-      <h3 className="text-8xl font-black text-black dark:text-white">
+    <div className="flex flex-col gap-16 justify-center items-center min-h-screen">
+      <h3 className="text-7xl sm:text-8xl font-black text-black dark:text-white">
         {title}
       </h3>
       {children}
@@ -113,18 +113,18 @@ class Home extends React.Component {
           </div>
           <a
             href="#projects"
-            className="text-4xl text-white transition-colors hover:text-blue-500"
+            className="text-4xl dark:text-white text-black transition-colors hover:text-blue-500"
           >
-            <FontAwesomeIcon icon={faArrowDown}></FontAwesomeIcon>{" "}
+            <FontAwesomeIcon icon={faArrowDown}></FontAwesomeIcon>
           </a>
         </Section>
         <div
           id="projects"
-          className="flex flex-col gap-16 justify-center items-center p-16 min-h-screen"
+          className="flex flex-col gap-16 justify-center items-center mx-16 py-8 min-h-screen"
         >
-          <h1 className="text-8xl font-black text-black dark:text-white">
+          <h1 className="text-7xl sm:text-8xl font-black text-black dark:text-white">
             projects
-          </h1>{" "}
+          </h1>
           <div className="flex flex-col flex-wrap gap-4 justify-center items-center md:flex-row">
             <GitHubProject
               url="https://github.com/vidhanio/checkpoint"

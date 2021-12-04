@@ -5,3 +5,8 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Tailwind doesn't have this even though it should... */
+.justify-stretch {
+  justify-content: stretch;
+}
