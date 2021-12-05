@@ -555,8 +555,8 @@ class LargeTTT extends React.Component<{}, LargeState> {
 
   render() {
     return (
-      <div className="flex flex-col items-center justify-center w-screen h-screen">
-        <div className="flex flex-col gap-4 p-8 transition-shadow bg-gray-100 shadow-md rounded-xl dark:bg-gray-900">
+      <div className="flex flex-col justify-center items-center w-screen h-screen">
+        <div className="flex flex-col gap-4 p-8 bg-gray-100 rounded-xl shadow-md transition-shadow dark:bg-gray-900">
           <div className="flex flex-row gap-4">
             <this.MediumTTT coords={[0, 0]} />
             <this.MediumTTT coords={[1, 0]} />
