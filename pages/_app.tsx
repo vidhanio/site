@@ -12,7 +12,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" href="favicon.ico" />
 
         <meta property="og:title" content="vidhan" />
-        <meta property="og:type" content="website" />
         <meta property="og:url" content="https://vidhan.io" />
         <meta property="og:image" content="https://vidhan.io/og.png" />
         <meta
