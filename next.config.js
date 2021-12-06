@@ -9,7 +9,7 @@ module.exports = {
       },
       {
         source: "/resume/:path*",
-        destination: "https://resume.vidhan.io/resume:path*",
+        destination: "https://resume.vidhan.io/resume/:path*",
       },
     ];
   },
