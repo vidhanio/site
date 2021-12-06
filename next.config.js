@@ -5,7 +5,7 @@ module.exports = {
     return [
       {
         source: "/resume/:path*",
-        destination: "https://resume.vidhan.io/resume",
+        destination: "https://resume.vidhan.io/resume:path*",
       },
     ];
   },
