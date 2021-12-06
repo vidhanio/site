@@ -9,11 +9,11 @@ module.exports = {
       },
       {
         source: "/triple-tac-toe/:path*",
-        destination: `triple-tac-toe.vidhan.io`,
+        destination: `https://triple-tac-toe.vidhan.io`,
       },
       {
         source: "/resume/:path*",
-        destination: `resume.vidhan.io`,
+        destination: `https://resume.vidhan.io`,
       },
     ];
   },
