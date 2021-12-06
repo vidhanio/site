@@ -4,7 +4,7 @@ module.exports = {
   async rewrites() {
     return [
       {
-        source: "/resume",
+        source: "/resume/:path*",
         destination: "https://resume.vidhan.io/resume",
       },
     ];
