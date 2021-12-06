@@ -5,7 +5,7 @@ module.exports = {
     return [
       {
         source: "/triple-tac-toe/:path*",
-        destination: `https://triple-tac-toe.vidhan.io`,
+        destination: `https://triple-tac-toe.vidhan.io/triple-tac-toe`,
       },
       {
         source: "/resume/:path*",
