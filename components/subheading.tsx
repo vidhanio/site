@@ -40,7 +40,7 @@ function Subheading({
   return (
     <h2 className="text-xl font-semibold">
       <span>{prefix}</span>
-      <span className="text-green-500">
+      <span className="text-green-600 dark:text-green-500">
         {words[wordIndex].substring(0, index)}
       </span>
       <span>{suffix}</span>
