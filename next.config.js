@@ -7,6 +7,10 @@ module.exports = {
         source: "/resume",
         destination: "https://resume.vidhan.io/resume",
       },
+      {
+        source: "/resume/:path*",
+        destination: "https://resume.vidhan.io/resume/:path*",
+      },
     ];
   },
 };
