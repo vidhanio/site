@@ -24,7 +24,7 @@ function NavItem({ name, url, className }: NavItemProps) {
 
 function Nav({ navItems }: NavProps) {
   return (
-    <nav className="fixed mt-16 w-full">
+    <nav className="fixed p-16 w-full bg-gradient-to-b from-gray-100 to-transparent dark:from-gray-900">
       <ul className="flex flex-row gap-4 justify-center items-center">
         {navItems.map((item) => (
           <NavItem {...item} key={item.name} />
