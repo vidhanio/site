@@ -9,37 +9,39 @@ function Subheading({
   suffix?: string;
   words: string[];
 }) {
-  const [index, setIndex] = useState(0);
-  const [subIndex, setSubIndex] = useState(0);
-  const [reverse, setReverse] = useState(false);
+  const [wordIndex, setWordIndex] = useState<number>(0);
+  const [index, setIndex] = useState<number>(0);
+  const [reverse, setReverse] = useState<boolean>(false);
 
   useEffect(() => {
-    if (subIndex === words[index].length + 1 && !reverse) {
+    if (index === words[wordIndex].length + 1 && !reverse) {
       setReverse(true);
       return;
     }
 
-    if (subIndex === 0 && reverse) {
+    if (index === 0 && reverse) {
       setReverse(false);
-      index === words.length - 1 ? setIndex(0) : setIndex(index + 1);
+      wordIndex === words.length - 1
+        ? setWordIndex(0)
+        : setWordIndex(wordIndex + 1);
       return;
     }
 
     const timeout = setTimeout(
       () => {
-        setSubIndex(subIndex + (reverse ? -1 : 1));
+        setIndex(index + (reverse ? -1 : 1));
       },
-      reverse ? 50 : subIndex === words[index].length ? 1000 : 100
+      reverse ? 50 : index === words[wordIndex].length ? 1000 : 100
     );
 
     return () => clearTimeout(timeout);
-  }, [words, subIndex, index, reverse]);
+  }, [words, wordIndex, index, reverse]);
 
   return (
     <h2 className="text-xl font-semibold">
       <span>{prefix}</span>
       <span className="text-green-500">
-        {words[index].substring(0, subIndex)}
+        {words[wordIndex].substring(0, index)}
       </span>
       <span>{suffix}</span>
     </h2>
