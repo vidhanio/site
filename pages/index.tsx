@@ -14,6 +14,14 @@ function Index() {
             name: "blog",
             url: "https://blog.vidhan.io",
           },
+          {
+            name: "resume",
+            url: "/resume",
+          },
+          {
+            name: "triple-tac-toe",
+            url: "https://triple-tac-toe.vidhan.io",
+          },
         ]}
       />
       <div className="flex flex-col gap-2 justify-center items-center p-16 w-full h-screen">
