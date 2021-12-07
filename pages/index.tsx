@@ -24,7 +24,7 @@ function Index() {
           },
         ]}
       />
-      <div className="flex flex-col gap-2 justify-center items-center p-16 w-full h-screen">
+      <div className="flex flex-col gap-2 justify-center items-center p-16 w-full h-screen text-center">
         <h1 className="text-8xl font-black">{"vidhan bhatt"}</h1>
         <h2 className="text-xl font-medium">
           <Typewriter
