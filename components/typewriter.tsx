@@ -15,41 +15,41 @@ function Typewriter({
 }): JSX.Element {
   const [index, setIndex] = useState<number>(0);
   const [subIndex, setSubIndex] = useState<number>(0);
-  const [reverse, setReverse] = useState<boolean>(false);
+  const [isReversed, setIsReversed] = useState<boolean>(false);
 
-  const [vowel, setVowel] = useState<boolean>(false);
+  const [isVowel, setIsVowel] = useState<boolean>(false);
 
   useEffect(() => {
-    if (subIndex === strings[index].length + 1 && !reverse) {
-      setReverse(true);
+    if (subIndex === strings[index].length + 1 && !isReversed) {
+      setIsReversed(true);
       return;
     }
 
-    if (subIndex === 0 && reverse) {
-      setReverse(false);
+    if (subIndex === 0 && isReversed) {
+      setIsReversed(false);
       index === strings.length - 1 ? setIndex(0) : setIndex(index + 1);
       return;
     }
 
     const timeout = setTimeout(
       () => {
-        setSubIndex(subIndex + (reverse ? -1 : 1));
+        setSubIndex(subIndex + (isReversed ? -1 : 1));
       },
-      reverse ? 50 : subIndex === strings[index].length ? 1000 : 100
+      isReversed ? 50 : subIndex === strings[index].length ? 1000 : 100
     );
 
-    setVowel(
+    setIsVowel(
       ["a", "e", "i", "o", "u"].includes(
         (strings[index].charAt(0) ?? "").toLowerCase()
       )
     );
 
     return () => clearTimeout(timeout);
-  }, [strings, index, subIndex, reverse]);
+  }, [strings, index, subIndex, isReversed]);
 
   return (
     <>
-      <span>{prefixVowel && vowel ? prefixVowel : prefix}</span>
+      <span>{prefixVowel && isVowel ? prefixVowel : prefix}</span>
       <span className={className}>{strings[index].substring(0, subIndex)}</span>
       <span>{suffix}</span>
     </>

@@ -4,7 +4,7 @@ import type { AppProps } from "next/app";
 import "tailwindcss/tailwind.css";
 import "../styles/main.css";
 
-import Nav from "../components/nav";
+import Nav from "../components/nav/nav";
 
 function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
