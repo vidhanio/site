@@ -5,24 +5,28 @@ import Typewriter from "../components/typewriter";
 
 function Index(): JSX.Element {
   return (
-    <MainLayout>
-      <H1>{"vidhan bhatt"}</H1>
-      <H2>
-        <Typewriter
-          className="font-bold text-green-600 dark:text-green-500"
-          prefix="i'm a "
-          strings={[
-            "software developer",
-            "discord bot developer",
-            "frontend developer",
-            "backend developer",
-            "api developer",
-            "full stack developer (?)",
-          ]}
-          suffix=" based in canada."
-        />
-      </H2>
-    </MainLayout>
+    <>
+      <MainLayout>
+        <H1>{"vidhan bhatt"}</H1>
+        <H2>
+          <Typewriter
+            className="font-bold text-green-500"
+            prefix="i'm a "
+            prefixVowel="i'm an "
+            strings={[
+              "high school student",
+              "software developer",
+              "discord bot developer",
+              "frontend developer",
+              "backend developer",
+              "api developer",
+              "full stack developer (?)",
+            ]}
+            suffix=" from canada."
+          />
+        </H2>
+      </MainLayout>
+    </>
   );
 }
 

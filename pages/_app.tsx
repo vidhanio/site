@@ -1,5 +1,5 @@
-import type { AppProps } from "next/app";
 import Head from "next/head";
+import type { AppProps } from "next/app";
 
 import "tailwindcss/tailwind.css";
 import "../styles/main.css";
@@ -10,17 +10,9 @@ function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <>
       <Head>
-        <title>vidhan</title>
-        <link rel="icon" href="favicon.ico" />
-
-        <meta property="og:title" content="vidhan" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://vidhan.io" />
-        <meta property="og:image" content="https://vidhan.io/og.png" />
-        <meta
-          property="og:description"
-          content="vidhan's home on the internet."
-        />
+        <meta charSet="UTF-8" />
+        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
       <Nav
         navItems={[
