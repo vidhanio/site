@@ -3,9 +3,11 @@ import Document, { Html, Head, Main, NextScript } from "next/document";
 class MyDocument extends Document {
   render() {
     return (
-      <Html className="w-full h-full">
+      <Html>
         <Head />
-        <body className="w-full h-full bg-white dark:bg-black">
+        <body
+          className={`font-serif text-purple-600 bg-white dark:text-purple-500 dark:bg-gray-900`}
+        >
           <Main />
           <NextScript />
         </body>
