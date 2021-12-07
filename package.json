@@ -17,7 +17,7 @@
     "@fortawesome/react-fontawesome": "^0.1.16"
   },
   "devDependencies": {
-    "@types/node": "^16.11.11",
+    "@types/node": "^16.11.12",
     "@types/react": "^17.0.37",
     "autoprefixer": "^10.4.0",
     "eslint": "<8.0.0",
