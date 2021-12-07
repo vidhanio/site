@@ -1,6 +1,0 @@
-[submodule "submodules/triple-tac-toe"]
-	path = submodules/triple-tac-toe
-	url = https://github.com/vidhanio/triple-tac-toe.git
-[submodule "submodules/resume"]
-	path = submodules/resume
-	url = https://github.com/vidhanio/resume

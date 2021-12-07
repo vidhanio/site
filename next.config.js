@@ -4,16 +4,12 @@ module.exports = {
   async rewrites() {
     return [
       {
-        source: "/:path*",
-        destination: `/`,
-      },
-      {
-        source: "/triple-tac-toe/:path*",
-        destination: `https://triple-tac-toe.vidhan.io`,
+        source: "/resume",
+        destination: "https://resume.vidhan.io/resume",
       },
       {
         source: "/resume/:path*",
-        destination: `https://resume.vidhan.io`,
+        destination: "https://resume.vidhan.io/resume/:path*",
       },
     ];
   },
