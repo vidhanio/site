@@ -1,11 +1,13 @@
-import Layout from "../components/layout";
+import MainLayout from "../components/layouts/main";
+import H1 from "../components/headings/h1";
+import H2 from "../components/headings/h2";
 import Typewriter from "../components/typewriter";
 
-function Index() {
+function Index(): JSX.Element {
   return (
-    <Layout>
-      <h1 className="text-8xl font-black">{"vidhan bhatt"}</h1>
-      <h2 className="text-xl font-medium">
+    <MainLayout>
+      <H1>{"vidhan bhatt"}</H1>
+      <H2>
         <Typewriter
           className="font-bold text-green-600 dark:text-green-500"
           prefix="i'm a "
@@ -19,8 +21,8 @@ function Index() {
           ]}
           suffix=" based in canada."
         />
-      </h2>
-    </Layout>
+      </H2>
+    </MainLayout>
   );
 }
 

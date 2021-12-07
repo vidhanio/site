@@ -6,7 +6,7 @@ import "../styles/main.css";
 
 import Nav from "../components/nav";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <>
       <Head>
@@ -47,4 +47,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default MyApp;
+export default CustomApp;

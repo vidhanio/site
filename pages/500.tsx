@@ -1,10 +1,14 @@
-import Layout from "../components/layout";
+import MainLayout from "../components/layouts/main";
+import H1 from "../components/headings/h1";
+import H2 from "../components/headings/h2";
 
-export default function My500() {
+function Custom500(): JSX.Element {
   return (
-    <Layout>
-      <h1 className="text-8xl font-black">{"500"}</h1>
-      <h2 className="text-xl font-medium">{"sorry, i suck at coding."}</h2>
-    </Layout>
+    <MainLayout>
+      <H1>{"500"}</H1>
+      <H2>{"sorry, i suck at coding."}</H2>
+    </MainLayout>
   );
 }
+
+export default Custom500;

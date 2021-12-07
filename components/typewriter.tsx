@@ -10,7 +10,7 @@ function Typewriter({
   strings: string[];
   suffix?: string;
   className?: string;
-}) {
+}): JSX.Element {
   const [index, setIndex] = useState<number>(0);
   const [subIndex, setSubIndex] = useState<number>(0);
   const [reverse, setReverse] = useState<boolean>(false);

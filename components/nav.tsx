@@ -10,7 +10,7 @@ interface NavProps {
   navItems: NavItemProps[];
 }
 
-function NavItem({ name, url, className }: NavItemProps) {
+function NavItem({ name, url, className }: NavItemProps): JSX.Element {
   return (
     <li>
       <Link href={url}>
@@ -22,7 +22,7 @@ function NavItem({ name, url, className }: NavItemProps) {
   );
 }
 
-function Nav({ navItems }: NavProps) {
+function Nav({ navItems }: NavProps): JSX.Element {
   return (
     <nav className="fixed p-16 w-full bg-gradient-to-b from-gray-100 to-transparent dark:from-gray-900">
       <ul className="flex flex-row gap-4 justify-center items-center text-center">
