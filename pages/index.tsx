@@ -3,8 +3,8 @@ import matter from "gray-matter";
 import { GetStaticPropsResult } from "next";
 import Link from "next/link";
 import path from "path";
-import H1 from "../components/headings/h1";
-import MainLayout from "../components/layouts/main";
+import H1 from "components/headings/h1";
+import MainLayout from "components/layouts/main";
 import { postsPath, postFilePaths } from "../utils/mdx-utils";
 
 interface Props {

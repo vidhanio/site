@@ -8,10 +8,10 @@ import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import matter from "gray-matter";
 
 import { postsPath, postFilePaths } from "../../utils/mdx-utils";
-import { postComponents } from "../../components/post/components";
-import H1 from "../../components/headings/h1";
-import BlogHeaderLayout from "../../components/layouts/blog/header";
-import BlogMainLayout from "../../components/layouts/blog/main";
+import { postComponents } from "components/post/components";
+import H1 from "components/headings/h1";
+import BlogHeaderLayout from "components/layouts/blog/header";
+import BlogMainLayout from "components/layouts/blog/main";
 
 interface Props {
   content: MDXRemoteSerializeResult<Record<string, unknown>>;
