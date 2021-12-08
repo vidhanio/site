@@ -1,24 +1,41 @@
-import type { AppProps } from "next/app";
 import Head from "next/head";
+import type { AppProps } from "next/app";
 
 import "tailwindcss/tailwind.css";
 
-function MyApp({ Component, pageProps }: AppProps) {
+import Nav from "../components/nav/nav";
+
+function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <>
       <Head>
-        <title>vidhan - blog</title>
-        <link rel="icon" href="favicon.ico" />
-
-        <meta property="og:title" content="vidhan - blog" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://blog.vidhan.io" />
-        <meta property="og:image" content="https://vidhan.io/og.png" />
-        <meta property="og:description" content="💭 → 📄" />
+        <meta charSet="UTF-8" />
+        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
+      <Nav
+        navItems={[
+          {
+            name: "home",
+            url: "/",
+          },
+          {
+            name: "blog",
+            url: "https://blog.vidhan.io",
+          },
+          {
+            name: "resume",
+            url: "/resume",
+          },
+          {
+            name: "triple-tac-toe",
+            url: "https://triple-tac-toe.vidhan.io",
+          },
+        ]}
+      />
       <Component {...pageProps} />
     </>
   );
 }
 
-export default MyApp;
+export default CustomApp;

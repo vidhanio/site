@@ -1,42 +1,51 @@
 import fs from "fs";
-import matter from "gray-matter";
-import { GetStaticPropsResult } from "next";
-import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
-import { serialize } from "next-mdx-remote/serialize";
-import path from "path";
 import { ParsedUrlQuery } from "querystring";
-import { postFilePaths, POSTS_PATH } from "../../utils/mdx-utils";
+import path from "path";
+
+import { GetStaticPathsResult, GetStaticPropsResult } from "next";
+import { serialize } from "next-mdx-remote/serialize";
+import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
+import matter from "gray-matter";
+
+import { postsPath, postFilePaths } from "../../utils/mdx-utils";
+import { postComponents } from "../../components/post/components";
+import H1 from "../../components/headings/h1";
+import BlogHeaderLayout from "../../components/layouts/blog/header";
+import BlogMainLayout from "../../components/layouts/blog/main";
 
 interface Props {
-  source: MDXRemoteSerializeResult<Record<string, unknown>>;
-  frontMatter: {
+  content: MDXRemoteSerializeResult<Record<string, unknown>>;
+  frontmatter: {
     [key: string]: any;
   };
 }
-interface IParams extends ParsedUrlQuery {
-  slug: string;
+
+interface Params {
+  params: {
+    slug: string;
+  };
 }
 
-function PostPage({ source, frontMatter }: Props) {
+function Post({ content, frontmatter }: Props) {
   return (
-    <div>
-      <div>
-        <h1>{frontMatter.title}</h1>
-        {frontMatter.description ? (
-          <p className="description">{frontMatter.description}</p>
-        ) : null}
-      </div>
-      <main>
-        <MDXRemote {...source} />
-      </main>
-    </div>
+    <>
+      <BlogHeaderLayout>
+        <H1>{frontmatter.title}</H1>
+        {frontmatter.description ?? (
+          <p className="description">{frontmatter.description}</p>
+        )}
+      </BlogHeaderLayout>
+      <BlogMainLayout>
+        <MDXRemote {...content} components={postComponents} />
+      </BlogMainLayout>
+    </>
   );
 }
 
 async function getStaticProps({
-  slug,
-}: IParams): Promise<GetStaticPropsResult<Props>> {
-  const postFilePath = path.join(POSTS_PATH, `${slug}.mdx`);
+  params,
+}: Params): Promise<GetStaticPropsResult<Props>> {
+  const postFilePath = path.join(postsPath, `${params.slug}.mdx`);
   const source = fs.readFileSync(postFilePath);
 
   const { data, content } = matter(source);
@@ -47,8 +56,8 @@ async function getStaticProps({
 
   return {
     props: {
-      source: mdxSource,
-      frontMatter: data,
+      content: mdxSource,
+      frontmatter: data,
     },
   };
 }
@@ -64,5 +73,5 @@ async function getStaticPaths() {
   };
 }
 
-export default PostPage;
+export default Post;
 export { getStaticProps, getStaticPaths };
