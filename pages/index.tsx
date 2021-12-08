@@ -1,7 +1,6 @@
-import MainLayout from "components/layouts/main";
-import H1 from "components/headings/h1";
-import H2 from "components/headings/h2";
-import Typewriter from "components/typewriter";
+import MainLayout from "@/layouts/main";
+import { H1, H2 } from "@/elements/headings";
+import Typewriter from "@/misc/typewriter";
 
 function Index(): JSX.Element {
   return (

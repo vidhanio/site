@@ -1,6 +1,5 @@
-import MainLayout from "components/layouts/main";
-import H1 from "components/headings/h1";
-import H2 from "components/headings/h2";
+import MainLayout from "@/layouts/main";
+import { H1, H2 } from "@/elements/headings";
 
 function Custom500(): JSX.Element {
   return (
