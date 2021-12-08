@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       minHeight: {
-        "1/2-screen": "75vh",
+        "3/4-screen": "75vh",
       },
     },
   },

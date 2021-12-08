@@ -4,7 +4,7 @@ function BlogHeaderLayout({
   children?: React.ReactNode;
 }): JSX.Element {
   return (
-    <main className="flex flex-col gap-2 justify-center items-center p-16 w-full text-center min-h-1/2-screen">
+    <main className="flex flex-col gap-2 justify-center items-center p-16 w-full text-center min-h-3/4-screen">
       {children}
     </main>
   );
