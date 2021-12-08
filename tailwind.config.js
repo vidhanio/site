@@ -3,9 +3,6 @@ module.exports = {
   darkMode: "media",
   theme: {
     extend: {
-      fontSize: {
-        none: ["0rem", "1.25rem"],
-      },
       fontFamily: {
         sans: [
           "Poppins",
