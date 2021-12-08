@@ -3,7 +3,7 @@ import type { AppProps } from "next/app";
 
 import "tailwindcss/tailwind.css";
 
-import Nav from "components/nav/nav";
+import Nav from "@/nav";
 
 function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
@@ -25,7 +25,7 @@ function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
           },
           {
             name: "resume",
-            url: "/resume",
+            url: "https://vidhan.io/resume",
           },
           {
             name: "triple-tac-toe",

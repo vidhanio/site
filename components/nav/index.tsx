@@ -1,4 +1,4 @@
-import NavItem, { NavItemProps } from "./nav-item";
+import NavItem, { NavItemProps } from "./item";
 
 interface Props {
   navItems: NavItemProps[];

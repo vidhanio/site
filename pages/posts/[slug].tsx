@@ -1,17 +1,15 @@
 import fs from "fs";
-import { ParsedUrlQuery } from "querystring";
 import path from "path";
 
-import { GetStaticPathsResult, GetStaticPropsResult } from "next";
+import { GetStaticPropsResult } from "next";
 import { serialize } from "next-mdx-remote/serialize";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import matter from "gray-matter";
 
-import { postsPath, postFilePaths } from "../../utils/mdx-utils";
-import { postComponents } from "components/post/components";
-import H1 from "components/headings/h1";
-import BlogHeaderLayout from "components/layouts/blog/header";
-import BlogMainLayout from "components/layouts/blog/main";
+import { postsPath, postFilePaths } from "utils/mdx";
+import { postComponents } from "@/mdx";
+import { H1 } from "@/elements/headings";
+import { BlogHeaderLayout, BlogMainLayout } from "@/layouts/blog";
 
 interface Props {
   content: MDXRemoteSerializeResult<Record<string, unknown>>;
