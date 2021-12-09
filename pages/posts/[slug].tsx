@@ -1,20 +1,23 @@
-import fs from "fs";
 import path from "path";
 
 import { GetStaticPropsResult } from "next";
-import { serialize } from "next-mdx-remote/serialize";
-import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
-import matter from "gray-matter";
+import { bundleMDX } from "mdx-bundler";
+import { getMDXComponent } from "mdx-bundler/client";
+import rehypeHighlight from "rehype-highlight";
 
 import { postsPath, postFilePaths } from "utils/mdx";
-import { postComponents } from "@/mdx";
-import { H1 } from "@/elements/headings";
-import { BlogHeaderLayout, BlogMainLayout } from "@/layouts/blog";
+import { mdxComponents } from "@/mdx";
+import { BlogHeaderLayout, BlogMainLayout } from "layouts/blog";
+import { H1, H2, H3 } from "@/elements/headings";
+import React from "react";
 
 interface Props {
-  content: MDXRemoteSerializeResult<Record<string, unknown>>;
+  code: string;
   frontmatter: {
-    [key: string]: any;
+    title: string;
+    description: string;
+    addedDate: number;
+    editedDate?: number;
   };
 }
 
@@ -24,17 +27,36 @@ interface Params {
   };
 }
 
-function Post({ content, frontmatter }: Props) {
+function Post({ code, frontmatter }: Props) {
+  const MDX = React.useMemo(() => getMDXComponent(code), [code]);
+
+  const addedDate = new Date(frontmatter.addedDate * 1000).toLocaleDateString(
+    "en-CA",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
+
+  const editedDate =
+    frontmatter.editedDate && frontmatter.editedDate !== 0
+      ? new Date(frontmatter.editedDate * 1000).toLocaleDateString("en-CA", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      : undefined;
   return (
     <>
       <BlogHeaderLayout>
         <H1>{frontmatter.title}</H1>
-        {frontmatter.description ?? (
-          <p className="description">{frontmatter.description}</p>
-        )}
+        <H2>{frontmatter.description}</H2>
+        <H3 className={editedDate && "line-through text-lg"}>{addedDate}</H3>
+        <H3>{editedDate}</H3>
       </BlogHeaderLayout>
       <BlogMainLayout>
-        <MDXRemote {...content} components={postComponents} />
+        <MDX components={mdxComponents} />
       </BlogMainLayout>
     </>
   );
@@ -43,19 +65,20 @@ function Post({ content, frontmatter }: Props) {
 async function getStaticProps({
   params,
 }: Params): Promise<GetStaticPropsResult<Props>> {
-  const postFilePath = path.join(postsPath, `${params.slug}.mdx`);
-  const source = fs.readFileSync(postFilePath);
+  const filePath = path.join(postsPath, `${params.slug}.mdx`);
 
-  const { data, content } = matter(source);
-
-  const mdxSource = await serialize(content, {
-    scope: data,
+  const { frontmatter, code } = await bundleMDX<Props["frontmatter"]>({
+    file: filePath,
+    xdmOptions(options) {
+      options.rehypePlugins = [rehypeHighlight];
+      return options;
+    },
   });
 
   return {
     props: {
-      content: mdxSource,
-      frontmatter: data,
+      code,
+      frontmatter: frontmatter,
     },
   };
 }

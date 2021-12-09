@@ -4,7 +4,7 @@ import { GetStaticPropsResult } from "next";
 import Link from "next/link";
 import path from "path";
 import { H1 } from "@/elements/headings";
-import MainLayout from "@/layouts/main";
+import MainLayout from "layouts/main";
 import { postsPath, postFilePaths } from "utils/mdx";
 
 interface Props {

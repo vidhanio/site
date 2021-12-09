@@ -2,6 +2,7 @@ import Head from "next/head";
 import type { AppProps } from "next/app";
 
 import "tailwindcss/tailwind.css";
+import "styles/prism.css";
 
 import Nav from "@/nav";
 
