@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
-    "dev:watch": "next-remote-watch ./posts",
+    "dev:watch": "next-remote-watch ./post",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

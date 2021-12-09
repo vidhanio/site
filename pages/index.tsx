@@ -5,10 +5,10 @@ import Link from "next/link";
 import path from "path";
 import { H1 } from "@/elements/headings";
 import MainLayout from "layouts/main";
-import { postsPath, postFilePaths } from "utils/mdx";
+import { postPath, postFilePaths } from "utils/mdx";
 
 interface Props {
-  posts: {
+  post: {
     content: string;
     frontmatter: {
       [key: string]: any;
@@ -17,16 +17,16 @@ interface Props {
   }[];
 }
 
-export default function Index({ posts }: Props) {
+export default function Index({ post }: Props) {
   return (
     <MainLayout>
       <H1>{"vidhan's blog"}</H1>
       <ul>
-        {posts.map((post) => (
+        {post.map((post) => (
           <li key={post.path}>
             <Link
-              as={`/posts/${post.path.replace(/\.mdx?$/, "")}`}
-              href={`/posts/[slug]`}
+              as={`/post/${post.path.replace(/\.mdx?$/, "")}`}
+              href={`/post/[slug]`}
             >
               <a>{post.frontmatter.title}</a>
             </Link>
@@ -38,8 +38,8 @@ export default function Index({ posts }: Props) {
 }
 
 export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
-  const posts = postFilePaths.map((filePath) => {
-    const source = fs.readFileSync(path.join(postsPath, filePath));
+  const post = postFilePaths.map((filePath) => {
+    const source = fs.readFileSync(path.join(postPath, filePath));
     const { content, data } = matter(source);
 
     return {
@@ -51,7 +51,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
 
   return {
     props: {
-      posts: posts,
+      post: post,
     },
   };
 }

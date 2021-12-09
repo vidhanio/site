@@ -5,7 +5,7 @@ import { bundleMDX } from "mdx-bundler";
 import { getMDXComponent } from "mdx-bundler/client";
 import rehypeHighlight from "rehype-highlight";
 
-import { postsPath, postFilePaths } from "utils/mdx";
+import { postPath, postFilePaths } from "utils/mdx";
 import { mdxComponents } from "@/mdx";
 import { BlogHeaderLayout, BlogMainLayout } from "layouts/blog";
 import { H1, H2, H3 } from "@/elements/headings";
@@ -65,7 +65,7 @@ function Post({ code, frontmatter }: Props) {
 async function getStaticProps({
   params,
 }: Params): Promise<GetStaticPropsResult<Props>> {
-  const filePath = path.join(postsPath, `${params.slug}.mdx`);
+  const filePath = path.join(postPath, `${params.slug}.mdx`);
 
   const { frontmatter, code } = await bundleMDX<Props["frontmatter"]>({
     file: filePath,
