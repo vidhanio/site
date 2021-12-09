@@ -22,7 +22,7 @@ function A({
 }): JSX.Element {
   return (
     <a
-      className="text-purple-600 transition-colors dark:text-purple-400 hover:text-green-500"
+      className="text-purple-600 underline transition-colors dark:text-purple-400 hover:text-green-500"
       href={href}
     >
       {children}
@@ -42,7 +42,7 @@ function Code({
       className={
         className
           ? className
-          : "p-1 font-mono bg-gray-200 rounded-md dark:bg-gray-800"
+          : "px-1 font-mono bg-gray-300 rounded-md dark:bg-gray-700"
       }
     >
       {children}
@@ -95,6 +95,11 @@ function Pre({ children }: { children?: React.ReactNode }): JSX.Element {
     </div>
   );
 }
+
+function Ul({ children }: { children?: React.ReactNode }): JSX.Element {
+  return <ul className="pl-4 my-4 list-disc">{children}</ul>;
+}
+
 const components = {
   h1: H1,
   h2: H2,
@@ -102,6 +107,7 @@ const components = {
   a: A,
   code: Code,
   pre: Pre,
+  ul: Ul,
 };
 
 export { components as mdxComponents };
