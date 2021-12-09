@@ -5,7 +5,7 @@ import Link from "next/link";
 import path from "path";
 import { H1 } from "@/elements/headings";
 import MainLayout from "layouts/main";
-import { postPath, postFilePaths } from "utils/mdx";
+import { postPath, postFilePaths } from "constants/posts";
 
 interface Props {
   post: {

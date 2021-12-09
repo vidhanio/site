@@ -5,7 +5,7 @@ import { bundleMDX } from "mdx-bundler";
 import { getMDXComponent } from "mdx-bundler/client";
 import rehypeHighlight from "rehype-highlight";
 
-import { postPath, postFilePaths } from "utils/mdx";
+import { postPath, postFilePaths } from "constants/posts";
 import { mdxComponents } from "@/mdx";
 import { BlogHeaderLayout, BlogMainLayout } from "layouts/blog";
 import { H1, H2, H3 } from "@/elements/headings";
