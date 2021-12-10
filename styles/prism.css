@@ -134,7 +134,7 @@
   }
 
   .code-highlight {
-    @apply float-left w-full;
+    @apply float-left min-w-full;
   }
 
   .code-line {
@@ -146,7 +146,7 @@
   }
 
   .line-number::before {
-    @apply pr-4 text-right text-gray-400 dark:text-gray-600;
+    @apply inline-block pr-4 w-10 text-right text-gray-400 dark:text-gray-600;
     content: attr(line);
   }
 }
