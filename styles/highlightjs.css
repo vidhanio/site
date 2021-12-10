@@ -2,12 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  .hyphens-none {
-    hyphens: none;
-  }
-}
-
 @layer base {
   .hljs-keyword {
     @apply text-blue-500;
@@ -26,7 +20,7 @@
   }
 
   .hljs-number {
-    @apply text-purple-500;
+    @apply text-violet-500;
   }
 
   .hljs-operator {
@@ -34,7 +28,7 @@
   }
 
   .hljs-punctuation {
-    @apply text-purple-400;
+    @apply text-violet-400;
   }
 
   .hljs-regexp {
@@ -86,7 +80,7 @@
   }
 
   .hljs-tag {
-    @apply text-purple-500;
+    @apply text-violet-500;
   }
 
   .hljs-name {
@@ -106,7 +100,7 @@
   }
 
   .hljs-code {
-    @apply font-mono;
+    @apply font-['Fira_Code'];
   }
 
   .hljs-emphasis {
@@ -126,7 +120,7 @@
   }
 
   .hljs-quote {
-    @apply font-sans text-gray-400 dark:text-gray-600;
+    @apply text-gray-400 dark:text-gray-600;
   }
 
   .hljs-selector-tag {
@@ -146,11 +140,11 @@
   }
 
   .hljs-selector-pseudo {
-    @apply text-purple-300;
+    @apply text-violet-300;
   }
 
   .hljs-template-tag {
-    @apply text-purple-500;
+    @apply text-violet-500;
   }
 
   .hljs-template-variable {

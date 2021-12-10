@@ -3,7 +3,7 @@ import matter from "gray-matter";
 import { GetStaticPropsResult } from "next";
 import Link from "next/link";
 import path from "path";
-import { H1 } from "@/elements/headings";
+import { H1 } from "@/elements";
 import MainLayout from "layouts/main";
 import { postPath, postFilePaths } from "constants/posts";
 

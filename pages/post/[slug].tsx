@@ -6,9 +6,8 @@ import { getMDXComponent } from "mdx-bundler/client";
 import rehypePrism from "rehype-prism-plus";
 
 import { postPath, postFilePaths } from "constants/posts";
-import { mdxComponents } from "@/mdx";
-import { BlogHeaderLayout, BlogMainLayout } from "layouts/blog";
-import { H1, H2, H3 } from "@/elements/headings";
+import { H1, H2, H3, mdxComponents } from "@/elements";
+import { BlogMainLayout } from "layouts/blog";
 import React from "react";
 
 interface Props {
@@ -16,8 +15,8 @@ interface Props {
   frontmatter: {
     title: string;
     description: string;
-    addedDate: number;
-    editedDate?: number;
+    dateAdded: number;
+    dateEdited?: number;
   };
 }
 
@@ -30,7 +29,7 @@ interface Params {
 function Post({ code, frontmatter }: Props) {
   const MDX = React.useMemo(() => getMDXComponent(code), [code]);
 
-  const addedDate = new Date(frontmatter.addedDate * 1000).toLocaleDateString(
+  const dateAdded = new Date(frontmatter.dateAdded * 1000).toLocaleDateString(
     "en-CA",
     {
       year: "numeric",
@@ -39,9 +38,9 @@ function Post({ code, frontmatter }: Props) {
     }
   );
 
-  const editedDate =
-    frontmatter.editedDate && frontmatter.editedDate !== 0
-      ? new Date(frontmatter.editedDate * 1000).toLocaleDateString("en-CA", {
+  const dateEdited =
+    frontmatter.dateEdited && frontmatter.dateEdited !== 0
+      ? new Date(frontmatter.dateEdited * 1000).toLocaleDateString("en-CA", {
           year: "numeric",
           month: "long",
           day: "numeric",
@@ -49,13 +48,17 @@ function Post({ code, frontmatter }: Props) {
       : undefined;
   return (
     <>
-      <BlogHeaderLayout>
-        <H1>{frontmatter.title}</H1>
-        <H2>{frontmatter.description}</H2>
-        <H3 className={editedDate && "line-through text-lg"}>{addedDate}</H3>
-        <H3>{editedDate}</H3>
-      </BlogHeaderLayout>
       <BlogMainLayout>
+        <h1 className="mb-2">{frontmatter.title}</h1>
+        <p className="my-0 text-xl text-gray-800 dark:text-gray-200">
+          {frontmatter.description}
+        </p>
+        <p
+          className={"mt-0 text-lg" + " " + (dateEdited ? "line-through" : "")}
+        >
+          {dateAdded}
+        </p>
+        {dateEdited && <p className="mt-2 text-xl">Edited: {dateEdited}</p>}
         <MDX components={mdxComponents} />
       </BlogMainLayout>
     </>
