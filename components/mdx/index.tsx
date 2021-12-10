@@ -62,20 +62,19 @@ function Pre({ children }: { children?: React.ReactNode }): JSX.Element {
     }
   }, [copied]);
 
-  // get the className of the child
   const childClassName = (children as React.ReactElement).props
     .className as string;
 
-  // remove language- prefix
   const language = childClassName
     .replace("language-", "")
     .replace("hljs", "")
+    .replace("code-highlight", "")
     .trim()
     .toUpperCase();
 
   return (
     <div className="flex flex-col my-4">
-      <div className="flex justify-between items-center p-4 bg-gray-300 rounded-t-md dark:bg-gray-700">
+      <div className="flex flex-row justify-between items-center p-4 bg-gray-300 rounded-t-md dark:bg-gray-700">
         <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
           {language}
         </span>
@@ -89,7 +88,7 @@ function Pre({ children }: { children?: React.ReactNode }): JSX.Element {
           {copied ? "Copied!" : "Copy"}
         </button>
       </div>
-      <pre className="overflow-auto p-4 font-mono text-left text-gray-700 bg-gray-200 rounded-b-md dark:text-gray-300 line-numbers dark:bg-gray-800 hyphens-none">
+      <pre className="overflow-auto py-4 font-mono text-left text-gray-700 bg-gray-200 rounded-b-md dark:text-gray-300 dark:bg-gray-800 hyphens-none">
         {children}
       </pre>
     </div>

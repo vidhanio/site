@@ -3,7 +3,7 @@ import path from "path";
 import { GetStaticPropsResult } from "next";
 import { bundleMDX } from "mdx-bundler";
 import { getMDXComponent } from "mdx-bundler/client";
-import rehypeHighlight from "rehype-highlight";
+import rehypePrism from "rehype-prism-plus";
 
 import { postPath, postFilePaths } from "constants/posts";
 import { mdxComponents } from "@/mdx";
@@ -70,7 +70,8 @@ async function getStaticProps({
   const { frontmatter, code } = await bundleMDX<Props["frontmatter"]>({
     file: filePath,
     xdmOptions(options) {
-      options.rehypePlugins = [rehypeHighlight];
+      options.rehypePlugins = [[rehypePrism, { showLineNumbers: true }]];
+
       return options;
     },
   });

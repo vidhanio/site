@@ -31,7 +31,7 @@ I have used tailwind before, but I changed a bit of stuff in project structure f
 This resulted in some problems with Tailwind.
 First, I forgot to add `layouts/` which I moved, in my `tailwind.config.js` file, so I had to add it.
 
-```js
+```js {7}
 // tailwind.config.js
 
 module.exports = {
@@ -40,12 +40,12 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
     "./layouts/**/*.{js,ts,jsx,tsx}",
   ],
-...
+// ...
 ```
 
 Then, after a bit of debugging, realized I had to add my `styles/` folder as well!
 
-```js
+```js {7-8}
 // tailwind.config.js
 
 module.exports = {
@@ -55,7 +55,7 @@ module.exports = {
     "./layouts/**/*.{js,ts,jsx,tsx}",
     "./styles/**/*.css",
   ],
-...
+// ...
 ```
 
 This fixed everything, and now you are reading a cool syntax-highlighted blog!

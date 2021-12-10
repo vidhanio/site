@@ -9,163 +9,150 @@
 }
 
 @layer base {
-  .hljs-keyword {
+  .token.keyword {
     @apply text-blue-500;
   }
 
-  .hljs-built_in {
+  .token.builtin {
     @apply text-green-500;
   }
 
-  .hljs-type {
-    @apply text-yellow-500;
+  .token.class-name {
+    @apply text-pink-500;
   }
 
-  .hljs-literal {
-    @apply text-red-500;
+  .token.function {
+    @apply text-blue-500;
   }
 
-  .hljs-number {
-    @apply text-purple-500;
-  }
-
-  .hljs-operator {
-    @apply text-blue-400;
-  }
-
-  .hljs-punctuation {
+  .token.boolean {
     @apply text-purple-400;
   }
 
-  .hljs-regexp {
-    @apply text-yellow-500;
-  }
-
-  .hljs-string {
-    @apply text-green-500;
-  }
-
-  .hljs-char.hljs-escape {
-    @apply text-red-500;
-  }
-
-  .hljs-subst {
-    @apply text-green-400;
-  }
-
-  .hljs-symbol {
-    @apply text-pink-500;
-  }
-
-  .hljs-title.hljs-class {
-    @apply text-pink-500;
-  }
-
-  .hljs-title.hljs-class.hljs-inherited {
-    @apply text-pink-500;
-  }
-
-  .hljs-title.hljs-function {
-    @apply text-blue-500;
-  }
-
-  .hljs-params {
-    @apply text-yellow-500;
-  }
-
-  .hljs-comment {
-    @apply text-gray-300 dark:text-gray-700;
-  }
-
-  .hljs-doctag {
-    @apply text-green-500;
-  }
-
-  .hljs-section {
-    @apply text-blue-500;
-  }
-
-  .hljs-tag {
+  .token.number {
     @apply text-purple-500;
   }
 
-  .hljs-name {
+  .token.string {
+    @apply text-green-500;
+  }
+
+  .token.char {
+    @apply text-green-500;
+  }
+
+  .token.symbol {
     @apply text-pink-500;
   }
 
-  .hljs-attr {
+  .token.regex {
     @apply text-yellow-500;
   }
 
-  .hljs-attribute {
+  .token.operator {
+    @apply text-blue-400;
+  }
+
+  .token.variable {
+    @apply text-pink-500;
+  }
+
+  .token.constant {
+    @apply text-purple-500;
+  }
+
+  .token.property {
     @apply text-yellow-500;
   }
 
-  .hljs-bullet {
-    @apply text-gray-700 dark:text-gray-300;
+  .token.punctuation {
+    @apply text-purple-400;
   }
 
-  .hljs-code {
-    @apply font-mono;
+  .token.important {
+    @apply text-yellow-400;
   }
 
-  .hljs-emphasis {
-    @apply italic;
+  .token.comment {
+    @apply text-gray-300 dark:text-gray-700;
   }
 
-  .hljs-strong {
-    @apply font-bold;
+  .token.literal {
+    @apply text-red-500;
   }
 
-  .hljs-formula {
-    @apply font-serif;
-  }
-
-  .hljs-link {
+  .token.url {
     @apply text-green-300 underline;
   }
 
-  .hljs-quote {
-    @apply font-sans text-gray-400 dark:text-gray-600;
+  .token.tag {
+    @apply text-purple-500;
+  }
+
+  .token.attr-name {
+    @apply text-green-500;
+  }
+
+  .token.attr-value {
+    @apply text-blue-500;
+  }
+
+  .token.namespace {
+    @apply text-blue-400;
+  }
+
+  .token.prolog {
+    @apply text-gray-300 dark:text-gray-700;
+  }
+
+  .token.doctype {
+    @apply text-gray-300 dark:text-gray-700;
+  }
+
+  .token.cdata {
+    @apply text-gray-300 dark:text-gray-700;
+  }
+
+  .token.bold {
+    @apply font-bold;
+  }
+
+  /* Handled already because it's called italic lol
+  .token.italic {
+    @apply italic;
+  }
+  */
+
+  .atrule {
+    @apply text-green-500;
   }
 
   .hljs-selector-tag {
     @apply text-blue-300;
   }
 
-  .hljs-selector-id {
-    @apply text-green-300;
+  .token.inserted {
+    @apply w-full text-green-500 bg-green-500 bg-opacity-20;
   }
 
-  .hljs-selector-class {
-    @apply text-yellow-300;
+  .token.deleted {
+    @apply w-full text-red-500 bg-red-500 bg-opacity-20;
   }
 
-  .hljs-selector-attr {
-    @apply text-yellow-300;
+  .code-highlight {
+    @apply w-full;
   }
 
-  .hljs-selector-pseudo {
-    @apply text-purple-300;
+  .code-line {
+    @apply block pr-4 pl-4 w-full;
   }
 
-  .hljs-template-tag {
-    @apply text-purple-500;
+  .code-line.highlight-line {
+    @apply pl-2 w-full bg-purple-400 bg-opacity-25 border-l-8 border-purple-500 box-border;
   }
 
-  .hljs-template-tag {
-    @apply text-purple-500;
-  }
-
-  .hljs-template-variable {
-    @apply text-pink-500;
-  }
-
-  .hljs-inserted {
-    @apply w-full text-green-500 bg-green-500 bg-opacity-25;
-  }
-
-  .hljs-deleted {
-    @apply w-full text-red-500 bg-red-500 bg-opacity-25;
+  .line-number::before {
+    @apply pr-4 text-right text-gray-400 dark:text-gray-600;
+    content: attr(line);
   }
 }
