@@ -1,13 +1,12 @@
 /** @type {import('tailwindcss/tailwind-config').TailwindConfig} */
 
 module.exports = {
-  purge: [
+  content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
     "./layouts/**/*.{js,ts,jsx,tsx}",
-    "./styles/**/*.css",
+    "./styles/prism.css",
   ],
-  darkMode: "media",
   theme: {
     extend: {
       minHeight: {
@@ -44,9 +43,6 @@ module.exports = {
         ],
       },
     },
-  },
-  variants: {
-    extend: {},
   },
   plugins: [],
 };
