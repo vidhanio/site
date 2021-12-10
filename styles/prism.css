@@ -2,12 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  .hyphens-none {
-    hyphens: none;
-  }
-}
-
 @layer base {
   .token.keyword {
     @apply text-blue-500;
@@ -132,23 +126,23 @@
   }
 
   .token.inserted {
-    @apply w-full text-green-500 bg-green-500 bg-opacity-20;
+    @apply text-green-500 bg-green-500 bg-opacity-20;
   }
 
   .token.deleted {
-    @apply w-full text-red-500 bg-red-500 bg-opacity-20;
+    @apply text-red-500 bg-red-500 bg-opacity-20;
   }
 
   .code-highlight {
-    @apply w-full;
+    @apply float-left w-full;
   }
 
   .code-line {
-    @apply block pr-4 pl-4 w-full;
+    @apply block pr-4 pl-4;
   }
 
   .code-line.highlight-line {
-    @apply pl-2 w-full bg-purple-400 bg-opacity-25 border-l-8 border-purple-500 box-border;
+    @apply pl-2 bg-purple-400 bg-opacity-25 border-l-8 border-purple-500 box-border;
   }
 
   .line-number::before {

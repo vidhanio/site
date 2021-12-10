@@ -88,7 +88,7 @@ function Pre({ children }: { children?: React.ReactNode }): JSX.Element {
           {copied ? "Copied!" : "Copy"}
         </button>
       </div>
-      <pre className="overflow-auto py-4 font-mono text-left text-gray-700 bg-gray-200 rounded-b-md dark:text-gray-300 dark:bg-gray-800 hyphens-none">
+      <pre className="overflow-x-auto py-4 font-mono text-gray-700 bg-gray-200 rounded-b-md dark:text-gray-300 dark:bg-gray-800">
         {children}
       </pre>
     </div>
