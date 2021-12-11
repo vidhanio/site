@@ -28,10 +28,6 @@ function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
             name: "resume",
             url: "https://vidhan.io/resume",
           },
-          {
-            name: "triple-tac-toe",
-            url: "https://triple-tac-toe.vidhan.io",
-          },
         ]}
       />
       <Component {...pageProps} />

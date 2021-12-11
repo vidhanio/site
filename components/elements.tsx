@@ -60,9 +60,9 @@ function A({
 
 function Pre({ children }: { children?: React.ReactNode }): JSX.Element {
   return (
-    <div className="overflow-x-auto shadow-lg text-gray-700 py-4 bg-gray-200 font-['Fira_Code'] rounded-md not-prose dark:text-gray-300 dark:bg-gray-800">
-      <pre>{children}</pre>
-    </div>
+    <pre className="overflow-x-auto shadow-lg px-0 text-gray-800 py-4 bg-gray-200 font-['Fira_Code'] rounded-md  dark:text-gray-200 dark:bg-gray-800">
+      {children}
+    </pre>
   );
 }
 

@@ -55,7 +55,7 @@ function Post({ code, frontmatter }: Props) {
         slug={frontmatter.title}
       />
       <BlogMainLayout>
-        <h1 className="mb-2 text-4xl text-violet-500 md:text-6xl">
+        <h1 className="mb-2 text-4xl text-indigo-500 md:text-6xl">
           {frontmatter.title}
         </h1>
         <h2 className="my-0 text-xl text-gray-800 dark:text-gray-200">
@@ -63,7 +63,7 @@ function Post({ code, frontmatter }: Props) {
         </h2>
         <time
           dateTime={dateAdded.toISOString()}
-          className={"my-0" + (dateEdited ? "line-through text-md" : "text-lg")}
+          className={dateEdited ? "line-through text-md" : "text-lg"}
         >
           {dateAdded.toLocaleDateString("en-CA", {
             year: "numeric",
@@ -72,7 +72,7 @@ function Post({ code, frontmatter }: Props) {
           })}
         </time>
         {dateEdited && (
-          <time dateTime={dateEdited?.toISOString()} className="my-0 text-lg">
+          <time dateTime={dateEdited?.toISOString()} className="text-lg">
             Edited:{" "}
             {dateEdited.toLocaleDateString("en-CA", {
               year: "numeric",
@@ -81,9 +81,8 @@ function Post({ code, frontmatter }: Props) {
             })}
           </time>
         )}
-        <hr />
         {frontmatter.imageURL && (
-          <div className="rounded-md shadow-md">
+          <div className="mt-8 rounded-md shadow-md">
             <Image
               src={frontmatter.imageURL}
               alt={frontmatter.title}
