@@ -1,13 +1,6 @@
 import Head from "next/head";
 
-interface Props {
-  title: string;
-  description: string;
-  imageURL: string | null;
-  slug: string;
-}
-
-function SEO({ title, description, imageURL, slug }: Props) {
+function SEO({ title, description, imageURL, slug }: SEOProps) {
   return (
     <Head>
       <title>{title}</title>

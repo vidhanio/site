@@ -1,30 +1,10 @@
-import fs from "fs";
-import matter from "gray-matter";
 import { GetStaticPropsResult } from "next";
 import Link from "next/link";
 import path from "path";
-import { H1 } from "@/elements";
 import MainLayout from "layouts/main";
 import { postsPath, postSlugs } from "constants/posts";
 import { bundleMDX } from "mdx-bundler";
-
-interface FrontmatterProps {
-  title: string;
-  description: string;
-  dateAdded: Date;
-  dateEdited?: Date | undefined;
-}
-
-interface Post {
-  slug: string;
-  code: string;
-  frontmatter: {
-    title: string;
-    description: string;
-    dateAdded: [number, number, number];
-    dateEdited?: [number, number, number] | null;
-  };
-}
+import BlogCard from "@/blog-card";
 
 interface Props {
   posts: Post[];
@@ -33,16 +13,16 @@ interface Props {
 export default function Index({ posts }: Props) {
   return (
     <MainLayout>
-      <H1>{"vidhan's blog"}</H1>
-      <ul>
+      <h1 className="text-8xl font-black">{"posts"}</h1>
+      <div className="flex flex-col gap-4 justify-center items-center w-full">
         {posts.map((post) => (
-          <li key={post.slug}>
-            <Link href={`/post/${post.slug.replace(/\.mdx?$/, "")}`}>
-              <a>{post.frontmatter.title}</a>
-            </Link>
-          </li>
+          <BlogCard
+            slug={post.slug.replace(/\.mdx?$/, "")}
+            key={post.slug}
+            {...post.frontmatter}
+          />
         ))}
-      </ul>
+      </div>
     </MainLayout>
   );
 }
@@ -53,6 +33,7 @@ async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
       file: path.join(postsPath, slug),
     });
 
+    const imageURL = frontmatter.imageURL ?? null;
     const dateAdded = [
       frontmatter.dateAdded.getUTCFullYear(),
       frontmatter.dateAdded.getUTCMonth(),
@@ -71,8 +52,9 @@ async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
       code,
       frontmatter: {
         ...frontmatter,
-        dateAdded: dateAdded,
-        dateEdited: dateEdited,
+        imageURL,
+        dateAdded,
+        dateEdited,
       },
     };
   });

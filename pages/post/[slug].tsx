@@ -12,14 +12,6 @@ import { BlogMainLayout } from "layouts/blog";
 import React from "react";
 import Image from "next/image";
 
-interface FrontmatterProps {
-  title: string;
-  description: string;
-  imageURL?: string;
-  dateAdded: Date;
-  dateEdited?: Date;
-}
-
 interface Props {
   slug: string;
   code: string;
@@ -55,22 +47,24 @@ function Post({ code, frontmatter }: Props) {
         slug={frontmatter.title}
       />
       <BlogMainLayout>
-        <h1 className="mb-2 text-4xl text-indigo-500 md:text-6xl">
-          {frontmatter.title}
-        </h1>
-        <h2 className="my-0 text-xl text-gray-800 dark:text-gray-200">
-          {frontmatter.description}
-        </h2>
-        <time
-          dateTime={dateAdded.toISOString()}
-          className={dateEdited ? "line-through text-md" : "text-lg"}
-        >
-          {dateAdded.toLocaleDateString("en-CA", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </time>
+        <header className="flex flex-col">
+          <h1 className="mb-2 text-4xl text-indigo-500 md:text-6xl">
+            {frontmatter.title}
+          </h1>
+          <h2 className="my-0 text-xl text-gray-800 dark:text-gray-200">
+            {frontmatter.description}
+          </h2>
+          <time
+            dateTime={dateAdded.toISOString()}
+            className={dateEdited ? "line-through text-md" : "text-lg"}
+          >
+            {dateAdded.toLocaleDateString("en-CA", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </time>
+        </header>
         {dateEdited && (
           <time dateTime={dateEdited?.toISOString()} className="text-lg">
             Edited:{" "}

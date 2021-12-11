@@ -16,11 +16,11 @@
   }
 
   .code-line.inserted {
-    @apply pl-2 text-green-800 dark:text-green-200 bg-green-500 bg-opacity-5 border-l-8 border-green-500 box-border before:content-['+'] before:text-green-800 dark:before:text-green-200;
+    @apply pl-2 text-green-500 bg-green-500 bg-opacity-5 border-l-8 border-green-500 box-border before:content-['+'] before:text-green-800 dark:before:text-green-200;
   }
 
   .code-line.deleted {
-    @apply pl-2 text-red-800 dark:text-red-200  bg-red-500 bg-opacity-5 border-l-8 border-red-500 box-border  before:content-['-'] before:text-red-800 dark:before:text-red-200;
+    @apply pl-2 text-red-500  bg-red-500 bg-opacity-5 border-l-8 border-red-500 box-border  before:content-['-'] before:text-red-800 dark:before:text-red-200;
   }
 
   .token.prefix.inserted {
@@ -36,107 +36,107 @@
   }
 
   .token.keyword {
-    @apply text-blue-800 dark:text-blue-200;
+    @apply text-blue-500;
   }
 
   .token.builtin {
-    @apply text-green-800 dark:text-green-200;
+    @apply text-green-500;
   }
 
   .token.class-name {
-    @apply text-pink-800 dark:text-pink-200;
+    @apply text-pink-500;
   }
 
   .token.function {
-    @apply text-blue-800 dark:text-blue-200;
+    @apply text-blue-500;
   }
 
   .token.boolean {
-    @apply text-violet-800 dark:text-violet-200;
+    @apply text-violet-500;
   }
 
   .token.number {
-    @apply text-violet-800 dark:text-violet-200;
+    @apply text-violet-500;
   }
 
   .token.string {
-    @apply text-green-800 dark:text-green-200;
+    @apply text-green-500;
   }
 
   .token.char {
-    @apply text-green-800 dark:text-green-200;
+    @apply text-green-500;
   }
 
   .token.symbol {
-    @apply text-pink-800 dark:text-pink-200;
+    @apply text-pink-500;
   }
 
   .token.regex {
-    @apply text-yellow-800 dark:text-yellow-200;
+    @apply text-yellow-500;
   }
 
   .token.operator {
-    @apply text-sky-800 dark:text-sky-200;
+    @apply text-sky-500;
   }
 
   .token.variable {
-    @apply text-pink-800 dark:text-pink-200;
+    @apply text-pink-500;
   }
 
   .token.constant {
-    @apply text-violet-800 dark:text-violet-200;
+    @apply text-violet-500;
   }
 
   .token.property {
-    @apply text-yellow-800 dark:text-yellow-200;
+    @apply text-yellow-500;
   }
 
   .token.punctuation {
-    @apply text-violet-800 dark:text-violet-200;
+    @apply text-violet-500;
   }
 
   .token.important {
-    @apply text-yellow-800 dark:text-yellow-200;
+    @apply text-yellow-500;
   }
 
   .token.comment {
-    @apply text-gray-800 dark:text-gray-200;
+    @apply text-gray-500;
   }
 
   .token.literal {
-    @apply text-red-800 dark:text-red-200;
+    @apply text-red-500;
   }
 
   .token.url {
-    @apply text-cyan-800 underline dark:text-cyan-200;
+    @apply text-cyan-500 underline;
   }
 
   .token.tag {
-    @apply text-violet-800 dark:text-violet-200;
+    @apply text-violet-500;
   }
 
   .token.attr-name {
-    @apply text-green-800 dark:text-green-200;
+    @apply text-green-500;
   }
 
   .token.attr-value {
-    @apply text-blue-800 dark:text-blue-200;
+    @apply text-blue-500;
   }
 
   .token.namespace {
-    @apply text-sky-800 dark:text-sky-200;
+    @apply text-sky-500;
   }
 
   .token.prolog {
-    @apply text-gray-800 dark:text-gray-200;
+    @apply text-gray-500;
   }
 
   .token.doctype {
-    @apply text-gray-800 dark:text-gray-200;
+    @apply text-gray-500;
   }
 
   .token.cdata {
-    @apply text-gray-800 dark:text-gray-200;
+    @apply text-gray-500;
   }
 
   .token.bold {
@@ -150,6 +150,6 @@
   */
 
   .atrule {
-    @apply text-green-800 dark:text-green-200;
+    @apply text-green-500;
   }
 }

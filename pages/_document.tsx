@@ -17,7 +17,7 @@ function CustomDocument(_props: DocumentProps): JSX.Element {
         />
       </Head>
       <body
-        className={`text-indigo-500 bg-gray-100 font-['Fira_Sans'] dark:bg-gray-900`}
+        className={`text-indigo-500 bg-gray-100 font-['Fira_Sans',ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe_UI',Roboto,'Helvetica_Neue',Arial,'Noto_Sans',sans-serif,'Apple_Color_Emoji','Segoe_UI_Emoji','Segoe_UI_Symbol','Noto_Color_Emoji'] dark:bg-gray-900`}
       >
         <Main />
         <NextScript />

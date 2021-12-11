@@ -1,63 +1,5 @@
 import Image from "next/image";
 
-interface Props {
-  className?: string;
-  children?: React.ReactNode;
-}
-
-function H1({ className, children }: Props): JSX.Element {
-  return (
-    <h1 className={"text-8xl font-black" + " " + (className ?? "")}>
-      {children}
-    </h1>
-  );
-}
-
-function H2({ className, children }: Props): JSX.Element {
-  return (
-    <h2
-      className={
-        "text-2xl font-medium text-violet-400 dark:text-violet-600" +
-        " " +
-        (className ?? "")
-      }
-    >
-      {children}
-    </h2>
-  );
-}
-
-function H3({ className, children }: Props): JSX.Element {
-  return (
-    <h2
-      className={
-        "text-xl font-medium text-violet-300 dark:text-violet-700" +
-        " " +
-        (className ?? "")
-      }
-    >
-      {children}
-    </h2>
-  );
-}
-
-function A({
-  children,
-  href,
-}: {
-  children?: React.ReactNode;
-  href?: string;
-}): JSX.Element {
-  return (
-    <a
-      className="text-violet-600 underline transition-colors dark:text-violet-400 hover:text-green-500"
-      href={href}
-    >
-      {children}
-    </a>
-  );
-}
-
 function Pre({ children }: { children?: React.ReactNode }): JSX.Element {
   return (
     <pre className="overflow-x-auto shadow-lg px-0 text-gray-800 py-4 bg-gray-200 font-['Fira_Code'] rounded-md  dark:text-gray-200 dark:bg-gray-800">
@@ -66,7 +8,7 @@ function Pre({ children }: { children?: React.ReactNode }): JSX.Element {
   );
 }
 
-function img({ src, alt }: { src?: string; alt?: string }): JSX.Element {
+function Img({ src, alt }: { src?: string; alt?: string }): JSX.Element {
   return (
     <div className="rounded-md shadow-md">
       <Image
@@ -84,7 +26,7 @@ function img({ src, alt }: { src?: string; alt?: string }): JSX.Element {
 
 const mdxComponents = {
   pre: Pre,
-  img: img,
+  img: Img,
 };
 
-export { H1, H2, H3, A, Pre, mdxComponents };
+export { Pre, mdxComponents };
