@@ -1,10 +1,10 @@
 import fs from "fs";
 import path from "path";
 
-const postPath = path.join(process.cwd(), "data", "posts");
+const postsPath = path.join(process.cwd(), "data", "posts");
 
-const postFilePaths = fs
-  .readdirSync(postPath)
+const postSlugs = fs
+  .readdirSync(postsPath)
   .filter((path) => /\.mdx?$/.test(path));
 
-export { postPath, postFilePaths };
+export { postsPath, postSlugs };

@@ -1,5 +1,4 @@
-import { useState, useEffect, ReactElement } from "react";
-import innerText from "react-innertext";
+import Image from "next/image";
 
 interface Props {
   className?: string;
@@ -61,14 +60,31 @@ function A({
 
 function Pre({ children }: { children?: React.ReactNode }): JSX.Element {
   return (
-    <div className="overflow-x-auto text-gray-700 py-4 bg-gray-200 font-['Fira_Code'] rounded-md not-prose dark:text-gray-300 dark:bg-gray-800">
+    <div className="overflow-x-auto shadow-lg text-gray-700 py-4 bg-gray-200 font-['Fira_Code'] rounded-md not-prose dark:text-gray-300 dark:bg-gray-800">
       <pre>{children}</pre>
+    </div>
+  );
+}
+
+function img({ src, alt }: { src?: string; alt?: string }): JSX.Element {
+  return (
+    <div className="rounded-md shadow-md">
+      <Image
+        src={src as string}
+        alt={alt}
+        width={16}
+        height={9}
+        layout="responsive"
+        objectFit="cover"
+        className="rounded-md -z-10"
+      />
     </div>
   );
 }
 
 const mdxComponents = {
   pre: Pre,
+  img: img,
 };
 
 export { H1, H2, H3, A, Pre, mdxComponents };
