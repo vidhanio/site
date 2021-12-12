@@ -35,7 +35,7 @@ export default function RepoCard(repo: Repository): JSX.Element {
           </div>
         </div>
         {repo.topics && (
-          <div className="flex overflow-scroll flex-row flex-wrap gap-2 justify-center items-center">
+          <div className="flex overflow-scroll flex-row flex-wrap gap-2 justify-center items-center scrollbar-hide">
             {repo.topics.map((topic) => (
               <span
                 key={topic}
