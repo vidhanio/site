@@ -1,32 +1,27 @@
-import MainLayout from "@/layouts/main";
-import { H1, H2 } from "@/elements/headings";
-import Typewriter from "@/misc/typewriter";
+import MainLayout from "layouts/main";
+import Typewriter from "@/typewriter";
 
-function Index(): JSX.Element {
+export default function Index() {
   return (
-    <>
-      <MainLayout>
-        <H1>{"vidhan bhatt"}</H1>
-        <H2>
-          <Typewriter
-            className="font-bold text-green-500"
-            prefix="i'm a "
-            prefixVowel="i'm an "
-            strings={[
-              "high school student",
-              "software developer",
-              "discord bot developer",
-              "frontend developer",
-              "backend developer",
-              "api developer",
-              "full stack developer (?)",
-            ]}
-            suffix=" from canada."
-          />
-        </H2>
-      </MainLayout>
-    </>
+    <MainLayout>
+      <h1 className="text-8xl font-black">{"vidhan bhatt"}</h1>
+      <h2 className="text-2xl font-bold">
+        <Typewriter
+          className="font-bold text-emerald-500"
+          prefix="i'm a "
+          prefixVowel="i'm an "
+          strings={[
+            "high school student",
+            "software developer",
+            "discord bot developer",
+            "frontend developer",
+            "backend developer",
+            "api developer",
+            "full stack developer (?)",
+          ]}
+          suffix=" from canada."
+        />
+      </h2>
+    </MainLayout>
   );
 }
-
-export default Index;

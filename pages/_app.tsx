@@ -17,19 +17,15 @@ function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
         navItems={[
           {
             name: "home",
-            url: "/",
+            url: "https://vidhan.io",
           },
           {
             name: "blog",
-            url: "https://blog.vidhan.io",
+            url: "/",
           },
           {
             name: "resume",
-            url: "/resume",
-          },
-          {
-            name: "triple-tac-toe",
-            url: "https://triple-tac-toe.vidhan.io",
+            url: "https://vidhan.io/resume",
           },
         ]}
       />
