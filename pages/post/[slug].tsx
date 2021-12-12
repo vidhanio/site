@@ -76,7 +76,7 @@ function Post({ code, frontmatter }: Props) {
           </time>
         )}
         {frontmatter.imageURL && (
-          <div className="mt-8 rounded-md shadow-md">
+          <div className="mt-8 rounded-md shadow-lg">
             <Image
               src={frontmatter.imageURL}
               alt={frontmatter.title}
