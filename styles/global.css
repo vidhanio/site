@@ -4,6 +4,6 @@
 
 @layer base {
   #__next {
-    @apply flex flex-col gap-16 justify-center items-center p-16;
+    @apply flex flex-col gap-16 justify-center items-center px-16 pb-16;
   }
 }
