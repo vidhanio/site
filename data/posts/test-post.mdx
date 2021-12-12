@@ -1,0 +1,24 @@
+---
+title: Test Post
+description: Test description
+dateAdded: 2021-12-11
+---
+
+This is some test stuff!!
+
+```go {6, 11}
+package main
+
+import "fmt"
+
+type TestStruct struct {
+	TestField string `json:test_string`
+}
+
+func main() {
+	var test := TestStruct{ TestField: "Hi!" }
+	fmt.Printf("%v+\n", test)
+}
+```
+
+Cool!!
