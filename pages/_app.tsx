@@ -2,6 +2,7 @@ import Head from "next/head";
 import type { AppProps } from "next/app";
 
 import "tailwindcss/tailwind.css";
+import "../styles/global.css";
 
 import Nav from "@/nav";
 
@@ -17,11 +18,11 @@ function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
         navItems={[
           {
             name: "home",
-            url: "https://vidhan.io",
+            url: "/",
           },
           {
             name: "blog",
-            url: "/",
+            url: "https://blog.vidhan.io",
           },
           {
             name: "resume",
