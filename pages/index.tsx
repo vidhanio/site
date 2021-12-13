@@ -1,12 +1,10 @@
 import { GetStaticPropsResult, InferGetStaticPropsType } from "next";
 import { MainLayout, SectionLayout } from "layouts/main";
-import { postSlugs, postsPath } from "constants/posts";
 
-import BlogCard from "components/blog-card";
-import { bundleMDX } from "mdx-bundler";
-import path from "path";
-import rehypePrism from "rehype-prism-plus";
-import simpleGit from "simple-git";
+import BlogPostCard from "components/blog-post-card";
+import PostFromSlug from "utils/post-from-slug";
+import Typewriter from "components/typewriter";
+import { postSlugs } from "constants/posts";
 
 interface Props {
   posts: Post[];
@@ -19,6 +17,14 @@ function Index({ posts }: InferGetStaticPropsType<typeof getStaticProps>) {
         <h1 className="text-8xl font-black text-indigo-500">
           {"vidhan's blog"}
         </h1>
+        <p className="text-2xl font-semibold text-indigo-700 dark:text-indigo-300">
+          <Typewriter
+            className="font-bold text-emerald-600 dark:text-emerald-400"
+            prefix="read my "
+            strings={["thoughts", "ramblings", "ideas", "opinions"]}
+            suffix="."
+          />
+        </p>
       </header>
       <MainLayout>
         <SectionLayout>
@@ -31,7 +37,7 @@ function Index({ posts }: InferGetStaticPropsType<typeof getStaticProps>) {
                   new Date(a.dateAdded).getTime()
               )
               .map((post) => (
-                <BlogCard key={post.slug} {...post} />
+                <BlogPostCard key={post.slug} {...post} />
               ))}
           </div>
         </SectionLayout>
@@ -41,46 +47,13 @@ function Index({ posts }: InferGetStaticPropsType<typeof getStaticProps>) {
 }
 
 async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
-  const postsPromise = postSlugs.map(async (slug): Promise<Post> => {
-    const filePath = path.join(postsPath, `${slug}.mdx`);
-
-    const { frontmatter, code: content } = await bundleMDX<FrontmatterProps>({
-      file: filePath,
-      xdmOptions(options) {
-        options.rehypePlugins = [[rehypePrism, { showLineNumbers: true }]];
-        return options;
-      },
-    });
-
-    const git = simpleGit();
-
-    const commits = await git.log({
-      file: filePath,
-    });
-
-    const firstCommit = commits.all[commits.all.length - 1];
-    const lastCommit = commits.all[0];
-
-    const dateAdded = firstCommit.date;
-    const dateUpdated =
-      firstCommit.hash !== lastCommit.hash ? lastCommit.date : null;
-
-    const imageURL = frontmatter.imageURL ?? null;
-
-    return {
-      title: frontmatter.title,
-      description: frontmatter.description,
-      imageURL,
-      slug,
-      content,
-      dateAdded,
-      dateUpdated,
-    };
-  });
-
   return {
     props: {
-      posts: await Promise.all(postsPromise),
+      posts: await Promise.all(
+        postSlugs.map(async (slug): Promise<Post> => {
+          return PostFromSlug(slug);
+        })
+      ),
     },
   };
 }

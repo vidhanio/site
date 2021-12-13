@@ -10,11 +10,13 @@ function BlogPostCard(post: Post): JSX.Element {
     <Link href={`/post/${post.slug}`}>
       <a className="flex flex-col justify-start items-start w-full text-left text-indigo-500 bg-gray-200 rounded-md shadow-lg sm:items-center sm:h-32 sm:w-96 sm:flex-row dark:bg-gray-800">
         {post.imageURL && (
-          <div className="relative w-full h-auto rounded-t-md sm:rounded-l-md sm:rounded-tr-none sm:w-auto sm:h-full aspect-square">
+          <div className="w-full h-auto rounded-t-md sm:rounded-l-md sm:rounded-tr-none sm:w-auto sm:h-full aspect-square">
             <Image
               src={post.imageURL}
               alt={post.title}
-              layout="fill"
+              width={1}
+              height={1}
+              layout="responsive"
               objectFit="cover"
               className="rounded-t-md sm:rounded-l-md sm:rounded-tr-none"
             />

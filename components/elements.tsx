@@ -10,7 +10,7 @@ function Pre({ children }: { children?: React.ReactNode }): JSX.Element {
 
 function Img({ src, alt }: { src?: string; alt?: string }): JSX.Element {
   return (
-    <div className="rounded-md shadow-lg">
+    <div className="rounded-md shadow-lg aspect-video">
       <Image
         src={src as string}
         alt={alt}
