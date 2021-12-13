@@ -1,23 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
 
-interface CardProps extends SEOProps {
-  dateAdded: [number, number, number];
-  dateEdited: [number, number, number] | null;
-}
+function BlogPostCard(post: Post): JSX.Element {
+  const dateAdded = new Date(post.dateAdded);
 
-function BlogCard(card: CardProps): JSX.Element {
-  const dateAdded = new Date(...card.dateAdded);
+  const dateUpdated = post.dateUpdated ? new Date(post.dateUpdated) : undefined;
 
-  const dateEdited = card.dateEdited ? new Date(...card.dateEdited) : undefined;
   return (
-    <Link href={`/post/${card.slug}`}>
+    <Link href={`/post/${post.slug}`}>
       <a className="flex flex-col justify-start items-start w-full text-left text-indigo-500 bg-gray-200 rounded-md shadow-lg sm:items-center sm:h-32 sm:w-96 sm:flex-row dark:bg-gray-800">
-        {card.imageURL && (
+        {post.imageURL && (
           <div className="relative w-full h-auto rounded-t-md sm:rounded-l-md sm:rounded-tr-none sm:w-auto sm:h-full aspect-square">
             <Image
-              src={card.imageURL}
-              alt={card.title}
+              src={post.imageURL}
+              alt={post.title}
               layout="fill"
               objectFit="cover"
               className="rounded-t-md sm:rounded-l-md sm:rounded-tr-none"
@@ -25,16 +21,16 @@ function BlogCard(card: CardProps): JSX.Element {
           </div>
         )}
         <div className="flex flex-col justify-start items-start p-4">
-          <h2 className="text-2xl font-bold text-ellipsis">{card.title}</h2>
+          <h2 className="text-2xl font-bold text-ellipsis">{post.title}</h2>
           <h3 className="text-lg text-gray-900 dark:text-gray-100">
-            {card.description}
+            {post.description}
           </h3>
           <time
             dateTime={dateAdded.toISOString()}
             className={
               "text-gray-800 dark:text-gray-200" +
               " " +
-              (dateEdited ? "line-through decoration-2 text-sm" : "text-md")
+              (dateUpdated ? "line-through decoration-2 text-sm" : "text-md")
             }
           >
             {dateAdded.toLocaleDateString("en-CA", {
@@ -43,13 +39,13 @@ function BlogCard(card: CardProps): JSX.Element {
               day: "numeric",
             })}
           </time>
-          {dateEdited && (
+          {dateUpdated && (
             <time
-              dateTime={dateEdited?.toISOString()}
+              dateTime={dateUpdated?.toISOString()}
               className="text-gray-800 text-md dark:text-gray-200"
             >
               Edited:{" "}
-              {dateEdited.toLocaleDateString("en-CA", {
+              {dateUpdated.toLocaleDateString("en-CA", {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
@@ -62,4 +58,4 @@ function BlogCard(card: CardProps): JSX.Element {
   );
 }
 
-export default BlogCard;
+export default BlogPostCard;

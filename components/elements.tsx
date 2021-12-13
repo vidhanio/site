@@ -29,4 +29,4 @@ const mdxComponents = {
   img: Img,
 };
 
-export { Pre, mdxComponents };
+export default mdxComponents;

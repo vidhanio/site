@@ -1,6 +1,6 @@
-import { Html, Head, Main, NextScript, DocumentProps } from "next/document";
+import { Head, Html, Main, NextScript } from "next/document";
 
-function CustomDocument(_props: DocumentProps): JSX.Element {
+function Document(): JSX.Element {
   return (
     <Html lang="en">
       <Head>
@@ -17,7 +17,9 @@ function CustomDocument(_props: DocumentProps): JSX.Element {
         />
       </Head>
       <body
-        className={`text-indigo-500 bg-gray-100 font-['Fira_Sans',ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe_UI',Roboto,'Helvetica_Neue',Arial,'Noto_Sans',sans-serif,'Apple_Color_Emoji','Segoe_UI_Emoji','Segoe_UI_Symbol','Noto_Color_Emoji'] dark:bg-gray-900`}
+        className={
+          "text-gray-900 bg-gray-100 dark:text-gray-100 font-['Fira_Sans',ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe_UI',Roboto,'Helvetica_Neue',Arial,'Noto_Sans',sans-serif,'Apple_Color_Emoji','Segoe_UI_Emoji','Segoe_UI_Symbol','Noto_Color_Emoji'] dark:bg-gray-900"
+        }
       >
         <Main />
         <NextScript />
@@ -26,4 +28,4 @@ function CustomDocument(_props: DocumentProps): JSX.Element {
   );
 }
 
-export default CustomDocument;
+export default Document;

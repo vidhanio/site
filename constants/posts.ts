@@ -5,6 +5,7 @@ const postsPath = path.join(process.cwd(), "data", "posts");
 
 const postSlugs = fs
   .readdirSync(postsPath)
-  .filter((path) => /\.mdx?$/.test(path));
+  .filter((file) => /\.mdx$/.test(file))
+  .map((file) => file.replace(/\.mdx$/, ""));
 
 export { postsPath, postSlugs };

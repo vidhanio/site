@@ -15,7 +15,7 @@ function NavItem({ name, url, className }: ItemProps): JSX.Element {
     <li>
       <Link href={url}>
         <a
-          className={`text-xl font-bold transition-colors ${className} hover:text-emerald-500`}
+          className={`text-xl font-bold text-indigo-500 transition-colors ${className} hover:text-emerald-500`}
         >
           {name}
         </a>

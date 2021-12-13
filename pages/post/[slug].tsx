@@ -1,27 +1,19 @@
-import path from "path";
+import { postSlugs, postsPath } from "constants/posts";
 
+import { BlogMainLayout } from "layouts/blog";
 import { GetStaticPropsResult } from "next";
+import Image from "next/image";
+import React from "react";
+import SEO from "components/seo";
 import { bundleMDX } from "mdx-bundler";
 import { getMDXComponent } from "mdx-bundler/client";
+import mdxComponents from "components/elements";
+import path from "path";
 import rehypePrism from "rehype-prism-plus";
-
-import SEO from "@/seo";
-import { postsPath, postSlugs } from "constants/posts";
-import { mdxComponents } from "@/elements";
-import { BlogMainLayout } from "layouts/blog";
-import React from "react";
-import Image from "next/image";
+import simpleGit from "simple-git";
 
 interface Props {
-  slug: string;
-  code: string;
-  frontmatter: {
-    title: string;
-    description: string;
-    imageURL: string | null;
-    dateAdded: [number, number, number];
-    dateEdited: [number, number, number] | null;
-  };
+  post: Post;
 }
 
 interface Params {
@@ -30,33 +22,29 @@ interface Params {
   };
 }
 
-function Post({ code, frontmatter }: Props) {
-  const MDX = React.useMemo(() => getMDXComponent(code), [code]);
+function Post({ post }: Props) {
+  const MDX = React.useMemo(
+    () => getMDXComponent(post.content),
+    [post.content]
+  );
 
-  const dateAdded = new Date(...frontmatter.dateAdded);
+  const dateAdded = new Date(post.dateAdded);
 
-  const dateEdited = frontmatter.dateEdited
-    ? new Date(...frontmatter.dateEdited)
-    : undefined;
+  const dateUpdated = post.dateUpdated ? new Date(post.dateUpdated) : undefined;
   return (
     <>
-      <SEO
-        title={frontmatter.title}
-        description={frontmatter.description}
-        imageURL={frontmatter.imageURL}
-        slug={frontmatter.title}
-      />
+      <SEO {...post} />
       <BlogMainLayout>
         <header className="flex flex-col">
           <h1 className="mb-2 text-4xl text-indigo-500 md:text-6xl">
-            {frontmatter.title}
+            {post.title}
           </h1>
           <h2 className="my-0 text-xl text-gray-800 dark:text-gray-200">
-            {frontmatter.description}
+            {post.description}
           </h2>
           <time
             dateTime={dateAdded.toISOString()}
-            className={dateEdited ? "line-through text-md" : "text-lg"}
+            className={dateUpdated ? "line-through text-md" : "text-lg"}
           >
             {dateAdded.toLocaleDateString("en-CA", {
               year: "numeric",
@@ -65,21 +53,21 @@ function Post({ code, frontmatter }: Props) {
             })}
           </time>
         </header>
-        {dateEdited && (
-          <time dateTime={dateEdited?.toISOString()} className="text-lg">
+        {dateUpdated && (
+          <time dateTime={dateUpdated?.toISOString()} className="text-lg">
             Edited:{" "}
-            {dateEdited.toLocaleDateString("en-CA", {
+            {dateUpdated.toLocaleDateString("en-CA", {
               year: "numeric",
               month: "long",
               day: "numeric",
             })}
           </time>
         )}
-        {frontmatter.imageURL && (
+        {post.imageURL && (
           <div className="mt-8 rounded-md shadow-lg">
             <Image
-              src={frontmatter.imageURL}
-              alt={frontmatter.title}
+              src={post.imageURL}
+              alt={post.title}
               width={16}
               height={9}
               layout="responsive"
@@ -99,7 +87,7 @@ async function getStaticProps({
 }: Params): Promise<GetStaticPropsResult<Props>> {
   const filePath = path.join(postsPath, `${params.slug}.mdx`);
 
-  const { frontmatter, code } = await bundleMDX<FrontmatterProps>({
+  const { frontmatter, code: content } = await bundleMDX<FrontmatterProps>({
     file: filePath,
     xdmOptions(options) {
       options.rehypePlugins = [[rehypePrism, { showLineNumbers: true }]];
@@ -107,29 +95,31 @@ async function getStaticProps({
     },
   });
 
-  const dateAdded = [
-    frontmatter.dateAdded.getUTCFullYear(),
-    frontmatter.dateAdded.getUTCMonth(),
-    frontmatter.dateAdded.getUTCDate(),
-  ] as [number, number, number];
+  const git = simpleGit();
 
-  const dateEdited = frontmatter.dateEdited
-    ? ([
-        frontmatter.dateEdited.getUTCFullYear(),
-        frontmatter.dateEdited.getUTCMonth(),
-        frontmatter.dateEdited.getUTCDate(),
-      ] as [number, number, number])
-    : null;
+  const commits = await git.log({
+    file: filePath,
+  });
+
+  const firstCommit = commits.all[commits.all.length - 1];
+  const lastCommit = commits.all[0];
+
+  const dateAdded = firstCommit.date;
+  const dateUpdated =
+    firstCommit.hash !== lastCommit.hash ? lastCommit.date : null;
+
+  const imageURL = frontmatter.imageURL ?? null;
 
   return {
     props: {
-      slug: params.slug,
-      code,
-      frontmatter: {
-        ...frontmatter,
-        imageURL: frontmatter.imageURL ?? null,
+      post: {
+        title: frontmatter.title,
+        description: frontmatter.description,
+        imageURL,
+        slug: params.slug,
+        content,
         dateAdded,
-        dateEdited,
+        dateUpdated,
       },
     },
   };
@@ -137,7 +127,7 @@ async function getStaticProps({
 
 async function getStaticPaths() {
   const paths = postSlugs
-    .map((path) => path.replace(/\.mdx?$/, ""))
+    .map((file) => file.replace(/\.mdx?$/, ""))
     .map((slug) => ({ params: { slug } }));
 
   return {

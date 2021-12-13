@@ -1,61 +1,80 @@
-import { GetStaticPropsResult } from "next";
-import Link from "next/link";
-import path from "path";
-import MainLayout from "layouts/main";
-import { postsPath, postSlugs } from "constants/posts";
+import { GetStaticPropsResult, InferGetStaticPropsType } from "next";
+import { MainLayout, SectionLayout } from "layouts/main";
+import { postSlugs, postsPath } from "constants/posts";
+
+import BlogCard from "components/blog-card";
 import { bundleMDX } from "mdx-bundler";
-import BlogCard from "@/blog-card";
+import path from "path";
+import rehypePrism from "rehype-prism-plus";
+import simpleGit from "simple-git";
 
 interface Props {
   posts: Post[];
 }
 
-export default function Index({ posts }: Props) {
+function Index({ posts }: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
-    <MainLayout>
-      <h1 className="text-8xl font-black">{"posts"}</h1>
-      <div className="flex flex-col gap-4 justify-center items-center w-full">
-        {posts.map((post) => (
-          <BlogCard
-            slug={post.slug.replace(/\.mdx?$/, "")}
-            key={post.slug}
-            {...post.frontmatter}
-          />
-        ))}
-      </div>
-    </MainLayout>
+    <>
+      <header className="flex flex-col gap-2 justify-center items-center w-full">
+        <h1 className="text-8xl font-black text-indigo-500">
+          {"vidhan's blog"}
+        </h1>
+      </header>
+      <MainLayout>
+        <SectionLayout>
+          <h2 className="text-6xl font-bold text-indigo-500">posts</h2>
+          <div className="flex flex-col gap-4 justify-center items-center w-full">
+            {posts
+              .sort(
+                (a, b) =>
+                  new Date(b.dateAdded).getTime() -
+                  new Date(a.dateAdded).getTime()
+              )
+              .map((post) => (
+                <BlogCard key={post.slug} {...post} />
+              ))}
+          </div>
+        </SectionLayout>
+      </MainLayout>
+    </>
   );
 }
 
 async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
   const postsPromise = postSlugs.map(async (slug): Promise<Post> => {
-    const { frontmatter, code } = await bundleMDX<FrontmatterProps>({
-      file: path.join(postsPath, slug),
+    const filePath = path.join(postsPath, `${slug}.mdx`);
+
+    const { frontmatter, code: content } = await bundleMDX<FrontmatterProps>({
+      file: filePath,
+      xdmOptions(options) {
+        options.rehypePlugins = [[rehypePrism, { showLineNumbers: true }]];
+        return options;
+      },
     });
 
+    const git = simpleGit();
+
+    const commits = await git.log({
+      file: filePath,
+    });
+
+    const firstCommit = commits.all[commits.all.length - 1];
+    const lastCommit = commits.all[0];
+
+    const dateAdded = firstCommit.date;
+    const dateUpdated =
+      firstCommit.hash !== lastCommit.hash ? lastCommit.date : null;
+
     const imageURL = frontmatter.imageURL ?? null;
-    const dateAdded = [
-      frontmatter.dateAdded.getUTCFullYear(),
-      frontmatter.dateAdded.getUTCMonth(),
-      frontmatter.dateAdded.getUTCDate(),
-    ] as [number, number, number];
-    const dateEdited = frontmatter.dateEdited
-      ? ([
-          frontmatter.dateEdited.getUTCFullYear(),
-          frontmatter.dateEdited.getUTCMonth(),
-          frontmatter.dateEdited.getUTCDate(),
-        ] as [number, number, number])
-      : null;
 
     return {
+      title: frontmatter.title,
+      description: frontmatter.description,
+      imageURL,
       slug,
-      code,
-      frontmatter: {
-        ...frontmatter,
-        imageURL,
-        dateAdded,
-        dateEdited,
-      },
+      content,
+      dateAdded,
+      dateUpdated,
     };
   });
 
@@ -66,4 +85,5 @@ async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
   };
 }
 
+export default Index;
 export { getStaticProps };

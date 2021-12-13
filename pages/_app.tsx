@@ -1,12 +1,12 @@
-import Head from "next/head";
-import type { AppProps } from "next/app";
-
 import "tailwindcss/tailwind.css";
+import "../styles/global.css";
 import "styles/prism.css";
 
-import Nav from "@/nav";
+import type { AppProps } from "next/app";
+import Head from "next/head";
+import Nav from "components/nav";
 
-function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
+function App({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <>
       <Head>
@@ -35,4 +35,4 @@ function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
   );
 }
 
-export default CustomApp;
+export default App;
