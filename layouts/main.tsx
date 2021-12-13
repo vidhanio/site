@@ -1,8 +1,4 @@
-export function MainLayout({
-  children,
-}: {
-  children?: React.ReactNode;
-}): JSX.Element {
+function MainLayout({ children }: { children?: React.ReactNode }): JSX.Element {
   return (
     <main className="flex flex-col gap-16 justify-center items-center w-full text-center">
       {children}
@@ -10,7 +6,7 @@ export function MainLayout({
   );
 }
 
-export function SectionLayout({
+function SectionLayout({
   children,
 }: {
   children?: React.ReactNode;
@@ -21,3 +17,5 @@ export function SectionLayout({
     </section>
   );
 }
+
+export { MainLayout, SectionLayout };

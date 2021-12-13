@@ -1,4 +1,4 @@
-import { Html, Head, Main, NextScript, DocumentProps } from "next/document";
+import { DocumentProps, Head, Html, Main, NextScript } from "next/document";
 
 function CustomDocument(_props: DocumentProps): JSX.Element {
   return (

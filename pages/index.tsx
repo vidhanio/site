@@ -1,14 +1,15 @@
-import { MainLayout, SectionLayout } from "layouts/main";
-import Typewriter from "@/typewriter";
 import { GetServerSidePropsResult, InferGetServerSidePropsType } from "next";
+import { MainLayout, SectionLayout } from "layouts/main";
+
 import { Octokit } from "@octokit/rest";
-import RepoCard from "@/repo-card";
+import RepoCard from "components/repo-card";
+import Typewriter from "components/typewriter";
 
 interface Props {
   repos: Repository[];
 }
 
-export default function Index({
+function Index({
   repos,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
@@ -35,8 +36,8 @@ export default function Index({
       </header>
       <MainLayout>
         <SectionLayout>
-          <h1 className="text-6xl font-bold text-indigo-500">repos</h1>
-          <div className="flex flex-row flex-wrap gap-8 justify-center items-center">
+          <h2 className="text-6xl font-bold text-indigo-500">repos</h2>
+          <div className="flex flex-row flex-wrap gap-8 justify-center items-center w-full">
             {repos
               .sort((a, b) =>
                 b.stars - a.stars ? b.stars - a.stars : b.forks - a.forks
@@ -51,11 +52,8 @@ export default function Index({
   );
 }
 
-export async function getServerSideProps(): Promise<
-  GetServerSidePropsResult<Props>
-> {
+async function getServerSideProps(): Promise<GetServerSidePropsResult<Props>> {
   const octokit = new Octokit();
-  // get all repos of user vidhanio
   const { data } = await octokit.repos.listForUser({
     username: "vidhanio",
   });
@@ -79,3 +77,6 @@ export async function getServerSideProps(): Promise<
     },
   };
 }
+
+export default Index;
+export { getServerSideProps };

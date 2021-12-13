@@ -26,8 +26,8 @@ function NavItem({ name, url, className }: ItemProps): JSX.Element {
 
 function Nav({ navItems }: Props): JSX.Element {
   return (
-    <nav className="sticky top-0 p-8 w-full bg-gray-100 dark:bg-gray-900">
-      <ul className="flex flex-row gap-4 justify-center items-center text-center">
+    <nav className="sticky top-0 justify-center items-center w-full h-32 bg-gray-100 dark:bg-gray-900">
+      <ul className="flex flex-row gap-4 justify-center items-center w-full h-full text-center">
         {navItems.map((item) => (
           <NavItem {...item} key={item.name} />
         ))}

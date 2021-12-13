@@ -1,10 +1,9 @@
-import Head from "next/head";
-import type { AppProps } from "next/app";
-
 import "tailwindcss/tailwind.css";
-import "../styles/global.css";
 
-import Nav from "@/nav";
+import type { AppProps } from "next/app";
+import Head from "next/head";
+import Nav from "components/nav";
+import { WrapperLayout } from "layouts/global";
 
 function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
@@ -30,7 +29,9 @@ function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
           },
         ]}
       />
-      <Component {...pageProps} />
+      <WrapperLayout>
+        <Component {...pageProps} />
+      </WrapperLayout>
     </>
   );
 }
