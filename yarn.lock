@@ -4889,10 +4889,10 @@ tailwind-scrollbar-hide@^1.1.6:
   resolved "https://registry.yarnpkg.com/tailwind-scrollbar-hide/-/tailwind-scrollbar-hide-1.1.6.tgz#9b9affcd5b0faba87148528891aa2168bc7c4dc5"
   integrity sha512-WDF6t3YZbHpte7gwz6h4hwRl0unkC+exVz4ucAuDOtFwkOs8Pc77Bd6HBm//PMXVa6a6uQfDBsv8AiSa6GJq7A==
 
-tailwindcss@^3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.0.1.tgz#bef72ff45d5cfed79bb648d30da952e521e98da4"
-  integrity sha512-EVDXVZkcueZ77/zfOJw7XkzCuxe5TCiT/S9pw9P183oRzSuwMZ7WO+W/L76jbJQA5qxGeUBJOVOLVBuAUfeZ3g==
+tailwindcss@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.0.2.tgz#9eea4c6dbe8d6d2c11363d313f4a4eba2baeb652"
+  integrity sha512-i1KpjYnGYftjzdAth6jA5iMPjhxpUkk5L6DafhfnQs+KiiWaThYxmk47Weh4oFH1mZqP6MuiQNHxtoRVPOraLg==
   dependencies:
     arg "^5.0.1"
     chalk "^4.1.2"
