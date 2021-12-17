@@ -10,7 +10,8 @@ function BlogPostCard(post: Post): JSX.Element {
   return (
     <Link href={`/post/${post.slug}`} passHref>
       <motion.a
-        whileHover={{ scale: 2 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         className="flex flex-col justify-start items-start w-full text-left text-indigo-500 bg-gray-200 rounded-md shadow-lg sm:w-96 dark:bg-gray-800"
       >
         {post.imageURL && (
