@@ -4,6 +4,6 @@
 
 @layer base {
   #__next {
-    @apply flex flex-col gap-16 justify-center items-center p-16 w-full min-h-screen;
+    @apply w-full h-full;
   }
 }

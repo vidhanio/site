@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 function BlogPostCard(post: Post): JSX.Element {
   const dateAdded = new Date(post.dateAdded);
@@ -7,10 +8,13 @@ function BlogPostCard(post: Post): JSX.Element {
   const dateUpdated = post.dateUpdated ? new Date(post.dateUpdated) : undefined;
 
   return (
-    <Link href={`/post/${post.slug}`}>
-      <a className="flex flex-col justify-start items-start w-full text-left text-indigo-500 bg-gray-200 rounded-md shadow-lg sm:items-center sm:h-32 sm:w-96 sm:flex-row dark:bg-gray-800">
+    <Link href={`/post/${post.slug}`} passHref>
+      <motion.a
+        whileHover={{ scale: 2 }}
+        className="flex flex-col justify-start items-start w-full text-left text-indigo-500 bg-gray-200 rounded-md shadow-lg sm:w-96 dark:bg-gray-800"
+      >
         {post.imageURL && (
-          <div className="w-full h-auto rounded-t-md sm:rounded-l-md sm:rounded-tr-none sm:w-auto sm:h-full aspect-square">
+          <div className="w-full h-auto rounded-t-md aspect-square">
             <Image
               src={post.imageURL}
               alt={post.title}
@@ -18,12 +22,12 @@ function BlogPostCard(post: Post): JSX.Element {
               height={1}
               layout="responsive"
               objectFit="cover"
-              className="rounded-t-md sm:rounded-l-md sm:rounded-tr-none"
+              className="rounded-t-md"
             />
           </div>
         )}
         <div className="flex flex-col justify-start items-start p-4">
-          <h2 className="text-2xl font-bold text-ellipsis">{post.title}</h2>
+          <h2 className="text-2xl font-bold">{post.title}</h2>
           <h3 className="text-lg text-gray-900 dark:text-gray-100">
             {post.description}
           </h3>
@@ -55,7 +59,7 @@ function BlogPostCard(post: Post): JSX.Element {
             </time>
           )}
         </div>
-      </a>
+      </motion.a>
     </Link>
   );
 }

@@ -2,7 +2,7 @@ import { DocumentProps, Head, Html, Main, NextScript } from "next/document";
 
 function Document(props: DocumentProps): JSX.Element {
   return (
-    <Html lang="en">
+    <Html className="w-full h-full" lang="en">
       <Head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -18,7 +18,7 @@ function Document(props: DocumentProps): JSX.Element {
       </Head>
       <body
         className={
-          "text-gray-900 bg-gray-100 dark:text-gray-100 font-['Fira_Sans',ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe_UI',Roboto,'Helvetica_Neue',Arial,'Noto_Sans',sans-serif,'Apple_Color_Emoji','Segoe_UI_Emoji','Segoe_UI_Symbol','Noto_Color_Emoji'] dark:bg-gray-900"
+          "w-full h-full text-gray-900 bg-gray-100 dark:text-gray-100 font-['Fira_Sans',ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe_UI',Roboto,'Helvetica_Neue',Arial,'Noto_Sans',sans-serif,'Apple_Color_Emoji','Segoe_UI_Emoji','Segoe_UI_Symbol','Noto_Color_Emoji'] dark:bg-gray-900"
         }
       >
         <Main />

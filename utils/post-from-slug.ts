@@ -17,16 +17,21 @@ async function PostFromSlug(slug: string): Promise<Post> {
 
   const git = simpleGit();
 
-  const commits = await git.log({
-    file: filePath,
-  });
+  const commits = (
+    await git.log({
+      file: filePath,
+    })
+  ).all;
 
-  const firstCommit = commits.all[commits.all.length - 1];
-  const lastCommit = commits.all[0];
+  const firstCommit = commits[commits.length - 1];
+  const lastCommit = commits[0];
 
-  const dateAdded = firstCommit.date;
-  const dateUpdated =
-    firstCommit.hash !== lastCommit.hash ? lastCommit.date : null;
+  const dateAdded = firstCommit ? firstCommit.date : new Date().toISOString();
+  const dateUpdated = firstCommit
+    ? firstCommit.hash !== lastCommit.hash
+      ? lastCommit.date
+      : null
+    : null;
 
   const imageURL = frontmatter.imageURL ?? null;
 

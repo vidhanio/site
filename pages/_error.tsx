@@ -1,5 +1,4 @@
 import { NextPageContext } from "next";
-import { WrapperLayout } from "layouts/global";
 
 interface Props {
   statusCode?: number;
@@ -7,7 +6,7 @@ interface Props {
 
 function Error({ statusCode }: Props) {
   return (
-    <header className="flex flex-col justify-center w-full h-[calc(100vh-24rem)] items-center">
+    <header className="flex flex-col gap-2 justify-center items-center w-full h-full grow">
       {statusCode ? (
         <h1 className="text-8xl font-black text-indigo-500">{statusCode}</h1>
       ) : (
