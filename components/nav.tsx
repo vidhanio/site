@@ -1,14 +1,14 @@
 import Link from "next/link";
 
-interface ItemProps {
+type ItemProps = {
   name: string;
   url: string;
   className?: string;
-}
+};
 
-interface Props {
+type Props = {
   navItems: ItemProps[];
-}
+};
 
 function NavItem({ name, url, className }: ItemProps): JSX.Element {
   return (
@@ -24,7 +24,7 @@ function NavItem({ name, url, className }: ItemProps): JSX.Element {
   );
 }
 
-function Nav({ navItems }: Props): JSX.Element {
+export default function Nav({ navItems }: Props): JSX.Element {
   return (
     <nav className="sticky top-0 justify-center items-center w-full h-32 bg-gray-100 dark:bg-gray-900">
       <ul className="flex flex-row gap-4 justify-center items-center w-full h-full text-center">
@@ -35,5 +35,3 @@ function Nav({ navItems }: Props): JSX.Element {
     </nav>
   );
 }
-
-export default Nav;

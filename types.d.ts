@@ -1,4 +1,4 @@
-interface Repository {
+type Repository = {
   name: string;
   description: string | null;
   topics: string[];
@@ -8,4 +8,4 @@ interface Repository {
   stars: number;
   forks: number;
   issues: number;
-}
+};
