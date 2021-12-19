@@ -1,6 +1,6 @@
-import { DocumentProps, Head, Html, Main, NextScript } from "next/document";
+import { Head, Html, Main, NextScript } from "next/document";
 
-function CustomDocument(_props: DocumentProps): JSX.Element {
+export default function Document(): JSX.Element {
   return (
     <Html lang="en">
       <Head>
@@ -27,5 +27,3 @@ function CustomDocument(_props: DocumentProps): JSX.Element {
     </Html>
   );
 }
-
-export default CustomDocument;

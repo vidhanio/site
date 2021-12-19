@@ -1,11 +1,10 @@
 import { NextPageContext } from "next";
-import { WrapperLayout } from "layouts/global";
 
-interface Props {
+type Props = {
   statusCode?: number;
-}
+};
 
-function Error({ statusCode }: Props) {
+export default function Error({ statusCode }: Props) {
   return (
     <header className="flex flex-col justify-center w-full h-[calc(100vh-24rem)] items-center">
       {statusCode ? (
@@ -21,5 +20,3 @@ Error.getInitialProps = function ({ res, err }: NextPageContext) {
   const statusCode = res ? res.statusCode : err ? err.statusCode : 404;
   return { statusCode };
 };
-
-export default Error;

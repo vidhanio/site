@@ -5,11 +5,11 @@ import { Octokit } from "@octokit/rest";
 import RepoCard from "components/repo-card";
 import Typewriter from "components/typewriter";
 
-interface Props {
+type Props = {
   repos: Repository[];
-}
+};
 
-function Index({
+export default function Index({
   repos,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
@@ -36,23 +36,16 @@ function Index({
       </header>
       <MainLayout>
         <SectionLayout>
-          <h2 className="text-6xl font-bold text-indigo-500">repos</h2>
-          <div className="flex flex-row flex-wrap gap-8 justify-center items-center w-full">
-            {repos
-              .sort((a, b) =>
-                b.stars - a.stars ? b.stars - a.stars : b.forks - a.forks
-              )
-              .map((repo) => (
-                <RepoCard key={repo.name} {...repo} />
-              ))}
-          </div>
+          <h2 className="text-6xl font-bold text-indigo-500">who am i???</h2>
         </SectionLayout>
       </MainLayout>
     </>
   );
 }
 
-async function getServerSideProps(): Promise<GetServerSidePropsResult<Props>> {
+export async function getServerSideProps(): Promise<
+  GetServerSidePropsResult<Props>
+> {
   const octokit = new Octokit();
   const { data } = await octokit.repos.listForUser({
     username: "vidhanio",
@@ -77,6 +70,3 @@ async function getServerSideProps(): Promise<GetServerSidePropsResult<Props>> {
     },
   };
 }
-
-export default Index;
-export { getServerSideProps };

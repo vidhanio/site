@@ -5,7 +5,7 @@ import Head from "next/head";
 import Nav from "components/nav";
 import { WrapperLayout } from "layouts/global";
 
-function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
+export default function App({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <>
       <Head>
@@ -23,10 +23,6 @@ function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
             name: "blog",
             url: "https://blog.vidhan.io",
           },
-          {
-            name: "resume",
-            url: "https://vidhan.io/resume",
-          },
         ]}
       />
       <WrapperLayout>
@@ -35,5 +31,3 @@ function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
     </>
   );
 }
-
-export default CustomApp;
