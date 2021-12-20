@@ -1,4 +1,4 @@
-function BlogMainLayout({
+export function BlogMainLayout({
   children,
 }: {
   children?: React.ReactNode;
@@ -15,5 +15,3 @@ function BlogMainLayout({
     </main>
   );
 }
-
-export { BlogMainLayout };
