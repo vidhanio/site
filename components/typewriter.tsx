@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 
-function Typewriter({
+type Props = {
+  prefix?: string;
+  prefixVowel?: string;
+  suffix?: string;
+  strings: string[];
+  className?: string;
+};
+
+export default function Typewriter({
   prefix,
   prefixVowel,
   strings,
   suffix,
   className,
-}: {
-  prefix?: string;
-  prefixVowel?: string;
-  strings: string[];
-  suffix?: string;
-  className?: string;
-}): JSX.Element {
+}: Props): JSX.Element {
   const [index, setIndex] = useState<number>(0);
   const [subIndex, setSubIndex] = useState<number>(0);
   const [isReversed, setIsReversed] = useState<boolean>(false);
@@ -55,5 +57,3 @@ function Typewriter({
     </>
   );
 }
-
-export default Typewriter;
