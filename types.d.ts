@@ -1,4 +1,4 @@
-interface Post {
+type Post = {
   title: string;
   description: string;
   imageURL: string | null;
@@ -6,10 +6,10 @@ interface Post {
   content: string;
   dateAdded: string;
   dateUpdated: string | null;
-}
+};
 
-interface FrontmatterProps {
+type FrontmatterProps = {
   title: string;
   description: string;
   imageURL?: string;
-}
+};
