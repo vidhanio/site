@@ -1,8 +1,8 @@
 import { NextPageContext } from "next";
 
-interface Props {
+type Props = {
   statusCode?: number;
-}
+};
 
 function Error({ statusCode }: Props) {
   return (

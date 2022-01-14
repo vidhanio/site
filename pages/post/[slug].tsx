@@ -8,15 +8,15 @@ import { getMDXComponent } from "mdx-bundler/client";
 import mdxComponents from "components/elements";
 import { postSlugs } from "constants/posts";
 
-interface Props {
+type Props = {
   post: Post;
-}
+};
 
-interface Params {
+type Params = {
   params: {
     slug: string;
   };
-}
+};
 
 function Post({ post }: Props) {
   const MDX = React.useMemo(

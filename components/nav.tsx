@@ -1,14 +1,14 @@
 import Link from "next/link";
 
-interface ItemProps {
+type ItemProps = {
   name: string;
   url: string;
   className?: string;
-}
+};
 
-interface Props {
+type Props = {
   navItems: ItemProps[];
-}
+};
 
 function NavItem({ name, url, className }: ItemProps): JSX.Element {
   return (

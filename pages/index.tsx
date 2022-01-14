@@ -6,9 +6,9 @@ import PostFromSlug from "utils/post-from-slug";
 import Typewriter from "components/typewriter";
 import { postSlugs } from "constants/posts";
 
-interface Props {
+type Props = {
   posts: Post[];
-}
+};
 
 function Index({ posts }: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
