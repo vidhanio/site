@@ -1,11 +1,13 @@
-import { BlogMainLayout } from "layouts/blog";
+import BlogArticleLayout from "layouts/blog/article";
 import { GetStaticPropsResult } from "next";
+import H1 from "components/elements/h1";
 import Image from "next/image";
-import PostFromSlug from "utils/post-from-slug";
+import { Post } from "types";
 import React from "react";
-import SEO from "components/seo";
+import SEO from "components/blog/seo";
 import { getMDXComponent } from "mdx-bundler/client";
-import mdxComponents from "components/elements";
+import mdxComponents from "components/blog/components";
+import postFromSlug from "utils/post-from-slug";
 import { postSlugs } from "constants/posts";
 
 type Props = {
@@ -18,7 +20,7 @@ type Params = {
   };
 };
 
-function Post({ post }: Props) {
+function PostPage({ post }: Props) {
   const MDX = React.useMemo(
     () => getMDXComponent(post.content),
     [post.content]
@@ -29,27 +31,25 @@ function Post({ post }: Props) {
 
   return (
     <>
-      <SEO {...post} />
-      <>
-        <BlogMainLayout>
-          <header className="flex flex-col">
-            <h1 className="mb-2 text-4xl text-indigo-500 md:text-6xl">
-              {post.title}
-            </h1>
-            <h2 className="my-0 text-xl text-gray-800 dark:text-gray-200">
-              {post.description}
-            </h2>
-            <time
-              dateTime={dateAdded.toISOString()}
-              className={dateUpdated ? "line-through text-md" : "text-lg"}
-            >
-              {dateAdded.toLocaleDateString("en-CA", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </time>
-          </header>
+      <SEO post={post} />
+      <BlogArticleLayout>
+        <header className="flex flex-col">
+          <H1>{post.title}</H1>
+          <p className="my-0  text-gray-700 dark:text-gray-300">
+            {post.description}
+          </p>
+
+          <time
+            dateTime={dateAdded.toISOString()}
+            className={dateUpdated ? "text-md" : "text-lg"}
+          >
+            {dateAdded.toLocaleDateString("en-CA", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </time>
+
           {dateUpdated && (
             <time dateTime={dateUpdated?.toISOString()} className="text-lg">
               Edited:{" "}
@@ -60,22 +60,15 @@ function Post({ post }: Props) {
               })}
             </time>
           )}
-          {post.imageURL && (
-            <div className="mt-8 rounded-md shadow-lg aspect-video">
-              <Image
-                src={post.imageURL}
-                alt={post.title}
-                width={16}
-                height={9}
-                layout="responsive"
-                objectFit="cover"
-                className="rounded-md -z-10"
-              />
-            </div>
-          )}
-          <MDX components={mdxComponents} />
-        </BlogMainLayout>
-      </>
+        </header>
+
+        {post.imageURL &&
+          mdxComponents.img({
+            src: post.imageURL,
+            alt: post.title,
+          })}
+        <MDX components={mdxComponents} />
+      </BlogArticleLayout>
     </>
   );
 }
@@ -85,7 +78,7 @@ async function getStaticProps({
 }: Params): Promise<GetStaticPropsResult<Props>> {
   return {
     props: {
-      post: await PostFromSlug(params.slug),
+      post: await postFromSlug(params.slug),
     },
   };
 }
@@ -101,5 +94,5 @@ async function getStaticPaths() {
   };
 }
 
-export default Post;
+export default PostPage;
 export { getStaticProps, getStaticPaths };

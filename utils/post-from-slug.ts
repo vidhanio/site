@@ -1,10 +1,12 @@
+import { FrontmatterProps, Post } from "types";
+
 import { bundleMDX } from "mdx-bundler";
 import path from "path";
 import { postsPath } from "constants/posts";
 import rehypePrism from "rehype-prism-plus";
 import simpleGit from "simple-git";
 
-async function PostFromSlug(slug: string): Promise<Post> {
+export default async function postFromSlug(slug: string): Promise<Post> {
   const filePath = path.join(postsPath, `${slug}.mdx`);
 
   const { frontmatter, code: content } = await bundleMDX<FrontmatterProps>({
@@ -45,5 +47,3 @@ async function PostFromSlug(slug: string): Promise<Post> {
     dateUpdated,
   };
 }
-
-export default PostFromSlug;

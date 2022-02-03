@@ -3,11 +3,12 @@ type Props = {
   children: React.ReactNode;
 };
 
-export default function Link({ href, children }: Props): JSX.Element {
+export default function A({ href, children }: Props): JSX.Element {
   return (
     <a
       href={href}
       target="_blank"
+      rel="noopener noreferrer"
       className="font-bold text-indigo-500 underline transition-colors  hover:text-emerald-500"
     >
       {children}

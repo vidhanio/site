@@ -1,15 +1,12 @@
-import Head from "next/head";
+import H1 from "components/elements/h1";
 import { Projects } from "components/projects";
+import SEO from "components/seo";
 
 export default function ProjectsPage() {
   return (
     <>
-      <Head>
-        <title>vidhan - projects</title>
-      </Head>
-      <h1 className="text-8xl font-extrabold italic text-indigo-500">
-        projects
-      </h1>
+      <SEO path="projects" />
+      <H1>projects</H1>
       <Projects
         projects={[
           {

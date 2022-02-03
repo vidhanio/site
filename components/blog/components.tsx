@@ -2,7 +2,7 @@ import Image from "next/image";
 
 function Pre({ children }: { children?: React.ReactNode }): JSX.Element {
   return (
-    <pre className="overflow-x-auto shadow-lg px-0 text-gray-800 py-4 bg-gray-200 font-['Fira_Code'] rounded-md  dark:text-gray-200 dark:bg-gray-800">
+    <pre className="overflow-x-auto rounded-md bg-gray-200 px-0 py-4 font-mono text-gray-800 [font-feature-settings:normal]  dark:bg-gray-800 dark:text-gray-200">
       {children}
     </pre>
   );
@@ -10,16 +10,17 @@ function Pre({ children }: { children?: React.ReactNode }): JSX.Element {
 
 function Img({ src, alt }: { src?: string; alt?: string }): JSX.Element {
   return (
-    <div className="rounded-md shadow-lg aspect-video">
+    <div className="rounded-md">
       <Image
-        src={src as string}
+        src={src ?? ""}
         alt={alt}
         width={16}
         height={9}
         layout="responsive"
         objectFit="cover"
-        className="rounded-md -z-10"
+        className="rounded-md"
       />
+      <figcaption>{alt}</figcaption>
     </div>
   );
 }

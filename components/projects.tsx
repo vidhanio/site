@@ -1,5 +1,5 @@
 import { BeakerIcon } from "@heroicons/react/solid";
-import Head from "next/head";
+import Image from "next/image";
 
 type ProjectProps = {
   name: string;
@@ -18,7 +18,14 @@ export function Project({
     <a href={href}>
       <div className="flex w-96 flex-col items-center justify-center rounded-xl bg-gray-200 dark:bg-gray-800">
         {imageSrc ? (
-          <img src={imageSrc} alt={name} width={384} height={384} />
+          <Image
+            src={imageSrc}
+            alt={name}
+            objectFit="contain"
+            className="rounded-t-xl"
+            width={384}
+            height={384}
+          />
         ) : (
           <div className="flex h-96 w-96 flex-col items-center justify-center">
             <BeakerIcon className="h-16 w-16 fill-gray-300 dark:fill-gray-700" />

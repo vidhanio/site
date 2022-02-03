@@ -1,21 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { Post } from "types";
 
-function BlogPostCard(post: Post): JSX.Element {
+export default function Card(post: Post): JSX.Element {
   const dateAdded = new Date(post.dateAdded);
 
   const dateUpdated = post.dateUpdated ? new Date(post.dateUpdated) : undefined;
 
   return (
-    <Link href={`/post/${post.slug}`} passHref>
-      <motion.a
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="flex flex-col justify-start items-start w-full text-left text-indigo-500 bg-gray-200 rounded-md shadow-lg sm:w-96 dark:bg-gray-800"
-      >
+    <Link href={`/post/${post.slug}`}>
+      <a className="flex w-full flex-col items-start justify-start rounded-md bg-gray-200 text-left text-indigo-500 shadow-lg dark:bg-gray-800 sm:w-96">
         {post.imageURL && (
-          <div className="w-full h-auto rounded-t-md aspect-square">
+          <div className="aspect-square h-auto w-full rounded-t-md">
             <Image
               src={post.imageURL}
               alt={post.title}
@@ -27,7 +23,7 @@ function BlogPostCard(post: Post): JSX.Element {
             />
           </div>
         )}
-        <div className="flex flex-col justify-start items-start p-4">
+        <div className="flex flex-col items-start justify-start p-4">
           <h2 className="text-2xl font-bold">{post.title}</h2>
           <h3 className="text-lg text-gray-900 dark:text-gray-100">
             {post.description}
@@ -37,7 +33,7 @@ function BlogPostCard(post: Post): JSX.Element {
             className={
               "text-gray-800 dark:text-gray-200" +
               " " +
-              (dateUpdated ? "line-through decoration-2 text-sm" : "text-md")
+              (dateUpdated ? "text-sm line-through decoration-2" : "text-md")
             }
           >
             {dateAdded.toLocaleDateString("en-CA", {
@@ -49,7 +45,7 @@ function BlogPostCard(post: Post): JSX.Element {
           {dateUpdated && (
             <time
               dateTime={dateUpdated?.toISOString()}
-              className="text-gray-800 text-md dark:text-gray-200"
+              className="text-md text-gray-800 dark:text-gray-200"
             >
               Edited:{" "}
               {dateUpdated.toLocaleDateString("en-CA", {
@@ -60,9 +56,7 @@ function BlogPostCard(post: Post): JSX.Element {
             </time>
           )}
         </div>
-      </motion.a>
+      </a>
     </Link>
   );
 }
-
-export default BlogPostCard;
