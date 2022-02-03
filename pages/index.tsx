@@ -5,8 +5,7 @@ export default function Index() {
   return (
     <>
       <Head>
-        <title>home - vidhan</title>
-        <meta name="description" content="vidhan's home on the internet." />
+        <title>vidhan - home</title>
       </Head>
       <h1 className="text-8xl font-extrabold text-indigo-500">vidhan</h1>
       <Section>
