@@ -2,6 +2,7 @@ export type Post = {
   title: string;
   description: string;
   imageURL: string | null;
+  imageAlt: string | null;
   slug: string;
   content: string;
   dateAdded: string;
@@ -14,4 +15,5 @@ export type FrontmatterProps = {
   title: string;
   description: string;
   imageURL?: string;
+  imageAlt?: string;
 };

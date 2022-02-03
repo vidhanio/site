@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-const postsPath = path.join(process.cwd(), "data", "posts");
+const postsPath = path.join(process.cwd(), "content", "posts");
 
 const postSlugs = fs
   .readdirSync(postsPath)

@@ -18,7 +18,7 @@ export function PostCard({ post }: PostCardProps): JSX.Element {
             <Image
               src={post.imageURL}
               alt={post.title}
-              objectFit="contain"
+              objectFit="cover"
               className="rounded-t-xl"
               width={384}
               height={384}

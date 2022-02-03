@@ -21,7 +21,7 @@ export function Project({
           <Image
             src={imageSrc}
             alt={name}
-            objectFit="contain"
+            objectFit="cover"
             className="rounded-t-xl"
             width={384}
             height={384}

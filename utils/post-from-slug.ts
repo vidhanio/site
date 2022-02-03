@@ -38,12 +38,11 @@ export default async function postFromSlug(slug: string): Promise<Post> {
       : [null, null]
     : [null, null];
 
-  const imageURL = frontmatter.imageURL ?? null;
-
   return {
     title: frontmatter.title,
     description: frontmatter.description,
-    imageURL,
+    imageURL: frontmatter.imageURL ?? null,
+    imageAlt: frontmatter.imageAlt ?? null,
     slug,
     content,
     dateAdded,

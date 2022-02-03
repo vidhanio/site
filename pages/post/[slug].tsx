@@ -75,7 +75,9 @@ function PostPage({ post }: Props) {
       </header>
 
       <BlogArticleLayout>
-        {post.imageURL && <MDXImg src={post.imageURL} alt={post.title} />}
+        {post.imageURL && (
+          <MDXImg src={post.imageURL} alt={post.imageAlt || post.title} />
+        )}
         <MDX components={mdxComponents} />
       </BlogArticleLayout>
     </>

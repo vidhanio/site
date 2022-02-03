@@ -29,7 +29,7 @@ export function MDXImg({
         width={16}
         height={9}
         layout="responsive"
-        objectFit="contain"
+        objectFit="cover"
         className="rounded-md"
       />
       <figcaption>{alt}</figcaption>
