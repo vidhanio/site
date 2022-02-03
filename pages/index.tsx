@@ -1,4 +1,4 @@
-import { Head } from "next/document";
+import Head from "next/head";
 import { Section } from "components";
 
 export default function Index() {
