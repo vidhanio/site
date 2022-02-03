@@ -3,7 +3,7 @@ import "styles/globals.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import Nav from "components/nav";
-import { WrapperLayout } from "layouts/global";
+import { WrapperLayout } from "layouts/wrapper";
 
 export default function App({ Component, pageProps }: AppProps): JSX.Element {
   return (
