@@ -2,7 +2,7 @@ import Head from "next/head";
 import Link from "components/link";
 import { Section } from "components/section";
 
-export default function Index() {
+export default function IndexPage() {
   return (
     <>
       <Head>
@@ -14,14 +14,7 @@ export default function Index() {
           hey! i'm vidhan. i'm a software engineer, fullstack developer, discord
           bot developer, and grade 12 high school student. i'm currently working
           on a ton of cool projects, which you can find at{" "}
-          <a
-            className="font-bold text-indigo-500 underline transition-colors  hover:text-emerald-500"
-            target="_blank"
-            href="https://github.com/vidhanio"
-          >
-            my github
-          </a>
-          .
+          <Link href="https://github.com/vidhanio">my github</Link>.
         </p>
       </Section>
       <Section title="what am i workin on?">
