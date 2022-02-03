@@ -46,7 +46,7 @@ type Props = {
   projects: ProjectProps[];
 };
 
-export function Projects({ projects }: Props): JSX.Element {
+export default function Projects({ projects }: Props): JSX.Element {
   return (
     <div className="flex flex-row flex-wrap justify-center gap-8">
       {projects.map((project) => (

@@ -1,62 +1,72 @@
 import Image from "next/image";
 import Link from "next/link";
+import { NewspaperIcon } from "@heroicons/react/solid";
 import { Post } from "types";
 
-export default function Card(post: Post): JSX.Element {
-  const dateAdded = new Date(post.dateAdded);
+type PostCardProps = {
+  post: Post;
+};
 
-  const dateUpdated = post.dateUpdated ? new Date(post.dateUpdated) : undefined;
+export function PostCard({ post }: PostCardProps): JSX.Element {
+  const dateAdded = new Date(post.dateAdded);
 
   return (
     <Link href={`/post/${post.slug}`}>
-      <a className="flex w-full flex-col items-start justify-start rounded-md bg-gray-200 text-left text-indigo-500 shadow-lg dark:bg-gray-800 sm:w-96">
-        {post.imageURL && (
-          <div className="aspect-square h-auto w-full rounded-t-md">
+      <a>
+        <div className="flex w-96 flex-col items-center justify-center rounded-xl bg-gray-200 dark:bg-gray-800">
+          {post.imageURL ? (
             <Image
               src={post.imageURL}
               alt={post.title}
-              width={1}
-              height={1}
-              layout="responsive"
-              objectFit="cover"
-              className="rounded-t-md"
+              objectFit="contain"
+              className="rounded-t-xl"
+              width={384}
+              height={384}
             />
-          </div>
-        )}
-        <div className="flex flex-col items-start justify-start p-4">
-          <h2 className="text-2xl font-bold">{post.title}</h2>
-          <h3 className="text-lg text-gray-900 dark:text-gray-100">
-            {post.description}
-          </h3>
-          <time
-            dateTime={dateAdded.toISOString()}
-            className={
-              "text-gray-800 dark:text-gray-200" +
-              " " +
-              (dateUpdated ? "text-sm line-through decoration-2" : "text-md")
-            }
-          >
-            {dateAdded.toLocaleDateString("en-CA", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </time>
-          {dateUpdated && (
+          ) : (
+            <div className="flex h-96 w-96 flex-col items-center justify-center">
+              <NewspaperIcon className="h-16 w-16 fill-gray-300 dark:fill-gray-700" />
+            </div>
+          )}
+          <div className="flex flex-col items-center justify-center p-8 text-center">
+            <h3 className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
+              {post.title}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              {post.description}
+            </p>
             <time
-              dateTime={dateUpdated?.toISOString()}
-              className="text-md text-gray-800 dark:text-gray-200"
+              dateTime={dateAdded.toISOString()}
+              className="text-gray-800 dark:text-gray-500"
             >
-              Edited:{" "}
-              {dateUpdated.toLocaleDateString("en-CA", {
+              {dateAdded.toLocaleDateString("en-CA", {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
               })}
             </time>
-          )}
+          </div>
         </div>
       </a>
     </Link>
+  );
+}
+
+type Props = {
+  posts: Post[];
+};
+
+export default function Posts({ posts }: Props): JSX.Element {
+  return (
+    <div className="flex flex-row flex-wrap justify-center gap-8">
+      {posts
+        .sort(
+          (a, b) =>
+            new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime()
+        )
+        .map((post) => (
+          <PostCard key={post.slug} post={post} />
+        ))}
+    </div>
   );
 }

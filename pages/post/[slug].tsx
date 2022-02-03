@@ -1,7 +1,6 @@
 import BlogArticleLayout from "layouts/blog/article";
 import { GetStaticPropsResult } from "next";
 import H1 from "components/elements/h1";
-import Image from "next/image";
 import { Post } from "types";
 import React from "react";
 import SEO from "components/blog/seo";
@@ -34,14 +33,14 @@ function PostPage({ post }: Props) {
       <SEO post={post} />
       <BlogArticleLayout>
         <header className="flex flex-col">
-          <H1>{post.title}</H1>
-          <p className="my-0  text-gray-700 dark:text-gray-300">
+          <H1 className="mb-2">{post.title}</H1>
+          <p className="my-0 mt-2 text-lg text-gray-700 dark:text-gray-300">
             {post.description}
           </p>
 
           <time
             dateTime={dateAdded.toISOString()}
-            className={dateUpdated ? "text-md" : "text-lg"}
+            className="text-md text-gray-600 dark:text-gray-400"
           >
             {dateAdded.toLocaleDateString("en-CA", {
               year: "numeric",
@@ -51,7 +50,10 @@ function PostPage({ post }: Props) {
           </time>
 
           {dateUpdated && (
-            <time dateTime={dateUpdated?.toISOString()} className="text-lg">
+            <time
+              dateTime={dateUpdated?.toISOString()}
+              className="text-sm text-gray-500"
+            >
               Edited:{" "}
               {dateUpdated.toLocaleDateString("en-CA", {
                 year: "numeric",

@@ -1,6 +1,6 @@
 import { GetStaticPropsResult, InferGetStaticPropsType } from "next";
+import Posts, { PostCard } from "components/blog/card";
 
-import Card from "components/blog/card";
 import { Post } from "types";
 import PostFromSlug from "utils/post-from-slug";
 import SEO from "components/seo";
@@ -17,16 +17,7 @@ export default function Index({
     <>
       <SEO path="blog" />
       <h1 className="text-8xl font-extrabold italic text-indigo-500">blog</h1>
-      <div className="flex w-full flex-col items-center justify-center gap-4">
-        {posts
-          .sort(
-            (a, b) =>
-              new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime()
-          )
-          .map((post) => (
-            <Card key={post.slug} {...post} />
-          ))}
-      </div>
+      <Posts posts={posts}></Posts>
     </>
   );
 }
