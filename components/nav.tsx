@@ -3,19 +3,18 @@ import Link from "next/link";
 type NavItemProps = {
   name: string;
   url: string;
-  className?: string;
 };
 
 type Props = {
   navItems: NavItemProps[];
 };
 
-function NavItem({ name, url, className }: NavItemProps): JSX.Element {
+function NavItem({ name, url }: NavItemProps): JSX.Element {
   return (
     <li>
       <Link href={url}>
         <a
-          className={`text-xl font-extrabold italic text-indigo-500 transition-colors ${className} hover:text-emerald-500`}
+          className={`text-xl font-extrabold italic text-indigo-500 transition-colors hover:text-emerald-500`}
         >
           {name}
         </a>

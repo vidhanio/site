@@ -1,3 +1,5 @@
+import mdxComponents, { MDXImg } from "components/blog/components";
+
 import BlogArticleLayout from "layouts/blog/article";
 import { GetStaticPropsResult } from "next";
 import H1 from "components/elements/h1";
@@ -5,7 +7,6 @@ import { Post } from "types";
 import React from "react";
 import SEO from "components/blog/seo";
 import { getMDXComponent } from "mdx-bundler/client";
-import mdxComponents from "components/blog/components";
 import postFromSlug from "utils/post-from-slug";
 import { postSlugs } from "constants/posts";
 
@@ -62,13 +63,10 @@ function PostPage({ post }: Props) {
               })}
             </time>
           )}
+
+          {post.imageURL && <MDXImg src={post.imageURL} alt={post.title} />}
         </header>
 
-        {post.imageURL &&
-          mdxComponents.img({
-            src: post.imageURL,
-            alt: post.title,
-          })}
         <MDX components={mdxComponents} />
       </BlogArticleLayout>
     </>

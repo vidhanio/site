@@ -1,5 +1,5 @@
 import H1 from "components/elements/h1";
-import { Projects } from "components/projects";
+import Projects from "components/projects";
 import SEO from "components/seo";
 
 export default function ProjectsPage() {

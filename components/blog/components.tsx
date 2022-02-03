@@ -1,6 +1,12 @@
+import A from "components/elements/a";
 import Image from "next/image";
+import { MDXComponents } from "mdx/types";
 
-function Pre({ children }: { children?: React.ReactNode }): JSX.Element {
+export function MDXPre({
+  children,
+}: {
+  children?: React.ReactNode;
+}): JSX.Element {
   return (
     <pre className="overflow-x-auto rounded-md bg-gray-200 px-0 py-4 font-mono text-gray-800 [font-feature-settings:normal]  dark:bg-gray-800 dark:text-gray-200">
       {children}
@@ -8,7 +14,13 @@ function Pre({ children }: { children?: React.ReactNode }): JSX.Element {
   );
 }
 
-function Img({ src, alt }: { src?: string; alt?: string }): JSX.Element {
+export function MDXImg({
+  src,
+  alt,
+}: {
+  src?: string;
+  alt?: string;
+}): JSX.Element {
   return (
     <div className="rounded-md">
       <Image
@@ -17,7 +29,7 @@ function Img({ src, alt }: { src?: string; alt?: string }): JSX.Element {
         width={16}
         height={9}
         layout="responsive"
-        objectFit="cover"
+        objectFit="contain"
         className="rounded-md"
       />
       <figcaption>{alt}</figcaption>
@@ -25,9 +37,20 @@ function Img({ src, alt }: { src?: string; alt?: string }): JSX.Element {
   );
 }
 
-const mdxComponents = {
-  pre: Pre,
-  img: Img,
+export function MDXA({
+  href,
+  children,
+}: {
+  href?: string;
+  children?: React.ReactNode;
+}): JSX.Element {
+  return <A href={href}>{children}</A>;
+}
+
+const mdxComponents: MDXComponents = {
+  pre: MDXPre,
+  img: MDXImg,
+  a: MDXA,
 };
 
 export default mdxComponents;
