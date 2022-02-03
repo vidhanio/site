@@ -1,8 +1,13 @@
+import { Head } from "next/document";
 import { Section } from "components";
 
 export default function Index() {
   return (
     <>
+      <Head>
+        <title>home - vidhan</title>
+        <meta name="description" content="vidhan's home on the internet." />
+      </Head>
       <h1 className="text-8xl font-extrabold text-indigo-500">vidhan</h1>
       <Section>
         <h2 className="text-4xl font-bold text-indigo-600 dark:text-indigo-400">
