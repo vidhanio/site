@@ -28,12 +28,15 @@ export default async function postFromSlug(slug: string): Promise<Post> {
   const firstCommit = commits[commits.length - 1];
   const lastCommit = commits[0];
 
-  const dateAdded = firstCommit ? firstCommit.date : new Date().toISOString();
-  const dateUpdated = firstCommit
+  const [dateAdded, hashAdded] = firstCommit
+    ? [firstCommit.date, firstCommit.hash]
+    : [new Date().toISOString(), ""];
+
+  const [dateUpdated, hashUpdated] = firstCommit
     ? firstCommit.hash !== lastCommit.hash
-      ? lastCommit.date
-      : null
-    : null;
+      ? [lastCommit.date, lastCommit.hash]
+      : [null, null]
+    : [null, null];
 
   const imageURL = frontmatter.imageURL ?? null;
 
@@ -45,5 +48,7 @@ export default async function postFromSlug(slug: string): Promise<Post> {
     content,
     dateAdded,
     dateUpdated,
+    hashAdded,
+    hashUpdated,
   };
 }

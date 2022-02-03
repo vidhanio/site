@@ -32,22 +32,26 @@ function PostPage({ post }: Props) {
   return (
     <>
       <SEO post={post} />
-      <BlogArticleLayout>
-        <header className="flex flex-col">
-          <H1 className="mb-2">{post.title}</H1>
-          <p className="my-0 mt-2 text-lg text-gray-700 dark:text-gray-300">
-            {post.description}
-          </p>
+      <header className="flex flex-col items-center justify-center gap-4 text-center">
+        <H1>{post.title}</H1>
+        <p className="text-lg text-gray-700 dark:text-gray-300">
+          {post.description}
+        </p>
 
+        <div className="flex flex-col">
           <time
             dateTime={dateAdded.toISOString()}
             className="text-md text-gray-600 dark:text-gray-400"
           >
-            {dateAdded.toLocaleDateString("en-CA", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
+            <a
+              href={`https://github.com/vidhanio/site/blob/${post.hashAdded}/content/posts/${post.slug}.mdx`}
+            >
+              {dateAdded.toLocaleDateString("en-CA", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </a>
           </time>
 
           {dateUpdated && (
@@ -55,18 +59,23 @@ function PostPage({ post }: Props) {
               dateTime={dateUpdated?.toISOString()}
               className="text-sm text-gray-500"
             >
-              Edited:{" "}
-              {dateUpdated.toLocaleDateString("en-CA", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
+              <a
+                href={`https://github.com/vidhanio/site/blob/${post.hashUpdated}/content/posts/${post.slug}.mdx`}
+              >
+                Edited:{" "}
+                {dateUpdated.toLocaleDateString("en-CA", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </a>
             </time>
           )}
+        </div>
+      </header>
 
-          {post.imageURL && <MDXImg src={post.imageURL} alt={post.title} />}
-        </header>
-
+      <BlogArticleLayout>
+        {post.imageURL && <MDXImg src={post.imageURL} alt={post.title} />}
         <MDX components={mdxComponents} />
       </BlogArticleLayout>
     </>

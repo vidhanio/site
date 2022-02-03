@@ -6,6 +6,8 @@ export type Post = {
   content: string;
   dateAdded: string;
   dateUpdated: string | null;
+  hashAdded: string;
+  hashUpdated: string | null;
 };
 
 export type FrontmatterProps = {
