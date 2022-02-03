@@ -8,7 +8,11 @@ module.exports = {
     "./styles/**/*.css",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        mono: ["'Cartograph CF'", "monospace"],
+      },
+    },
   },
-  plugins: [require("tailwind-scrollbar-hide")],
+  plugins: [require("@tailwindcss/typography")],
 };
