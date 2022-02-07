@@ -128,3 +128,28 @@ here are a few images of my dialogs:
 i also added a toggle for full-time/part-time employee, which switches the three-part wage calculations to a single salary field.
 
 ![update employee dialog. the "full-time" checkbox is ticked, and a salary field replaces the 3 wage parts for a part-time employee.](/images/posts/cs-in-a-weekend/full-time.png)
+
+the final requirement was to actually have the data save to a persistent file which would be read from on launch. i used an _extremely_ simple format, being `attributeName:attributeValue`, and the separators between employees just being a double newline rather than a single one used to separate attributes of the same employee.
+
+```
+empNumber:2
+firstName:Vidhan
+lastName:Bhatt
+gender:Male
+workLoc:127.0.0.1
+deductRate:0.0
+isFTE:false
+hourlyWage:15.0
+hoursPerWeek:20.0
+weeksPerYear:30.0
+```
+
+i then made an equally simple parser to turn it into the internal hashtable, and i was done!
+
+## what next?
+
+well, i still have a tests as well as probably other stuff to do during computer science. i mostly did this to lower the stress of assignments (i also have **_calc, chem and physics_** this semester. 😬). i also get bragging rights, as well as the ability to never pay attention in computer science lol.
+
+# goodbye... :(
+
+this was my first _real_ blog post, and i would like to thank you, the reader, so much for spending your time here. if you really loved this post, please do let me know at [me@vidhan.io](mailto:me@vidhan.io), or message me on [discord](https://discord.com/users/277507281652940800). more blog posts will be on the way, so check back soon! 😄
