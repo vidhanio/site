@@ -20,33 +20,6 @@ export default function IndexPage() {
           <A href="https://github.com/vidhanio">my github</A>.
         </p>
       </Section>
-
-      <Section title="what am i workin on?">
-        <p className="text-xl">
-          <ul className="flex flex-col gap-4">
-            <li>
-              <h3 className="text-2xl">
-                <A href="https://github.com/vidhanio/diswordle">diswordle</A>
-              </h3>
-              a discord bot to play wordle right in your discord server.
-            </li>
-            <li>
-              <h3 className="text-2xl">
-                <A href="https://github.com/vidhanio/checkpoint">checkpoint</A>
-              </h3>
-              a discord bot to provide easy verification for discord servers in
-              my school board.
-            </li>
-            <li>
-              <h3 className="text-2xl">
-                <A href="https://github.com/vidhanio/dmux">dmux</A>
-              </h3>
-              a package for go to make discord command definitions more
-              declarative.
-            </li>
-          </ul>
-        </p>
-      </Section>
     </>
   );
 }
