@@ -12,7 +12,7 @@
   }
 
   .code-line.highlight-line {
-    @apply box-border border-l-8 border-indigo-500 bg-indigo-500 bg-opacity-5 pl-2;
+    @apply box-border border-l-8 border-indigo-500 bg-indigo-500 bg-opacity-10 pl-2;
   }
 
   .code-line.inserted {
