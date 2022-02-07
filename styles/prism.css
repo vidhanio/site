@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  .code-highlight {
-    @apply float-left min-w-full;
+  code.code-highlight {
+    @apply float-left min-w-full p-0;
   }
 
   .code-line {
@@ -12,15 +12,15 @@
   }
 
   .code-line.highlight-line {
-    @apply pl-2 bg-indigo-500 bg-opacity-5 border-l-8 border-indigo-500 box-border;
+    @apply box-border border-l-8 border-indigo-500 bg-indigo-500 bg-opacity-5 pl-2;
   }
 
   .code-line.inserted {
-    @apply pl-2 text-green-500 bg-green-500 bg-opacity-5 border-l-8 border-green-500 box-border before:content-['+'] before:text-green-800 dark:before:text-green-200;
+    @apply box-border border-l-8 border-green-500 bg-green-500 bg-opacity-5 pl-2 text-green-500 before:text-green-800 before:content-['+'] dark:before:text-green-200;
   }
 
   .code-line.deleted {
-    @apply pl-2 text-red-500  bg-red-500 bg-opacity-5 border-l-8 border-red-500 box-border  before:content-['-'] before:text-red-800 dark:before:text-red-200;
+    @apply box-border border-l-8  border-red-500 bg-red-500 bg-opacity-5 pl-2 text-red-500  before:text-red-800 before:content-['-'] dark:before:text-red-200;
   }
 
   .token.prefix.inserted {
@@ -32,7 +32,7 @@
   }
 
   .line-number {
-    @apply before:content-[attr(line)] before:pr-4 before:w-10 before:text-right before:text-gray-400 before:inline-block dark:before:text-gray-600;
+    @apply before:inline-block before:w-10 before:pr-4 before:text-right before:text-gray-400 before:content-[attr(line)] dark:before:text-gray-600;
   }
 
   .token.keyword {
