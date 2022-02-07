@@ -1,6 +1,7 @@
 import { GetStaticPropsResult, InferGetStaticPropsType } from "next";
 import Posts, { PostCard } from "components/blog/card";
 
+import H1 from "components/elements/h1";
 import { Post } from "types";
 import PostFromSlug from "utils/post-from-slug";
 import SEO from "components/seo";
@@ -16,7 +17,7 @@ export default function Index({
   return (
     <>
       <SEO path="blog" />
-      <h1 className="text-8xl font-extrabold italic text-indigo-500">blog</h1>
+      <H1>blog</H1>
       <Posts posts={posts}></Posts>
     </>
   );

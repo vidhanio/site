@@ -13,7 +13,7 @@ export function PostCard({ post }: PostCardProps): JSX.Element {
   return (
     <Link href={`/post/${post.slug}`}>
       <a>
-        <div className="flex w-96 flex-col items-center justify-center rounded-xl bg-gray-200 dark:bg-gray-800">
+        <div className="flex w-full flex-col items-center justify-center rounded-xl bg-gray-200 dark:bg-gray-800 sm:w-96">
           {post.imageURL ? (
             <Image
               src={post.imageURL}
@@ -24,11 +24,11 @@ export function PostCard({ post }: PostCardProps): JSX.Element {
               height={384}
             />
           ) : (
-            <div className="flex h-96 w-96 flex-col items-center justify-center">
+            <div className="flex aspect-square w-full flex-col items-center justify-center sm:h-96 sm:w-96">
               <NewspaperIcon className="h-16 w-16 fill-gray-300 dark:fill-gray-700" />
             </div>
           )}
-          <div className="flex flex-col items-center justify-center p-8 text-center">
+          <div className="flex flex-col items-center justify-center p-4 text-center sm:p-8">
             <h3 className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
               {post.title}
             </h3>
@@ -58,7 +58,7 @@ type Props = {
 
 export default function Posts({ posts }: Props): JSX.Element {
   return (
-    <div className="flex flex-row flex-wrap justify-center gap-8">
+    <div className="flex flex-row flex-wrap justify-center gap-4 sm:gap-8">
       {posts
         .sort(
           (a, b) =>

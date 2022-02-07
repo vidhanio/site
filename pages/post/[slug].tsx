@@ -33,7 +33,9 @@ function PostPage({ post }: Props) {
     <>
       <SEO post={post} />
       <header className="flex flex-col items-center justify-center gap-4 text-center">
-        <H1>{post.title}</H1>
+        <h1 className="text-4xl font-extrabold italic text-indigo-500">
+          {post.title}
+        </h1>
         <p className="text-lg text-gray-700 dark:text-gray-300">
           {post.description}
         </p>

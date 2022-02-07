@@ -25,8 +25,8 @@ function NavItem({ name, url }: NavItemProps): JSX.Element {
 
 export default function Nav({ navItems }: Props): JSX.Element {
   return (
-    <nav className="border-b-2 border-indigo-200 dark:border-indigo-800">
-      <ul className="flex flex-row justify-center gap-4 p-16">
+    <nav className="border-b-2 border-indigo-200 p-8  dark:border-indigo-800 sm:p-16">
+      <ul className="flex flex-row justify-center gap-4">
         {navItems.map((item) => (
           <NavItem {...item} key={item.name} />
         ))}
