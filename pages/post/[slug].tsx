@@ -44,7 +44,7 @@ function PostPage({ post }: Props) {
             className="text-md text-gray-600 dark:text-gray-400"
           >
             <a
-              href={`https://github.com/vidhanio/site/blob/${post.hashAdded}/content/posts/${post.slug}.mdx`}
+              href={`https://github.com/vidhanio/site/commit/${post.hashAdded}`}
             >
               {dateAdded.toLocaleDateString("en-CA", {
                 year: "numeric",
@@ -60,7 +60,7 @@ function PostPage({ post }: Props) {
               className="text-sm text-gray-500"
             >
               <a
-                href={`https://github.com/vidhanio/site/blob/${post.hashUpdated}/content/posts/${post.slug}.mdx`}
+                href={`https://github.com/vidhanio/site/commit/${post.hashUpdated}`}
               >
                 Edited:{" "}
                 {dateUpdated.toLocaleDateString("en-CA", {
