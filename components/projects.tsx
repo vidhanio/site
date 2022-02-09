@@ -16,7 +16,7 @@ export function Project({
 }: ProjectProps): JSX.Element {
   return (
     <a href={href}>
-      <div className="flex w-full flex-col items-center justify-center rounded-xl bg-gray-200 dark:bg-gray-800 sm:w-96">
+      <div className="flex w-full flex-col items-center justify-center rounded-xl bg-slate-200 dark:bg-slate-800 sm:w-96">
         {imageSrc ? (
           <Image
             src={imageSrc}
@@ -28,14 +28,14 @@ export function Project({
           />
         ) : (
           <div className="flex aspect-square w-full flex-col items-center justify-center sm:h-96 sm:w-96">
-            <BeakerIcon className="h-16 w-16 fill-gray-300 dark:fill-gray-700" />
+            <BeakerIcon className="h-16 w-16 fill-slate-300 dark:fill-slate-700" />
           </div>
         )}
         <div className="flex flex-col items-center justify-center p-4 text-center sm:p-8">
           <h3 className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
             {name}
           </h3>
-          <p className="text-gray-600 dark:text-gray-400">{description}</p>
+          <p className="text-slate-600 dark:text-slate-400">{description}</p>
         </div>
       </div>
     </a>

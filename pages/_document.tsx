@@ -6,7 +6,7 @@ export default function Document(): JSX.Element {
       <Head />
       <body
         className={
-          "bg-gray-100 font-mono text-gray-900 [font-feature-settings:'ss05'] dark:bg-gray-900 dark:text-gray-100"
+          "bg-slate-100 font-mono text-slate-900 [font-feature-settings:'ss05'] dark:bg-slate-900 dark:text-slate-100"
         }
       >
         <Main />

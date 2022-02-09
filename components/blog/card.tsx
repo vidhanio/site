@@ -13,7 +13,7 @@ export function PostCard({ post }: PostCardProps): JSX.Element {
   return (
     <Link href={`/post/${post.slug}`}>
       <a>
-        <div className="flex w-full flex-col items-center justify-center rounded-xl bg-gray-200 dark:bg-gray-800 sm:w-96">
+        <div className="flex w-full flex-col items-center justify-center rounded-xl bg-slate-200 dark:bg-slate-800 sm:w-96">
           {post.imageURL ? (
             <Image
               src={post.imageURL}
@@ -25,19 +25,19 @@ export function PostCard({ post }: PostCardProps): JSX.Element {
             />
           ) : (
             <div className="flex aspect-square w-full flex-col items-center justify-center sm:h-96 sm:w-96">
-              <NewspaperIcon className="h-16 w-16 fill-gray-300 dark:fill-gray-700" />
+              <NewspaperIcon className="h-16 w-16 fill-slate-300 dark:fill-slate-700" />
             </div>
           )}
           <div className="flex flex-col items-center justify-center p-4 text-center sm:p-8">
             <h3 className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
               {post.title}
             </h3>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-slate-600 dark:text-slate-400">
               {post.description}
             </p>
             <time
               dateTime={dateAdded.toISOString()}
-              className="text-gray-800 dark:text-gray-500"
+              className="text-slate-800 dark:text-slate-500"
             >
               {dateAdded.toLocaleDateString("en-CA", {
                 year: "numeric",

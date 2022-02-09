@@ -13,7 +13,7 @@ function FooterItem({ name, url }: FooterItemProps): JSX.Element {
   return (
     <li>
       <Link href={url}>
-        <a className="text-sm font-light italic text-gray-400 underline transition-colors hover:text-gray-600 dark:text-gray-600 dark:hover:text-gray-400">
+        <a className="text-sm font-light italic text-slate-400 underline transition-colors hover:text-slate-600 dark:text-slate-600 dark:hover:text-slate-400">
           {name}
         </a>
       </Link>
@@ -24,7 +24,7 @@ function FooterItem({ name, url }: FooterItemProps): JSX.Element {
 export default function Footer({ footerItems }: Props): JSX.Element {
   return (
     <footer className="flex flex-col items-center gap-4 border-t-2 border-indigo-200 p-8 dark:border-indigo-800 sm:p-16">
-      <p className="text-lg text-gray-400 dark:text-gray-600">
+      <p className="text-lg text-slate-400 dark:text-slate-600">
         {"made with <3 by vidhan."}
       </p>
       <ul className="flex flex-row justify-center gap-4">
@@ -34,7 +34,7 @@ export default function Footer({ footerItems }: Props): JSX.Element {
       </ul>
       <a
         href="https://github.com/vidhanio/site/blob/main/LICENSE"
-        className={`text-xs font-thin text-gray-400 underline transition-colors hover:text-gray-600 dark:text-gray-600 dark:hover:text-gray-400`}
+        className={`text-xs font-thin text-slate-400 underline transition-colors hover:text-slate-600 dark:text-slate-600 dark:hover:text-slate-400`}
       >
         {"site licensed under agpl-3.0."}
       </a>

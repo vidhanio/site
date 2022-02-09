@@ -8,7 +8,7 @@ export function MDXPre({
   children?: React.ReactNode;
 }): JSX.Element {
   return (
-    <pre className="overflow-x-auto rounded-md bg-gray-200 px-0 py-4 font-mono text-gray-800 [font-feature-settings:normal]  dark:bg-gray-800 dark:text-gray-200">
+    <pre className="overflow-x-auto rounded-md bg-slate-200 px-0 py-4 font-mono text-slate-800 [font-feature-settings:normal]  dark:bg-slate-800 dark:text-slate-200">
       {children}
     </pre>
   );

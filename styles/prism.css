@@ -32,7 +32,7 @@
   }
 
   .line-number {
-    @apply before:inline-block before:w-10 before:pr-4 before:text-right before:text-gray-400 before:content-[attr(line)] dark:before:text-gray-600;
+    @apply before:inline-block before:w-10 before:pr-4 before:text-right before:text-slate-400 before:content-[attr(line)] dark:before:text-slate-600;
   }
 
   .token.keyword {
@@ -100,7 +100,7 @@
   }
 
   .token.comment {
-    @apply text-gray-500;
+    @apply text-slate-500;
   }
 
   .token.literal {
@@ -128,15 +128,15 @@
   }
 
   .token.prolog {
-    @apply text-gray-500;
+    @apply text-slate-500;
   }
 
   .token.doctype {
-    @apply text-gray-500;
+    @apply text-slate-500;
   }
 
   .token.cdata {
-    @apply text-gray-500;
+    @apply text-slate-500;
   }
 
   .token.bold {

@@ -36,14 +36,14 @@ function PostPage({ post }: Props) {
         <h1 className="text-4xl font-extrabold italic text-indigo-500">
           {post.title}
         </h1>
-        <p className="text-lg text-gray-700 dark:text-gray-300">
+        <p className="text-lg text-slate-700 dark:text-slate-300">
           {post.description}
         </p>
 
         <div className="flex flex-col">
           <time
             dateTime={dateAdded.toISOString()}
-            className="text-md text-gray-600 dark:text-gray-400"
+            className="text-md text-slate-600 dark:text-slate-400"
           >
             <a
               href={`https://github.com/vidhanio/site/commit/${post.hashAdded}`}
@@ -59,7 +59,7 @@ function PostPage({ post }: Props) {
           {dateUpdated && (
             <time
               dateTime={dateUpdated?.toISOString()}
-              className="text-sm text-gray-500"
+              className="text-sm text-slate-500"
             >
               <a
                 href={`https://github.com/vidhanio/site/commit/${post.hashUpdated}`}
