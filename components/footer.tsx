@@ -34,7 +34,7 @@ export default function Footer({ footerItems }: Props): JSX.Element {
       </ul>
       <a
         href="https://github.com/vidhanio/site/blob/main/LICENSE"
-        className={`text-xs font-thin text-slate-400 underline transition-colors hover:text-slate-600 dark:text-slate-600 dark:hover:text-slate-400`}
+        className="text-xs font-thin text-slate-400 underline transition-colors hover:text-slate-600 dark:text-slate-600 dark:hover:text-slate-400"
       >
         {"site licensed under agpl-3.0."}
       </a>
