@@ -11,7 +11,7 @@ export default async function postFromSlug(slug: string): Promise<Post> {
 
   const { frontmatter, code: content } = await bundleMDX<FrontmatterProps>({
     file: filePath,
-    xdmOptions(options) {
+    mdxOptions(options) {
       options.rehypePlugins = [[rehypePrism, { showLineNumbers: true }]];
       return options;
     },
