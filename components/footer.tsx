@@ -1,19 +1,24 @@
 import Link from "next/link";
+import { AnchorHTMLAttributes } from "react";
 
 type FooterItemProps = {
   name: string;
   url: string;
+  attributes?: AnchorHTMLAttributes<HTMLAnchorElement>;
 };
 
 type Props = {
   footerItems: FooterItemProps[];
 };
 
-function FooterItem({ name, url }: FooterItemProps): JSX.Element {
+function FooterItem({ name, url, attributes }: FooterItemProps): JSX.Element {
   return (
     <li>
       <Link href={url}>
-        <a className="text-sm font-light italic text-slate-400 underline transition-colors hover:text-slate-600 dark:text-slate-600 dark:hover:text-slate-400">
+        <a
+          {...attributes}
+          className="text-sm font-light italic text-slate-400 underline transition-colors hover:text-slate-600 dark:text-slate-600 dark:hover:text-slate-400"
+        >
           {name}
         </a>
       </Link>

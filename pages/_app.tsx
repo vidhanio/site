@@ -46,6 +46,13 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
             name: "linkedin",
             url: "https://www.linkedin.com/in/vidhanio/",
           },
+          {
+            name: "mastodon",
+            url: "https://fosstodon.org/@vidhan",
+            attributes: {
+              rel: "me",
+            },
+          },
         ]}
       />
     </>
