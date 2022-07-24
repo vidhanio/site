@@ -14,7 +14,7 @@ export default function IndexPage() {
         <p className="text-xl">
           {`
           hey! i'm vidhan. i'm a software engineer, fullstack developer, discord
-          bot developer, and grade 12 high school student. i'm currently working
+          bot developer, and a student at mcmaster. i'm currently working
           on a ton of cool projects, which you can find at 
           `}
           <A href="https://github.com/vidhanio">my github</A>.
