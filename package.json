@@ -20,7 +20,7 @@
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.4",
     "@types/node": "^18.7.14",
-    "@types/react": "^18.0.17",
+    "@types/react": "^18.0.19",
     "@types/react-highlight": "^0.12.5",
     "autoprefixer": "^10.4.8",
     "esbuild": "^0.14.54",
