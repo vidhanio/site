@@ -22,7 +22,7 @@
     "@types/node": "^18.7.14",
     "@types/react": "^18.0.21",
     "@types/react-highlight": "^0.12.5",
-    "autoprefixer": "^10.4.8",
+    "autoprefixer": "^10.4.12",
     "esbuild": "^0.14.54",
     "eslint": "8.24.0",
     "eslint-config-next": "^12.2.5",
