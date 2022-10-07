@@ -18,7 +18,7 @@
     "simple-git": "^3.13.0"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.4",
+    "@tailwindcss/typography": "^0.5.7",
     "@types/node": "^18.7.14",
     "@types/react": "^18.0.21",
     "@types/react-highlight": "^0.12.5",
