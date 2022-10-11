@@ -24,7 +24,7 @@
     "@types/react-highlight": "^0.12.5",
     "autoprefixer": "^10.4.12",
     "esbuild": "^0.14.54",
-    "eslint": "8.24.0",
+    "eslint": "8.25.0",
     "eslint-config-next": "^12.3.1",
     "postcss": "^8.4.17",
     "prettier": "^2.6.2",
