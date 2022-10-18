@@ -1,4 +1,4 @@
-import { BeakerIcon } from "@heroicons/react/solid";
+import { BeakerIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 
 type ProjectProps = {

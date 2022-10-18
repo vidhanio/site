@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { NewspaperIcon } from "@heroicons/react/solid";
+import { NewspaperIcon } from "@heroicons/react/24/solid";
 import { Post } from "types";
 
 type PostCardProps = {
