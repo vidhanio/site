@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@heroicons/react": "^2.0.12",
+    "@heroicons/react": "^2.0.13",
     "mdx-bundler": "^9.0.0",
     "next": "^13.0.1",
     "react": "^18.0.0",
