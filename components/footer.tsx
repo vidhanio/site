@@ -14,13 +14,12 @@ type Props = {
 function FooterItem({ name, url, attributes }: FooterItemProps): JSX.Element {
   return (
     <li>
-      <Link href={url}>
-        <a
-          {...attributes}
-          className="text-sm font-light italic text-slate-400 underline transition-colors hover:text-slate-600 dark:text-slate-600 dark:hover:text-slate-400"
-        >
-          {name}
-        </a>
+      <Link
+        {...attributes}
+        href={url}
+        className="text-sm font-light italic text-slate-400 underline transition-colors hover:text-slate-600 dark:text-slate-600 dark:hover:text-slate-400"
+      >
+        {name}
       </Link>
     </li>
   );

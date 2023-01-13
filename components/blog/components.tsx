@@ -26,8 +26,8 @@ export function MDXImg({
       <Image
         src={src ?? ""}
         alt={alt ?? ""}
-        width={16}
-        height={9}
+        width={1920}
+        height={1080}
         className="rounded-md"
       />
       <figcaption>{alt}</figcaption>
