@@ -25,11 +25,9 @@ export function MDXImg({
     <div className="rounded-md">
       <Image
         src={src ?? ""}
-        alt={alt}
+        alt={alt ?? ""}
         width={16}
         height={9}
-        layout="responsive"
-        objectFit="cover"
         className="rounded-md"
       />
       <figcaption>{alt}</figcaption>
