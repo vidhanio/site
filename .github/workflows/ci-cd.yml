@@ -134,14 +134,3 @@ jobs:
           labels: ${{ steps.docker-metadata.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-  deploy:
-    name: Deploy
-
-    environment:
-      name: Production
-      url: https://vidhan.io
-
-    permissions: {}
-
-    runs-on: ubuntu-latest
