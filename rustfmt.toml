@@ -1,0 +1,7 @@
+unstable_features = true
+
+format_macro_matchers = true
+group_imports = "StdExternalCrate"
+imports_granularity = "Crate"
+reorder_impl_items = true
+wrap_comments = true

@@ -1,0 +1,36 @@
+[package]
+name = "vidhan-site"
+version = "0.1.0"
+edition = "2021"
+authors = ["Vidhan Bhatt <me@vidhan.io>"]
+license = "AGPL-3.0"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = { version = "0.6", features = ["macros"] }
+color-eyre = "0.6"
+envy = "0.4"
+futures-util = { version = "0.3", features = ["std"], default-features = false }
+html-escape = "0.2.13"
+html-node = { version = "0.2", features = ["axum"] }
+hyper = "0.14"
+pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }
+request-id = { version = "0.2", features = ["ulid"] }
+serde = { version = "1", features = ["derive"] }
+syntect = { version = "5", features = [
+    "default-fancy",
+], default-features = false }
+thiserror = "1"
+tokio = { version = "1", features = ["fs", "macros", "rt-multi-thread"] }
+tokio-stream = { version = "0.1", features = ["fs"] }
+tower = "0.4"
+tower-http = { version = "0.4", features = [
+    "cors",
+    "fs",
+    "request-id",
+    "trace",
+    "util",
+] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
