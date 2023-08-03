@@ -1,14 +1,12 @@
 use pulldown_cmark::{CodeBlockKind, Event, Tag, TagEnd};
-use syntect::{parsing::SyntaxSet, util::LinesWithEndings};
 
-use self::html_generator::HighlightedHtmlGenerator;
-use crate::error::Error;
+use crate::{error::Error, App};
 
 pub struct SyntaxHighlighterStream<'a, I>
 where
     I: Iterator<Item = Event<'a>>,
 {
-    syntax_set: &'a SyntaxSet,
+    app: &'a App,
     iter: I,
 }
 
@@ -16,8 +14,8 @@ impl<'a, I> SyntaxHighlighterStream<'a, I>
 where
     I: Iterator<Item = Event<'a>>,
 {
-    pub const fn new(syntax_set: &'a SyntaxSet, iter: I) -> Self {
-        Self { syntax_set, iter }
+    pub const fn new(app: &'a App, iter: I) -> Self {
+        Self { app, iter }
     }
 }
 
@@ -31,59 +29,50 @@ where
         let event = self.iter.next()?;
 
         match event {
-            Event::Start(Tag::CodeBlock(kind)) => {
-                let syntax = match kind {
-                    CodeBlockKind::Fenced(lang) => self
-                        .syntax_set
-                        .find_syntax_by_token(&lang)
-                        .unwrap_or_else(|| self.syntax_set.find_syntax_plain_text()),
-                    CodeBlockKind::Indented => self.syntax_set.find_syntax_plain_text(),
-                };
-
-                let event = self
+            Event::Start(Tag::CodeBlock(block_kind)) => {
+                let result = self
                     .iter
                     .by_ref()
                     .map_while(|event| match event {
-                        Event::Text(text) => Some(Ok(text)),
+                        Event::Text(text) => Some(Ok(text.into_string())),
                         Event::End(TagEnd::CodeBlock) => None,
                         _ => Some(Err(Error::UnexpectedMarkdownTag)),
                     })
-                    .try_fold(
-                        HighlightedHtmlGenerator::new_with_class_style(syntax, self.syntax_set),
-                        |mut generator, lines| {
-                            let lines = lines?;
+                    .collect::<crate::Result<String>>();
 
-                            for line in LinesWithEndings::from(&lines) {
-                                generator.parse_html_for_line_which_includes_newline(line)?;
-                            }
+                let code = match result {
+                    Ok(text) => text,
+                    Err(error) => return Some(Err(error)),
+                };
 
-                            Ok::<_, Error>(generator)
-                        },
-                    )
-                    .map(|generator| {
-                        let html = generator.finalize();
+                let highlighted_code_result = match block_kind {
+                    CodeBlockKind::Fenced(lang) => self.app.highlight_code(&lang, &code),
+                    CodeBlockKind::Indented => Ok(code),
+                };
 
-                        Event::Html(
-                            format!(
-                                "\
+                let highlighted_code = match highlighted_code_result {
+                    Ok(highlighted_code) => highlighted_code,
+                    Err(error) => return Some(Err(error)),
+                };
+
+                let event = Event::Html(
+                    format!(
+                        "\
                             <pre \
                                 class=\"highlighted-code\"\
                             >\
                                 <code class=\"highlighted-code\">\
-                                    {html}\
+                                    {highlighted_code}\
                                 </code>\
                             </pre>\
                             "
-                            )
-                            .into(),
-                        )
-                    });
+                    )
+                    .into(),
+                );
 
-                Some(event)
+                Some(Ok(event))
             }
             event => Some(Ok(event)),
         }
     }
 }
-
-mod html_generator;

@@ -20,11 +20,9 @@ pub async fn get(State(app): State<App>) -> crate::Result<Node> {
         .map(|markdown| {
             let markdown = markdown?;
 
-            let events = SyntaxHighlighterStream::new(
-                &app.syntax_set,
-                Parser::new_ext(&markdown, Options::all()),
-            )
-            .collect::<Result<Vec<_>, _>>()?;
+            let events =
+                SyntaxHighlighterStream::new(&app, Parser::new_ext(&markdown, Options::all()))
+                    .collect::<Result<Vec<_>, _>>()?;
 
             let mut buf = String::new();
 

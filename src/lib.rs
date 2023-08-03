@@ -22,7 +22,7 @@ type Result<T> = std::result::Result<T, Error>;
 
 /// Serve the application.
 pub async fn serve(config: Config) -> Result<()> {
-    App::new(config).serve().await?;
+    App::new(config)?.serve().await?;
 
     Ok(())
 }

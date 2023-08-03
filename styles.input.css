@@ -152,60 +152,73 @@
 
   /* colors */
 
+  code.highlighted-code .variable {
+    @apply text-violet-700 dark:text-violet-300;
+  }
+
+  code.highlighted-code .variable.builtin {
+    @apply text-violet-600 dark:text-violet-400;
+  }
+
   code.highlighted-code .punctuation,
-  code.highlighted-code .keyword.operator {
+  code.highlighted-code .operator {
     @apply text-slate-600 dark:text-slate-400;
+  }
+
+  code.highlighted-code .punctuation.delimiter {
+    @apply text-slate-500;
   }
 
   code.highlighted-code .comment {
     @apply text-slate-400 dark:text-slate-600;
   }
 
-  code.highlighted-code .constant {
-    @apply text-purple-600 dark:text-purple-400;
+  code.highlighted-code .constructor {
+    @apply text-rose-600 dark:text-rose-400;
   }
 
-  code.highlighted-code .entity.name {
+  code.highlighted-code .type {
     @apply text-blue-600 dark:text-blue-400;
   }
 
-  code.highlighted-code .entity.name.constant {
+  code.highlighted-code .attribute {
+    @apply text-sky-700 dark:text-sky-300;
+  }
+
+  code.highlighted-code .constant {
     @apply text-cyan-600 dark:text-cyan-400;
   }
 
-  code.highlighted-code .invalid.illegal {
-    @apply bg-red-500;
+  code.highlighted-code .constant.builtin {
+    @apply text-purple-600 dark:text-purple-400;
   }
 
-  code.highlighted-code .invalid.deprecated {
-    @apply line-through;
+  code.highlighted-code .number {
+    @apply text-purple-600 dark:text-purple-400;
   }
 
   code.highlighted-code .keyword {
     @apply text-orange-600 dark:text-orange-400;
   }
 
-  code.highlighted-code .variable.function,
-  code.highlighted-code .support.function {
+  code.highlighted-code .function {
     @apply text-amber-600 dark:text-amber-400;
   }
 
-  code.highlighted-code .storage.type,
-  code.highlighted-code .support.type,
-  code.highlighted-code .support.class {
+  code.highlighted-code .type {
     @apply text-blue-600 dark:text-blue-400;
   }
 
-  code.highlighted-code .storage.modifier {
-    @apply text-orange-600 dark:text-orange-400;
+  code.highlighted-code .module {
+    @apply text-pink-600 dark:text-pink-400;
   }
 
   code.highlighted-code .string {
     @apply text-green-600 dark:text-green-400;
   }
 
-  code.highlighted-code .string.regex {
-    @apply text-cyan-600 dark:text-cyan-400;
+  code.highlighted-code .tag {
+    @apply text-fuchsia-600 dark:text-fuchsia-400;
   }
 
   /* line numbers */
@@ -221,11 +234,5 @@
 
   code.highlighted-code span.line-start:before {
     @apply content-[counter(linenumber)];
-  }
-
-  /* fix tailwind */
-  span.punctuation.block,
-  span.meta.block {
-    @apply inline;
   }
 }
