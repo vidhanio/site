@@ -134,3 +134,32 @@ jobs:
           labels: ${{ steps.docker-metadata.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy
+
+    permissions:
+      contents: read
+      id-token: write
+
+    environment:
+      name: production
+      url: https://vidhan.io
+
+    runs-on: ubuntu-latest
+
+    needs:
+      - build
+
+    steps:
+      - name: Login to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT }}
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: "vidhan-site"
+          image: "ghcr.io/vidhanio/site"
