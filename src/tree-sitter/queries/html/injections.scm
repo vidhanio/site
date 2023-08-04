@@ -9,8 +9,8 @@
 )
 
 (
-  (_) @injection.content
-  (#match? @injection.content "^\\{")
+  (_) @_rust @injection.content
+  (#match? @_rust "^\\{")
   (#match? @injection.content "\\}$")
   (#set! injection.language "rust")
 )

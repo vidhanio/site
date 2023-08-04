@@ -1,4 +1,4 @@
-use html_node::{html, text, Node};
+use html_node::{html, Node, Text};
 
 #[derive(Copy, Clone, Debug)]
 pub struct FooterLink<'a> {
@@ -16,7 +16,7 @@ impl<'a> From<FooterLink<'a>> for Node {
                     class="text-sm font-light italic text-slate-400 underline transition-colors hover:text-slate-600 dark:text-slate-600 dark:hover:text-slate-400"
                     rel=link.rel as &str
                 >
-                    {text!("{}", link.name)}
+                    {Text::from(link.name)}
                 </a>
             </li>
         }

@@ -1,4 +1,4 @@
-use html_node::{html, text, Node};
+use html_node::{html, Node, Text};
 
 pub fn seo(path: Option<&str>) -> Node {
     let title = path.map_or_else(
@@ -12,11 +12,11 @@ pub fn seo(path: Option<&str>) -> Node {
 
     html! {
         <head>
-            <title>{text!("{title}")}</title>
+            <title>{Text::from(&title)}</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <meta charset="utf-8" />
 
-            <title>{text!("{title}")}</title>
+            <title>{Text::from(&title)}</title>
 
             <meta name="description" content="vidhan's home on the internet." />
             <meta name="theme-color" content="#6466e9" />

@@ -1,4 +1,4 @@
-use html_node::{html, text, Node};
+use html_node::{html, Node, Text};
 
 #[derive(Copy, Clone, Debug)]
 pub struct ProjectCard<'a> {
@@ -31,10 +31,10 @@ impl<'a> From<ProjectCard<'a>> for Node {
                     )}
                     <div class="flex flex-col items-center justify-center p-4 text-center sm:p-8">
                         <h3 class="text-xl font-bold text-indigo-600 dark:text-indigo-400">
-                            {text!("{}", card.name)}
+                            {Text::from(card.name)}
                         </h3>
                         <p class="text-slate-600 font-normal dark:text-slate-400">
-                            {text!("{}", card.description)}
+                            {Text::from(card.description)}
                         </p>
                     </div>
                 </div>

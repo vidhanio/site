@@ -1,4 +1,4 @@
-use html_node::{html, text, Node, UnsafeText};
+use html_node::{html, Node, Text, UnsafeText};
 use pulldown_cmark::{CodeBlockKind, Event, MetadataBlockKind, Options, Parser, Tag, TagEnd};
 use time::macros::format_description;
 
@@ -121,10 +121,10 @@ impl<'configs, 'input> BlogPost<'configs, 'input, '_> {
 
         Ok(html! {
             <header class="flex flex-col text-center gap-8">
-                <h1>{text!("{}", metadata.title)}</h1>
-                <p class="text-lg text-slate-700 dark:text-slate-300">{text!("{}", metadata.description)}</p>
+                <h1>{Text::from(metadata.title)}</h1>
+                <p class="text-lg text-slate-700 dark:text-slate-300">{Text::from(metadata.description)}</p>
                 <time class="text-md text-slate-600 dark:text-slate-400" datetime=metadata.date>
-                    {text!("{}", metadata.date.format(FORMAT_DESCRIPTION)?)}
+                    {Text::from(metadata.date.format(FORMAT_DESCRIPTION)?)}
                 </time>
             </header>
 

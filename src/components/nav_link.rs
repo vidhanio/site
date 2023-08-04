@@ -1,4 +1,4 @@
-use html_node::{html, text, Node};
+use html_node::{html, Node, Text};
 
 #[derive(Copy, Clone, Debug)]
 pub struct NavLink<'a> {
@@ -14,7 +14,7 @@ impl<'a> From<NavLink<'a>> for Node {
                     href={item.link}
                     class="text-xl font-extrabold italic text-indigo-500 transition-colors hover:text-emerald-500"
                 >
-                    {text!("{}", item.name)}
+                    {Text::from(item.name)}
                 </a>
             </li>
         }

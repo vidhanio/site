@@ -1,4 +1,4 @@
-use html_node::{html, text, Node};
+use html_node::{html, Node, Text};
 
 use super::BlogPostMetadata;
 
@@ -37,10 +37,10 @@ impl From<BlogCard> for Node {
                     )}
                     <div class="flex flex-col items-center justify-center p-4 text-center sm:p-8">
                         <h3 class="text-xl font-bold text-indigo-600 dark:text-indigo-400">
-                            {text!("{}", card.metadata.title)}
+                            {Text::from(card.metadata.title)}
                         </h3>
                         <p class="text-slate-600 font-normal dark:text-slate-400">
-                            {text!("{}", card.metadata.description)}
+                            {Text::from(card.metadata.description)}
                         </p>
                     </div>
                 </div>

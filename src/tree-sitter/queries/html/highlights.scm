@@ -9,4 +9,6 @@
 
 (comment) @comment
 
-["<" ">" "</" "/>"] @punctuation.bracket
+["<!" "<" ">" "</" "/>"] @punctuation.bracket
+
+"=" @operator
