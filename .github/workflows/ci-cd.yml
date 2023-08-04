@@ -161,7 +161,7 @@ jobs:
 
     environment:
       name: production
-      url: https://vidhan.io
+      url: ${{ steps.cloud-run-deploy.outputs.url }}
 
     runs-on: ubuntu-latest
 
@@ -179,7 +179,8 @@ jobs:
           service_account: ${{ secrets.SERVICE_ACCOUNT }}
 
       - name: Deploy to Cloud Run
+        id: cloud-run-deploy
         uses: google-github-actions/deploy-cloudrun@v1
         with:
-          service: "vidhan-site"
+          service: "site"
           image: "us-east1-docker.pkg.dev/vidhan-io/site/site"
