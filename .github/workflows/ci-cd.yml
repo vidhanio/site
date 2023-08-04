@@ -136,7 +136,7 @@ jobs:
           service_account: ${{ secrets.SERVICE_ACCOUNT }}
 
       - name: Login to Google Artifact Registry
-        uses: google-github-actions/setup-gcloud@v0.3.0
+        uses: docker/login-action@v2
         with:
           registry: us-east1-docker.pkg.dev
           username: oauth2accesstoken
