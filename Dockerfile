@@ -1,5 +1,7 @@
-FROM lukemathwalker/cargo-chef:latest as chef
+FROM clux/muslrust:stable AS chef
+RUN cargo install cargo-chef
 WORKDIR /app
+
 
 FROM chef AS planner
 COPY ./Cargo.toml ./Cargo.lock ./
@@ -14,14 +16,14 @@ COPY ./src ./src
 RUN cargo build --release
 RUN mv ./target/release/vidhan-site ./site
 
-FROM debian:stable-slim AS css-builder
+FROM alpine:latest AS css-builder
 WORKDIR /app
 ADD --chmod=755 https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 ./
 COPY ./styles.input.css ./tailwind.config.js ./
 COPY ./src ./src
 RUN ./tailwindcss-linux-x64 build -i ./styles.input.css -o ./styles.css --minify
 
-FROM debian:stable-slim AS runtime
+FROM scratch AS runtime
 WORKDIR /app
 COPY ./public ./public
 COPY ./content ./content
