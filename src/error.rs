@@ -24,6 +24,14 @@ pub enum Error {
     #[error("unexpected markdown tag")]
     UnexpectedMarkdownTag,
 
+    /// A blog post was missing metadata.
+    #[error("missing blog post metadata")]
+    MissingMetadata,
+
+    /// A [`serde_yaml::Error`]
+    #[error("serde yaml error: {0}")]
+    Yaml(#[from] serde_yaml::Error),
+
     /// A [`tree_sitter::QueryError`]
     #[error("tree-sitter query error")]
     TreeSitterQuery(#[from] tree_sitter::QueryError),
@@ -31,6 +39,10 @@ pub enum Error {
     /// A [`tree_sitter_highlight::Error`]
     #[error("tree-sitter highlight error")]
     TreeSitterHighlight(#[from] tree_sitter_highlight::Error),
+
+    /// An invalid blog slug was provided.
+    #[error("invalid blog slug")]
+    InvalidBlogSlug,
 }
 
 impl Error {
@@ -41,8 +53,11 @@ impl Error {
             Self::Hyper(_)
             | Self::Io(_)
             | Self::UnexpectedMarkdownTag
+            | Self::MissingMetadata
+            | Self::Yaml(_)
             | Self::TreeSitterQuery(_)
             | Self::TreeSitterHighlight(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::InvalidBlogSlug => StatusCode::BAD_REQUEST,
         }
     }
 }

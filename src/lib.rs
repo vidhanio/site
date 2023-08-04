@@ -13,8 +13,8 @@ mod app;
 mod components;
 mod config;
 mod error;
+mod highlighter_configs;
 mod pages;
-mod syntax_highlighting;
 
 pub use self::{app::App, config::Config, error::Error};
 

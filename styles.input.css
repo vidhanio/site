@@ -139,6 +139,7 @@
   pre.highlighted-code,
   :not(pre) > code {
     @apply rounded font-mono hyphens-none bg-slate-200 dark:bg-slate-800;
+    font-feature-settings: normal;
   }
 
   pre.highlighted-code {

@@ -1,28 +1,34 @@
 use html_node::{html, text, Node};
 
-#[derive(Copy, Clone, Debug)]
-pub struct BlogCard<'a> {
-    pub slug: &'a str,
-    pub name: &'a str,
-    pub description: &'a str,
-    pub image_src: Option<&'a str>,
+use super::BlogPostMetadata;
+
+#[derive(Clone, Debug)]
+pub struct BlogCard {
+    pub slug: String,
+    pub metadata: BlogPostMetadata,
 }
 
-impl<'a> From<BlogCard<'a>> for Node {
-    fn from(card: BlogCard<'a>) -> Self {
+impl BlogCard {
+    pub const fn new(slug: String, metadata: BlogPostMetadata) -> Self {
+        Self { slug, metadata }
+    }
+}
+
+impl From<BlogCard> for Node {
+    fn from(card: BlogCard) -> Self {
         html! {
             <a href=format!("/blog/{}", card.slug)>
                 <div class="flex w-full flex-col items-center justify-center rounded-xl bg-slate-200 dark:bg-slate-800 sm:w-96">
-                    {card.image_src.map_or_else(
+                    {card.metadata.image_url.map_or_else(
                         || html! {
                             <div class="flex aspect-square w-full flex-col items-center justify-center sm:h-96 sm:w-96">
                                 {blog_placeholder()}
                             </div>
                         },
-                        |src| html! {
+                        |url| html! {
                             <img
-                                src=src
-                                alt=card.name
+                                src=url
+                                alt=card.metadata.title
                                 width=384
                                 height=384
                                 class="w-full rounded-t-xl"
@@ -31,10 +37,10 @@ impl<'a> From<BlogCard<'a>> for Node {
                     )}
                     <div class="flex flex-col items-center justify-center p-4 text-center sm:p-8">
                         <h3 class="text-xl font-bold text-indigo-600 dark:text-indigo-400">
-                            {text!("{}", card.name)}
+                            {text!("{}", card.metadata.title)}
                         </h3>
                         <p class="text-slate-600 font-normal dark:text-slate-400">
-                            {text!("{}", card.description)}
+                            {text!("{}", card.metadata.description)}
                         </p>
                     </div>
                 </div>

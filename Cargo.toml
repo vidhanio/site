@@ -14,10 +14,14 @@ futures-util = { version = "0.3", features = ["std"], default-features = false }
 html-escape = "0.2.13"
 html-node = { version = "0.2", features = ["axum"] }
 hyper = "0.14"
+once_cell = "1.18.0"
 pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }
+regex = "1.9.1"
 request-id = { version = "0.2", features = ["ulid"] }
 serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9.25"
 thiserror = "1"
+time = { version = "0.3.25", features = ["serde", "serde-human-readable"] }
 tokio = { version = "1", features = ["fs", "macros", "rt-multi-thread"] }
 tokio-stream = { version = "0.1", features = ["fs"] }
 tower = "0.4"
@@ -28,6 +32,7 @@ tower-http = { version = "0.4", features = [
     "trace",
     "util",
 ] }
+tracing = "0.1.37"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tree-sitter = "0.20"
 tree-sitter-highlight = "0.20"

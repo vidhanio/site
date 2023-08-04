@@ -1,4 +1,4 @@
-mod blog_card;
+mod blog;
 mod footer_link;
 mod nav_link;
 mod project_card;
@@ -7,8 +7,12 @@ mod seo;
 
 use html_node::{html, Node};
 
+pub use self::{
+    blog::{BlogCard, BlogPost, BlogPostMetadata, BlogSlug},
+    project_card::ProjectCard,
+    section::section,
+};
 use self::{footer_link::FooterLink, nav_link::NavLink, seo::seo};
-pub use self::{project_card::ProjectCard, section::section};
 
 const NAV_LINKS: [NavLink<'static>; 3] = [
     NavLink {

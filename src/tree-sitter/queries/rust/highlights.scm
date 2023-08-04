@@ -50,6 +50,18 @@
 (closure_parameters
   (identifier) @variable.parameter)
 
+; Function Calls
+
+(call_expression
+  function: [
+    (identifier) @function
+    (scoped_identifier
+      name: (identifier) @function)
+    (field_expression
+      field: (field_identifier) @function)
+  ])
+
+
 ; Types
 
 (empty_type) @type.builtin
@@ -254,6 +266,24 @@
   "while"
 ] @keyword
 
+
+; Punctuation
+
+["(" ")" "[" "]" "{" "}"] @punctuation.bracket
+(closure_parameters "|" @punctuation.bracket)
+
+["," "." ":" "::" ";" "->" "=>"] @punctuation.delimiter
+
+; ; Generic Brackets
+(type_parameters ["<" ">"] @punctuation.bracket)
+(bracketed_type ["<" ">"] @punctuation.bracket)
+(for_lifetimes ["<" ">"] @punctuation.bracket)
+(type_arguments  ["<" ">"] @punctuation.bracket)
+
+; ; Attributes
+(attribute_item "#" @punctuation)
+(inner_attribute_item ["!" "#"] @punctuation)
+
 ; Operators
 
 [
@@ -293,19 +323,3 @@
   "||"
 ] @operator
 
-; Punctuation
-
-["(" ")" "[" "]" "{" "}"] @punctuation.bracket
-(closure_parameters "|" @punctuation.bracket)
-
-["," "." ":" "::" ";" "->" "=>"] @punctuation.delimiter
-
-; ; Generic Brackets
-(type_parameters ["<" ">"] @punctuation.bracket)
-(bracketed_type ["<" ">"] @punctuation.bracket)
-(for_lifetimes ["<" ">"] @punctuation.bracket)
-(type_arguments  ["<" ">"] @punctuation.bracket)
-
-; ; Attributes
-(attribute_item "#" @punctuation)
-(inner_attribute_item ["!" "#"] @punctuation)
