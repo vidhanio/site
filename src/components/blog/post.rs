@@ -88,8 +88,6 @@ impl<'configs, 'input> BlogPost<'configs, 'input, '_> {
     }
 
     pub fn metadata(mut self) -> crate::Result<BlogPostMetadata> {
-        let mut metadata = None;
-
         while let Some(event) = self.parser.next() {
             if event == Event::Start(Tag::MetadataBlock(MetadataBlockKind::YamlStyle)) {
                 let metadata_string = self
@@ -104,11 +102,11 @@ impl<'configs, 'input> BlogPost<'configs, 'input, '_> {
 
                 let parsed_metadata = serde_yaml::from_str::<BlogPostMetadata>(&metadata_string)?;
 
-                metadata = Some(parsed_metadata);
+                return Ok(parsed_metadata);
             }
         }
 
-        metadata.ok_or(Error::MissingMetadata)
+        Err(Error::MissingMetadata)
     }
 
     pub fn into_node(mut self) -> crate::Result<Node> {
