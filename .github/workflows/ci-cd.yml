@@ -160,7 +160,7 @@ jobs:
       id-token: write
 
     environment:
-      name: production
+      name: Production
       url: ${{ steps.cloud-run-deploy.outputs.url }}
 
     runs-on: ubuntu-latest
