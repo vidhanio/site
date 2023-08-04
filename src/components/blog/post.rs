@@ -1,6 +1,6 @@
 use html_node::{html, text, Node, UnsafeText};
 use pulldown_cmark::{CodeBlockKind, Event, MetadataBlockKind, Options, Parser, Tag, TagEnd};
-use time::{format_description::OwnedFormatItem, macros::format_description};
+use time::macros::format_description;
 
 use super::BlogPostMetadata;
 use crate::{error::Error, highlighter_configs::HighlighterConfigurations};
