@@ -21,7 +21,6 @@ pub fn seo(path: Option<&str>) -> Node {
 
             <meta name="og:title" content=&title />
             <meta name="og:description" content="vidhan's home on the internet." />
-            <meta name="og:image" content="https://vidhan.io/images/og-image.png" />
             <meta name="og:url" content=&url />
             <meta name="og:type" content="website" />
 
@@ -32,10 +31,6 @@ pub fn seo(path: Option<&str>) -> Node {
             <meta
                 name="twitter:description"
                 content="vidhan's home on the internet."
-            />
-            <meta
-                name="twitter:image"
-                content="https://vidhan.io/images/og-image.png"
             />
             <meta name="og:url" content=&url />
         </head>
