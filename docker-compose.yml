@@ -4,9 +4,7 @@ services:
   site:
     container_name: vidhan-site
     image: ghcr.io/vidhan/site:local
-    build:
-      context: .
-      dockerfile: ./Dockerfile.dev
+    build: .
     restart: always
     environment:
       IP: 0.0.0.0
