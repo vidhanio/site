@@ -86,6 +86,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     runs-on: ubuntu-latest
 
