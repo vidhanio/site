@@ -1,4 +1,4 @@
-FROM lukemathwalker/cargo-chef:latest-rust-alpine as chef
+FROM lukemathwalker/cargo-chef:latest as chef
 WORKDIR /app
 
 FROM chef AS planner
@@ -7,7 +7,6 @@ COPY ./src ./src
 RUN cargo chef prepare
 
 FROM chef AS builder
-RUN apk add --no-cache build-base
 COPY --from=planner /app/recipe.json .
 RUN cargo chef cook --release
 COPY ./Cargo.toml ./Cargo.lock ./
@@ -22,7 +21,7 @@ COPY ./styles.input.css ./tailwind.config.js ./
 COPY ./src ./src
 RUN ./tailwindcss-linux-x64 build -i ./styles.input.css -o ./styles.css --minify
 
-FROM scratch AS runtime
+FROM debian:stable-slim AS runtime
 WORKDIR /app
 COPY ./public ./public
 COPY ./content ./content
