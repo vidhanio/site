@@ -185,3 +185,4 @@ jobs:
           service: "site"
           image: "us-east1-docker.pkg.dev/vidhan-io/site/site:latest"
           env_vars: IP=0.0.0.0
+          region: us-east1
