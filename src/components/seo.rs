@@ -1,7 +1,10 @@
 use html_node::{html, text, Node};
 
 pub fn seo(path: Option<&str>) -> Node {
-    let title = path.map_or_else(|| "vidhan".into(), |path| format!("vidhan / {path}"));
+    let title = path.map_or_else(
+        || "vidhan".into(),
+        |path| format!("vidhan / {}", path.replace('/', " / ")),
+    );
     let url = path.map_or_else(
         || "https://vidhan.io".into(),
         |path| format!("https://vidhan.io/{path}"),

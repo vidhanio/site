@@ -53,7 +53,7 @@ pub async fn get(State(app): State<App>) -> crate::Result<Node> {
         .await?;
 
     Ok(document(
-        None,
+        Some("blog"),
         html! {
             {post_cards}
         },
@@ -76,5 +76,5 @@ pub async fn get_post(
 
     let blog_post = BlogPost::new(&app.highlighter_configs, &md);
 
-    Ok(document(None, blog_post.into_node()?))
+    Ok(document(Some("blog/hello-world"), blog_post.into_node()?))
 }
