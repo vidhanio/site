@@ -1,5 +1,6 @@
 use html_node::{html, text, Node, UnsafeText};
 use pulldown_cmark::{CodeBlockKind, Event, MetadataBlockKind, Options, Parser, Tag, TagEnd};
+use time::{format_description::OwnedFormatItem, macros::format_description};
 
 use super::BlogPostMetadata;
 use crate::{error::Error, highlighter_configs::HighlighterConfigurations};
@@ -111,6 +112,9 @@ impl<'configs, 'input> BlogPost<'configs, 'input, '_> {
     }
 
     pub fn into_node(mut self) -> crate::Result<Node> {
+        static FORMAT_DESCRIPTION: &[time::format_description::FormatItem<'static>] =
+            format_description!("[month repr:long] [day padding:none], [year]");
+
         let mut buf = String::new();
 
         let (events, metadata) = self.events_and_metadata()?;
@@ -122,7 +126,7 @@ impl<'configs, 'input> BlogPost<'configs, 'input, '_> {
                 <h1>{text!("{}", metadata.title)}</h1>
                 <p class="text-lg text-slate-700 dark:text-slate-300">{text!("{}", metadata.description)}</p>
                 <time class="text-md text-slate-600 dark:text-slate-400" datetime=metadata.date>
-                    {text!("{}", metadata.date)}
+                    {text!("{}", metadata.date.format(FORMAT_DESCRIPTION)?)}
                 </time>
             </header>
 

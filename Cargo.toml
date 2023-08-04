@@ -21,7 +21,7 @@ request-id = { version = "0.2", features = ["ulid"] }
 serde = { version = "1", features = ["derive"] }
 serde_yaml = "0.9.25"
 thiserror = "1"
-time = { version = "0.3.25", features = ["serde", "serde-human-readable"] }
+time = { version = "0.3.25", features = ["serde", "serde-human-readable", "macros"] }
 tokio = { version = "1", features = ["fs", "macros", "rt-multi-thread"] }
 tokio-stream = { version = "0.1", features = ["fs"] }
 tower = "0.4"

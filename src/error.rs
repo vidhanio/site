@@ -43,6 +43,10 @@ pub enum Error {
     /// An invalid blog slug was provided.
     #[error("invalid blog slug")]
     InvalidBlogSlug,
+
+    /// A [`time::error::Format`]
+    #[error("time format error")]
+    TimeFormat(#[from] time::error::Format),
 }
 
 impl Error {
@@ -56,7 +60,8 @@ impl Error {
             | Self::MissingMetadata
             | Self::Yaml(_)
             | Self::TreeSitterQuery(_)
-            | Self::TreeSitterHighlight(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            | Self::TreeSitterHighlight(_)
+            | Self::TimeFormat(_) => StatusCode::INTERNAL_SERVER_ERROR,
             Self::InvalidBlogSlug => StatusCode::BAD_REQUEST,
         }
     }
