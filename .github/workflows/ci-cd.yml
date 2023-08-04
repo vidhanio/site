@@ -183,4 +183,4 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: "site"
-          image: "us-east1-docker.pkg.dev/vidhan-io/site/site"
+          image: "us-east1-docker.pkg.dev/vidhan-io/site/site:latest"
