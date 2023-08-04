@@ -1,0 +1,16 @@
+name: vidhan-site
+
+services:
+  site:
+    container_name: vidhan-site
+    image: ghcr.io/vidhan/site:local
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    restart: always
+    environment:
+      IP: 0.0.0.0
+      PORT: 8080
+      RUST_LOG: info,vidhan_site=debug
+    ports:
+      - 8080:8080

@@ -1,0 +1,10 @@
+*
+
+!/src/
+!/Cargo.toml
+!/Cargo.lock
+!/tailwind.config.js
+!/styles.input.css
+!/public/
+/public/css/styles.css
+!/content/

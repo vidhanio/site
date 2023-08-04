@@ -1,0 +1,239 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1 {
+    @apply text-6xl font-extrabold italic text-indigo-500;
+  }
+
+  a {
+    @apply font-bold text-indigo-500 transition-colors  hover:text-emerald-500;
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 100;
+    src: url("/public/fonts/CartographCF-Thin.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-Thin.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 100;
+    font-style: italic;
+    src: url("/public/fonts/CartographCF-ThinItalic.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-ThinItalic.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 200;
+    src: url("/public/fonts/CartographCF-ExtraLight.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-ExtraLight.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 200;
+    font-style: italic;
+    src: url("/public/fonts/CartographCF-ExtraLightItalic.woff2")
+        format("woff2"),
+      url("/public/fonts/CartographCF-ExtraLightItalic.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 300;
+    src: url("/public/fonts/CartographCF-Light.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-Light.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 300;
+    font-style: italic;
+    src: url("/public/fonts/CartographCF-LightItalic.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-LightItalic.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 400;
+    src: url("/public/fonts/CartographCF-Regular.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-Regular.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 400;
+    font-style: italic;
+    src: url("/public/fonts/CartographCF-RegularItalic.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-RegularItalic.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 500;
+    src: url("/public/fonts/CartographCF-DemiBold.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-DemiBold.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 500;
+    font-style: italic;
+    src: url("/public/fonts/CartographCF-DemiBoldItalic.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-DemiBoldItalic.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 600;
+    src: url("/public/fonts/CartographCF-Bold.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-Bold.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 600;
+    font-style: italic;
+    src: url("/public/fonts/CartographCF-BoldItalic.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-BoldItalic.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 700;
+    src: url("/public/fonts/CartographCF-ExtraBold.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-ExtraBold.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 700;
+    font-style: italic;
+    src: url("/public/fonts/CartographCF-ExtraBoldItalic.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-ExtraBoldItalic.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 800;
+    src: url("/public/fonts/CartographCF-Heavy.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-Heavy.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Cartograph CF";
+    font-weight: 800;
+    font-style: italic;
+    src: url("/public/fonts/CartographCF-HeavyItalic.woff2") format("woff2"),
+      url("/public/fonts/CartographCF-HeavyItalic.woff") format("woff");
+  }
+}
+
+@layer base {
+  /* basic code block setup */
+
+  pre.highlighted-code,
+  :not(pre) > code {
+    @apply rounded font-mono hyphens-none bg-slate-200 dark:bg-slate-800;
+    font-feature-settings: normal;
+  }
+
+  pre.highlighted-code {
+    @apply max-w-full overflow-x-auto p-4;
+    counter-reset: linenumber;
+  }
+
+  :not(pre) > code {
+    @apply px-1;
+  }
+
+  /* colors */
+
+  code.highlighted-code .variable {
+    @apply text-violet-700 dark:text-violet-300;
+  }
+
+  code.highlighted-code .variable.builtin {
+    @apply text-violet-600 dark:text-violet-400;
+  }
+
+  code.highlighted-code .punctuation,
+  code.highlighted-code .operator {
+    @apply text-slate-600 dark:text-slate-400;
+  }
+
+  code.highlighted-code .punctuation.delimiter {
+    @apply text-slate-500;
+  }
+
+  code.highlighted-code .comment {
+    @apply text-slate-400 dark:text-slate-600;
+  }
+
+  code.highlighted-code .constructor {
+    @apply text-rose-600 dark:text-rose-400;
+  }
+
+  code.highlighted-code .type {
+    @apply text-blue-600 dark:text-blue-400;
+  }
+
+  code.highlighted-code .attribute {
+    @apply text-sky-700 dark:text-sky-300;
+  }
+
+  code.highlighted-code .constant {
+    @apply text-cyan-600 dark:text-cyan-400;
+  }
+
+  code.highlighted-code .constant.builtin {
+    @apply text-purple-600 dark:text-purple-400;
+  }
+
+  code.highlighted-code .number {
+    @apply text-purple-600 dark:text-purple-400;
+  }
+
+  code.highlighted-code .keyword {
+    @apply text-orange-600 dark:text-orange-400;
+  }
+
+  code.highlighted-code .function {
+    @apply text-amber-600 dark:text-amber-400;
+  }
+
+  code.highlighted-code .type {
+    @apply text-blue-600 dark:text-blue-400;
+  }
+
+  code.highlighted-code .module {
+    @apply text-pink-600 dark:text-pink-400;
+  }
+
+  code.highlighted-code .string {
+    @apply text-green-600 dark:text-green-400;
+  }
+
+  code.highlighted-code .tag {
+    @apply text-fuchsia-600 dark:text-fuchsia-400;
+  }
+
+  /* line numbers */
+
+  code.highlighted-code {
+    counter-reset: linenumber;
+  }
+
+  code.highlighted-code span.line-start {
+    @apply inline-block text-slate-400 dark:text-slate-600 text-right w-[2ch] pr-4 mr-4 border-r-2 border-solid border-slate-300 dark:border-slate-700 box-content;
+    counter-increment: linenumber;
+  }
+
+  code.highlighted-code span.line-start:before {
+    @apply content-[counter(linenumber)];
+  }
+}
