@@ -106,6 +106,7 @@ jobs:
         with:
           images: |
             ghcr.io/vidhanio/site
+            us-east1-docker.pkg.dev/vidhan-io/site/site
           tags: |
             type=ref,event=branch
             type=sha
@@ -124,6 +125,21 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to Google Cloud
+        id: gcloud-auth
+        uses: google-github-actions/auth@v1
+        with:
+          token_format: access_token
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT }}
+
+      - name: Login to Google Artifact Registry
+        uses: google-github-actions/setup-gcloud@v0.3.0
+        with:
+          registry: us-east1-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.gcloud-auth.outputs.access_token }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
@@ -152,6 +168,9 @@ jobs:
       - build
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Login to Google Cloud
         uses: google-github-actions/auth@v1
         with:
@@ -162,4 +181,4 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: "vidhan-site"
-          image: "ghcr.io/vidhanio/site"
+          image: "us-east1-docker.pkg.dev/vidhan-io/site/site"
