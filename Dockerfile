@@ -9,6 +9,7 @@ COPY ./src ./src
 RUN cargo chef prepare
 
 FROM chef AS builder
+RUN ln -s "/usr/bin/g++" "/usr/bin/musl-g++"
 COPY --from=planner /app/recipe.json .
 RUN cargo chef cook --release --target x86_64-unknown-linux-musl
 COPY ./Cargo.toml ./Cargo.lock ./
