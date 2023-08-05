@@ -8,7 +8,7 @@ use tokio_stream::wrappers::ReadDirStream;
 use tracing::instrument;
 
 use crate::{
-    components::{document, BlogCard, BlogPost, BlogSlug},
+    components::{document, BlogLink, BlogPost, BlogSlug},
     App, Error,
 };
 
@@ -21,7 +21,7 @@ pub fn router() -> Router<App> {
 #[instrument(err)]
 pub async fn get(State(app): State<App>) -> crate::Result<Node> {
     let dir = fs::read_dir(&app.config.content_dir.join("blog")).await?;
-    let post_cards = ReadDirStream::new(dir)
+    let mut post_links = ReadDirStream::new(dir)
         .map_err(Error::from)
         .try_filter_map(|dir_entry| {
             let highlighter_configs = Arc::clone(&app.highlighter_configs);
@@ -40,7 +40,7 @@ pub async fn get(State(app): State<App>) -> crate::Result<Node> {
 
                     let metadata = BlogPost::new(&highlighter_configs, &md).metadata()?;
 
-                    Ok::<_, Error>(Some(BlogCard::new(
+                    Ok::<_, Error>(Some(BlogLink::new(
                         slug.to_string_lossy().into_owned(),
                         metadata,
                     )))
@@ -52,10 +52,15 @@ pub async fn get(State(app): State<App>) -> crate::Result<Node> {
         .try_collect::<Vec<_>>()
         .await?;
 
+    post_links.sort_by_key(|link| link.metadata.date);
+
     Ok(document(
         Some("blog"),
         html! {
-            {post_cards}
+            <h1>blog</h1>
+            <ul class="flex flex-col gap-4">
+                {post_links}
+            </ul>
         },
     ))
 }

@@ -13,7 +13,7 @@ impl<'a> From<FooterLink<'a>> for Node {
             <li>
                 <a
                     href=link.url
-                    class="text-sm font-light italic text-slate-400 underline transition-colors hover:text-slate-600 dark:text-slate-600 dark:hover:text-slate-400"
+                    class="text-sm font-light hover:text-slate-500"
                     rel=link.rel as &str
                 >
                     {Text::from(link.name)}

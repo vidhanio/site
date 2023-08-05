@@ -4,10 +4,7 @@ mod projects;
 use axum::Router;
 use html_node::{html, Node};
 
-use crate::{
-    components::{document, section},
-    App,
-};
+use crate::{components::document, App};
 
 pub fn router() -> Router<App> {
     Router::new()
@@ -21,16 +18,14 @@ pub async fn get() -> Node {
     document(
         None,
         html! {
-            <h1>vidhan</h1>
-            {section("introduction", html! {
-                <p class="text-xl">
+            <h1>vidhan.io</h1>
+            <p>
                 "hey! i'm vidhan. i'm a software engineer, fullstack developer, discord \
                 bot developer, and a cs student at mcmaster. i'm currently working \
                 on a ton of cool projects, which you can find on "
                 <a href="https://github.com/vidhanio">"my github"</a>
                 "."
-                </p>
-            })}
+            </p>
         },
     )
 }

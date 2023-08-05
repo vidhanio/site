@@ -1,21 +1,31 @@
-mod card;
+mod link;
 mod post;
 
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
-use time::Date;
+use time::{format_description::FormatItem, macros::format_description, Date};
 
-pub use self::{card::BlogCard, post::BlogPost};
+pub use self::{link::BlogLink, post::BlogPost};
 use crate::error::Error;
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub struct BlogPostMetadata {
     pub title: String,
-    pub description: String,
     pub date: Date,
-    pub image_url: Option<String>,
+    pub description: String,
+}
+
+impl BlogPostMetadata {
+    pub fn date_text(&self) -> String {
+        static FORMAT_DESCRIPTION: &[FormatItem<'static>] =
+            format_description!("[month repr:long] [day padding:none], [year]");
+
+        self.date
+            .format(FORMAT_DESCRIPTION)
+            .expect("date formatting should not fail")
+    }
 }
 
 #[derive(Clone, Debug)]

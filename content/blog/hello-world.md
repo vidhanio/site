@@ -1,7 +1,7 @@
 ---
-title: "hello, world!"
-description: "first post!"
+title: hello, world!
 date: 2023-08-04
+description: welcome to my new website!
 ---
 
 hi, i'm vidhan! welcome to my new site and blog, rewritten from the ground up using [rust](https://www.rust-lang.org/).

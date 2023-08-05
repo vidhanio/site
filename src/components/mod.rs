@@ -1,18 +1,21 @@
 mod blog;
-mod footer_link;
-mod nav_link;
-mod project_card;
-mod section;
+mod footer;
+mod icons;
+mod nav;
+mod project;
 mod seo;
 
 use html_node::{html, Node};
 
 pub use self::{
-    blog::{BlogCard, BlogPost, BlogPostMetadata, BlogSlug},
-    project_card::ProjectCard,
-    section::section,
+    blog::{BlogLink, BlogPost, BlogPostMetadata, BlogSlug},
+    project::ProjectLink,
 };
-use self::{footer_link::FooterLink, nav_link::NavLink, seo::seo};
+use self::{
+    footer::{footer, FooterLink},
+    nav::{nav, NavLink},
+    seo::seo,
+};
 
 const NAV_LINKS: [NavLink<'static>; 3] = [
     NavLink {
@@ -71,38 +74,21 @@ pub fn document(path: Option<&str>, content: Node) -> Node {
                 <link rel="stylesheet" href="/public/css/styles.css" />
             </head>
 
-            <body class="bg-slate-100 font-mono text-slate-900 [font-feature-settings:'ss05'] dark:bg-slate-900 dark:text-slate-100">
-                {layout(content)}
+            <body
+                class="\
+                    min-h-screen \
+                    px-[10%] lg:px-[25%] \
+                    flex flex-col items-center \
+                    font-mono [font-feature-settings:'ss05'] \
+                    bg-slate-100 dark:bg-slate-900 dark:text-slate-300 text-slate-700\
+                "
+            >
+                {nav(NAV_LINKS)}
+                <main class="w-full py-8 flex-1 border-indigo-600 flex flex-col gap-8">
+                    {content}
+                </main>
+                {footer(FOOTER_LINKS)}
             </body>
         </html>
-    }
-}
-
-fn layout(content: Node) -> Node {
-    html! {
-        <nav class="border-b-2 border-indigo-200 p-8 dark:border-indigo-800 sm:p-16">
-            <ul class="flex flex-row justify-center gap-4">
-                {NAV_LINKS}
-            </ul>
-        </nav>
-
-        <main class="flex flex-col items-center gap-16 px-8 pb-8 pt-16 sm:p-16">
-            {content}
-        </main>
-
-        <footer class="flex flex-col items-center gap-4 border-t-2 border-indigo-200 p-8 dark:border-indigo-800 sm:p-16">
-            <p class="text-lg text-slate-400 dark:text-slate-600">
-                "made with <3 by vidhan."
-            </p>
-            <ul class="flex flex-row justify-center gap-4">
-                {FOOTER_LINKS}
-            </ul>
-            <a
-                href="https://github.com/vidhanio/site/blob/main/LICENSE"
-                class="text-xs font-thin text-slate-400 underline transition-colors hover:text-slate-600 dark:text-slate-600 dark:hover:text-slate-400"
-            >
-                "site licensed under agpl-3.0."
-            </a>
-        </footer>
     }
 }

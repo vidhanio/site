@@ -1,9 +1,8 @@
 use html_node::{html, Node, Text, UnsafeText};
 use pulldown_cmark::{CodeBlockKind, Event, MetadataBlockKind, Options, Parser, Tag, TagEnd};
-use time::macros::format_description;
 
 use super::BlogPostMetadata;
-use crate::{error::Error, highlighter_configs::HighlighterConfigurations};
+use crate::{components::icons, error::Error, highlighter_configs::HighlighterConfigurations};
 
 pub struct BlogPost<'configs, 'input, 'callback> {
     highlighter_configs: &'configs HighlighterConfigurations,
@@ -110,9 +109,6 @@ impl<'configs, 'input> BlogPost<'configs, 'input, '_> {
     }
 
     pub fn into_node(mut self) -> crate::Result<Node> {
-        static FORMAT_DESCRIPTION: &[time::format_description::FormatItem<'static>] =
-            format_description!("[month repr:long] [day padding:none], [year]");
-
         let mut buf = String::new();
 
         let (events, metadata) = self.events_and_metadata()?;
@@ -120,15 +116,31 @@ impl<'configs, 'input> BlogPost<'configs, 'input, '_> {
         pulldown_cmark::html::push_html(&mut buf, events.into_iter());
 
         Ok(html! {
-            <header class="flex flex-col text-center gap-8">
-                <h1>{Text::from(metadata.title)}</h1>
-                <p class="text-lg text-slate-700 dark:text-slate-300">{Text::from(metadata.description)}</p>
-                <time class="text-md text-slate-600 dark:text-slate-400" datetime=metadata.date>
-                    {Text::from(metadata.date.format(FORMAT_DESCRIPTION)?)}
+            <header>
+                <h1>{Text::from(&metadata.title)}</h1>
+                <time class="flex flex-row gap-2 items-center text-slate-600 dark:text-slate-400 mt-2" datetime=metadata.date>
+                    {icons::date(Some("h-4"))}
+                    {Text::from(metadata.date_text())}
                 </time>
+                <p class="text-lg text-slate-500 mt-4">
+                    {Text::from(metadata.description)}
+                </p>
             </header>
 
-            <article class="w-full max-w-3xl flex flex-col gap-6">
+            <hr class="w-3/4 border-indigo-500">
+
+            <article
+                class="\
+                    prose prose-slate dark:prose-invert \
+                    prose-a:text-indigo-500 prose-a:no-underline \
+                    prose-pre:bg-slate-200 dark:prose-pre:bg-slate-800 \
+                        prose-code:font-normal \
+                        prose-code:before:content-none prose-code:after:content-none \
+                        prose-code:bg-slate-200 dark:prose-code:bg-slate-800 \
+                        prose-code:[font-feature-settings:normal] \
+                    max-w-none \
+                "
+            >
                 {UnsafeText::from(buf)}
             </article>
         })
