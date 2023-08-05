@@ -1,6 +1,5 @@
-FROM alpine:latest AS chef
-RUN apk add --no-cache rust cargo \
-  && cargo install cargo-chef
+FROM clux/muslrust:latest as chef
+RUN cargo install cargo-chef
 WORKDIR /app
 
 
@@ -10,14 +9,12 @@ COPY ./src ./src
 RUN cargo chef prepare
 
 FROM chef AS builder
-RUN apk add --no-cache g++
-ENV RUSTFLAGS "-C target-feature=+crt-static"
 COPY --from=planner /app/recipe.json .
-RUN cargo chef cook --release --target x86_64-alpine-linux-musl
+RUN cargo chef cook --release --target x86_64-unknown-linux-musl
 COPY ./Cargo.toml ./Cargo.lock ./
 COPY ./src ./src
-RUN cargo build --release --target x86_64-alpine-linux-musl
-RUN mv ./target/x86_64-alpine-linux-musl/release/vidhan-site ./site
+RUN cargo build --release --target x86_64-unknown-linux-musl
+RUN mv ./target/release/x86_64-unknown-linux-musl/vidhan-site ./site
 
 FROM alpine:latest AS css-builder
 WORKDIR /app

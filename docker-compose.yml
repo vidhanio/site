@@ -3,7 +3,7 @@ name: vidhan-site
 services:
   site:
     container_name: vidhan-site
-    image: ghcr.io/vidhan/site:local
+    image: ghcr.io/vidhanio/site:local
     build: .
     restart: always
     environment:
@@ -12,3 +12,7 @@ services:
       RUST_LOG: info,vidhan_site=debug
     ports:
       - 8080:8080
+
+networks:
+  default:
+    name: vidhan-site
