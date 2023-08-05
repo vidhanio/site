@@ -132,7 +132,6 @@ impl<'configs, 'input> BlogPost<'configs, 'input, '_> {
             <article
                 class="\
                     prose prose-slate dark:prose-invert \
-                    prose-a:text-indigo-500 prose-a:no-underline \
                     prose-pre:bg-slate-200 dark:prose-pre:bg-slate-800 \
                         prose-code:font-normal \
                         prose-code:before:content-none prose-code:after:content-none \

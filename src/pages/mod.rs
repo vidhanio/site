@@ -23,7 +23,7 @@ pub async fn get() -> Node {
                 "hey! i'm vidhan. i'm a software engineer, fullstack developer, discord \
                 bot developer, and a cs student at mcmaster. i'm currently working \
                 on a ton of cool projects, which you can find on "
-                <a href="https://github.com/vidhanio">"my github"</a>
+                <a class="underline" href="https://github.com/vidhanio">"my github"</a>
                 "."
             </p>
         },
