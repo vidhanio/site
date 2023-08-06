@@ -2,14 +2,14 @@ mod blog;
 mod footer;
 mod icons;
 mod nav;
-mod project;
+mod project_link;
 mod seo;
 
 use html_node::{html, Node};
 
 pub use self::{
     blog::{BlogLink, BlogPost, BlogPostMetadata, BlogSlug},
-    project::ProjectLink,
+    project_link::ProjectLink,
 };
 use self::{
     footer::{footer, FooterLink},

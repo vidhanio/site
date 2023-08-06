@@ -1,12 +1,23 @@
 use html_node::{html, Node, Text};
 
 use super::icons;
+use crate::project::Project;
 
 #[derive(Copy, Clone, Debug)]
 pub struct ProjectLink<'a> {
     pub name: &'a str,
     pub description: &'a str,
     pub href: &'a str,
+}
+
+impl<'a> From<&'a Project> for ProjectLink<'a> {
+    fn from(project: &'a Project) -> Self {
+        Self {
+            name: &project.name,
+            description: &project.description,
+            href: &project.href,
+        }
+    }
 }
 
 impl<'a> From<ProjectLink<'a>> for Node {

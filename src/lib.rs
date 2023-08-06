@@ -15,6 +15,7 @@ mod config;
 mod error;
 mod highlighter_configs;
 mod pages;
+mod project;
 
 pub use self::{app::App, config::Config, error::Error};
 

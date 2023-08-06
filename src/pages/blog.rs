@@ -1,15 +1,13 @@
-use std::sync::Arc;
-
-use axum::{extract::State, Router};
-use futures_util::TryStreamExt;
+use axum::{
+    extract::{Path, State},
+    Router,
+};
 use html_node::{html, Node};
-use tokio::fs;
-use tokio_stream::wrappers::ReadDirStream;
 use tracing::instrument;
 
 use crate::{
     components::{document, BlogLink, BlogPost, BlogSlug},
-    App, Error,
+    App,
 };
 
 pub fn router() -> Router<App> {
@@ -20,66 +18,27 @@ pub fn router() -> Router<App> {
 
 #[instrument(err)]
 pub async fn get(State(app): State<App>) -> crate::Result<Node> {
-    let dir = fs::read_dir(&app.config.content_dir.join("blog")).await?;
-    let mut post_links = ReadDirStream::new(dir)
-        .map_err(Error::from)
-        .try_filter_map(|dir_entry| {
-            let highlighter_configs = Arc::clone(&app.highlighter_configs);
-
-            async move {
-                let path = dir_entry.path();
-
-                let maybe_slug = path
-                    .extension()
-                    .filter(|&ext| ext == "md")
-                    .and_then(|_| path.file_stem());
-
-                // check if .md and them map file_stem
-                if let Some(slug) = maybe_slug {
-                    let md = fs::read_to_string(&path).await?;
-
-                    let metadata = BlogPost::new(&highlighter_configs, &md).metadata()?;
-
-                    Ok::<_, Error>(Some(BlogLink::new(
-                        slug.to_string_lossy().into_owned(),
-                        metadata,
-                    )))
-                } else {
-                    Ok(None)
-                }
-            }
-        })
-        .try_collect::<Vec<_>>()
-        .await?;
-
-    post_links.sort_by_key(|link| link.metadata.date);
+    let metadatas = app.blog_posts_metadatas().await?;
 
     Ok(document(
         Some("blog"),
         html! {
             <h1>blog</h1>
             <ul class="flex flex-col gap-4">
-                {post_links}
+                {metadatas.into_iter().map(|(slug, metadata)| BlogLink { slug, metadata })}
             </ul>
         },
     ))
 }
 
 #[instrument(err)]
-pub async fn get_post(
-    axum::extract::Path(slug): axum::extract::Path<BlogSlug>,
-    State(app): State<App>,
-) -> crate::Result<Node> {
-    let path = app
-        .config
-        .content_dir
-        .join("blog")
-        .join(slug.as_str())
-        .with_extension("md");
-
-    let md = fs::read_to_string(&path).await?;
+pub async fn get_post(State(app): State<App>, Path(slug): Path<BlogSlug>) -> crate::Result<Node> {
+    let md = app.blog_post_markdown(&slug).await?;
 
     let blog_post = BlogPost::new(&app.highlighter_configs, &md);
 
-    Ok(document(Some("blog/hello-world"), blog_post.into_node()?))
+    Ok(document(
+        Some(&format!("blog/{slug}")),
+        blog_post.try_into()?,
+    ))
 }

@@ -1,7 +1,10 @@
-use std::sync::Arc;
+use std::{cmp::Reverse, path::PathBuf, sync::Arc};
 
 use axum::{extract::FromRef, Server};
+use futures_util::TryStreamExt;
 use request_id::MakeRequestUlid;
+use tokio::fs;
+use tokio_stream::wrappers::ReadDirStream;
 use tower::ServiceBuilder;
 use tower_http::{
     cors::CorsLayer,
@@ -10,7 +13,14 @@ use tower_http::{
     ServiceBuilderExt,
 };
 
-use crate::{config::Config, highlighter_configs::HighlighterConfigurations, pages};
+use crate::{
+    components::{BlogPostMetadata, BlogSlug},
+    config::Config,
+    highlighter_configs::HighlighterConfigurations,
+    pages,
+    project::Project,
+    Error,
+};
 
 /// The application.
 #[derive(Debug, Clone, FromRef)]
@@ -55,5 +65,67 @@ impl App {
             .await?;
 
         Ok(())
+    }
+}
+
+impl App {
+    pub(crate) fn blog_post_dir(&self) -> PathBuf {
+        self.config.content_dir.join("blog")
+    }
+
+    pub(crate) fn blog_post_path(&self, slug: &BlogSlug) -> PathBuf {
+        self.blog_post_dir()
+            .join(slug.as_str())
+            .with_extension("md")
+    }
+
+    pub(crate) async fn blog_post_markdown(&self, slug: &BlogSlug) -> crate::Result<String> {
+        let path = self.blog_post_path(slug);
+
+        Ok(fs::read_to_string(&path).await?)
+    }
+
+    pub(crate) async fn blog_posts_metadatas(
+        &self,
+    ) -> crate::Result<Vec<(BlogSlug, BlogPostMetadata)>> {
+        let dir = fs::read_dir(&self.blog_post_dir()).await?;
+        let mut metadatas = ReadDirStream::new(dir)
+            .map_err(Error::from)
+            .try_filter_map(|dir_entry| async move {
+                let path = dir_entry.path();
+
+                let maybe_slug = path
+                    .extension()
+                    .filter(|&ext| ext == "md")
+                    .and_then(|_| path.file_stem());
+
+                if let Some(slug) = maybe_slug {
+                    let md = fs::read_to_string(&path).await?;
+
+                    let slug = BlogSlug::new(slug.to_string_lossy().into())?;
+                    let metadata = BlogPostMetadata::from_markdown(&md)?;
+
+                    Ok(Some((slug, metadata)))
+                } else {
+                    Ok(None)
+                }
+            })
+            .try_collect::<Vec<_>>()
+            .await?;
+
+        metadatas.sort_by_key(|link| Reverse(link.1.date));
+
+        Ok(metadatas)
+    }
+
+    pub(crate) fn projects_path(&self) -> PathBuf {
+        self.config.content_dir.join("projects.yml")
+    }
+
+    pub(crate) async fn projects(&self) -> crate::Result<Vec<Project>> {
+        let path = self.projects_path();
+        let yaml = fs::read_to_string(&path).await?;
+
+        Ok(serde_yaml::from_str(&yaml)?)
     }
 }

@@ -1,23 +1,18 @@
 use html_node::{html, Node, Text};
 
-use super::BlogPostMetadata;
+use super::{BlogPostMetadata, BlogSlug};
 use crate::components::icons;
 
 #[derive(Clone, Debug)]
 pub struct BlogLink {
-    pub slug: String,
+    pub slug: BlogSlug,
     pub metadata: BlogPostMetadata,
-}
-
-impl BlogLink {
-    pub const fn new(slug: String, metadata: BlogPostMetadata) -> Self {
-        Self { slug, metadata }
-    }
 }
 
 impl From<BlogLink> for Node {
     fn from(link: BlogLink) -> Self {
         let href = format!("/blog/{}", link.slug);
+
         html! {
             <li>
                 <a href=href class="group w-full flex flex-row justify-between rounded bg-slate-200 dark:bg-slate-800">

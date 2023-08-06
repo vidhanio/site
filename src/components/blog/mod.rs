@@ -1,7 +1,10 @@
 mod link;
 mod post;
 
+use std::fmt::{self, Display, Formatter};
+
 use once_cell::sync::Lazy;
+use pulldown_cmark::{Event, MetadataBlockKind, Options, Parser, Tag, TagEnd};
 use regex::Regex;
 use serde::Deserialize;
 use time::{format_description::FormatItem, macros::format_description, Date};
@@ -25,6 +28,27 @@ impl BlogPostMetadata {
         self.date
             .format(FORMAT_DESCRIPTION)
             .expect("date formatting should not fail")
+    }
+
+    pub fn from_markdown(md: &str) -> crate::Result<Self> {
+        let mut parser = Parser::new_ext(md, Options::all());
+
+        while let Some(event) = parser.next() {
+            if event == Event::Start(Tag::MetadataBlock(MetadataBlockKind::YamlStyle)) {
+                let metadata_string = parser
+                    .by_ref()
+                    .map_while(|event| match event {
+                        Event::Text(text) => Some(Ok(text.into_string())),
+                        Event::End(TagEnd::MetadataBlock(MetadataBlockKind::YamlStyle)) => None,
+                        _ => Some(Err(Error::UnexpectedMarkdownTag)),
+                    })
+                    .collect::<crate::Result<String>>()?;
+
+                return Ok(serde_yaml::from_str(&metadata_string)?);
+            }
+        }
+
+        Err(Error::MissingMetadata)
     }
 }
 
@@ -51,6 +75,12 @@ impl BlogSlug {
 impl From<BlogSlug> for String {
     fn from(slug: BlogSlug) -> Self {
         slug.0
+    }
+}
+
+impl Display for BlogSlug {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)
     }
 }
 

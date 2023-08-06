@@ -1,0 +1,19 @@
+- name: site
+  description: this website!
+  href: https://github.com/vidhanio/site
+
+- name: html-node
+  description: an html macro for rust (used to build this website!)
+  href: https://github.com/vidhanio/html-node
+
+- name: fncli
+  description: an attribute macro to simplify writing simple clis in rust.
+  href: https://github.com/vidhanio/fncli
+
+- name: diswordle
+  description: a discord bot to play wordle right in your discord server.
+  href: https://github.com/vidhanio/diswordle
+
+- name: checkpoint
+  description: a discord bot to provide easy verification for discord servers in my school board.
+  href: https://github.com/vidhanio/checkpoint

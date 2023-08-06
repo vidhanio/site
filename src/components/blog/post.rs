@@ -4,23 +4,21 @@ use pulldown_cmark::{CodeBlockKind, Event, MetadataBlockKind, Options, Parser, T
 use super::BlogPostMetadata;
 use crate::{components::icons, error::Error, highlighter_configs::HighlighterConfigurations};
 
-pub struct BlogPost<'configs, 'input, 'callback> {
-    highlighter_configs: &'configs HighlighterConfigurations,
-    parser: Parser<'input, 'callback>,
+#[derive(Debug)]
+pub struct BlogPost<'a> {
+    highlighter_configs: &'a HighlighterConfigurations,
+    parser: Parser<'a, 'a>,
 }
 
-impl<'configs, 'input> BlogPost<'configs, 'input, '_> {
-    pub fn new(
-        highlighter_configs: &'configs HighlighterConfigurations,
-        markdown: &'input str,
-    ) -> Self {
+impl<'a> BlogPost<'a> {
+    pub fn new(highlighter_configs: &'a HighlighterConfigurations, markdown: &'a str) -> Self {
         Self {
             highlighter_configs,
             parser: Parser::new_ext(markdown, Options::all()),
         }
     }
 
-    pub fn events_and_metadata(&mut self) -> crate::Result<(Vec<Event<'_>>, BlogPostMetadata)> {
+    pub fn events_and_metadata(&mut self) -> crate::Result<(Vec<Event<'a>>, BlogPostMetadata)> {
         let mut events = Vec::new();
         let mut metadata = None;
 
@@ -99,19 +97,21 @@ impl<'configs, 'input> BlogPost<'configs, 'input, '_> {
                     })
                     .collect::<crate::Result<String>>()?;
 
-                let parsed_metadata = serde_yaml::from_str::<BlogPostMetadata>(&metadata_string)?;
-
-                return Ok(parsed_metadata);
+                return Ok(serde_yaml::from_str(&metadata_string)?);
             }
         }
 
         Err(Error::MissingMetadata)
     }
+}
 
-    pub fn into_node(mut self) -> crate::Result<Node> {
+impl TryFrom<BlogPost<'_>> for Node {
+    type Error = crate::Error;
+
+    fn try_from(mut post: BlogPost) -> crate::Result<Self> {
         let mut buf = String::new();
 
-        let (events, metadata) = self.events_and_metadata()?;
+        let (events, metadata) = post.events_and_metadata()?;
 
         pulldown_cmark::html::push_html(&mut buf, events.into_iter());
 
