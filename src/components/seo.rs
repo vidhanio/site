@@ -12,12 +12,10 @@ pub fn seo(path: Option<&str>) -> Node {
 
     html! {
         <head>
-            <title>{Text::from(&title)}</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <meta charset="utf-8" />
 
             <title>{Text::from(&title)}</title>
-
             <meta name="description" content="vidhan's home on the internet." />
             <meta name="theme-color" content="#6466e9" />
             <link rel="icon" href="/public/favicon.ico" />
