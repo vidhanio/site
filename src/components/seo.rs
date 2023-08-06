@@ -33,7 +33,6 @@ pub fn seo(path: Option<&str>) -> Node {
                 name="twitter:description"
                 content="vidhan's home on the internet."
             />
-            <meta name="og:url" content=&url />
         </head>
     }
 }
