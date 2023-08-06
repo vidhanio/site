@@ -161,7 +161,7 @@ jobs:
 
     environment:
       name: Production
-      url: ${{ steps.cloud-run-deploy.outputs.url }}
+      url: https://vidhan.io
 
     runs-on: ubuntu-latest
 
