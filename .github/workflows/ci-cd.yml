@@ -1,4 +1,4 @@
-name: Continuous Integration/Continuous Deployment
+name: CI/CD
 
 on:
   - push
