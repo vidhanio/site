@@ -6,7 +6,7 @@ description: welcome to my new website!
 
 hi, i'm vidhan! welcome to my new site and blog, rewritten from the ground up using [rust](https://www.rust-lang.org/).
 this site mainly uses two libraries, namely the http server, [axum](https://docs.rs/axum) and the html library
-(written by myself!), [html-node](https://docs.rs/axum). one of the coolest features of this site,
+(written by myself!), [html-node](https://docs.rs/html-node). one of the coolest features of this site,
 the code block syntax highlighting is powered by [tree-sitter](https://tree-sitter.github.io/tree-sitter/).
 
 it also uses [tailwind css](https://tailwindcss.com/) for styling.
