@@ -16,7 +16,7 @@ html-node = { version = "0.2", features = ["axum"] }
 hyper = "0.14"
 once_cell = "1.18.0"
 pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }
-regex = "1.9.1"
+regex = "1.9.3"
 request-id = { version = "0.2", features = ["ulid"] }
 serde = { version = "1", features = ["derive"] }
 serde_yaml = "0.9.25"
