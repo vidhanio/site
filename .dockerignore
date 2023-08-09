@@ -5,8 +5,8 @@
 !/Cargo.lock
 !/tailwind.config.js
 !/styles.input.css
-!/public/
-/public/css/styles.css
+!/static/
+/static/css/styles.css
 !/content/
 
 **/.gitkeep

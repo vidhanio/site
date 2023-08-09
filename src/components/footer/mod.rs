@@ -16,7 +16,7 @@ pub fn footer<'a>(links: impl IntoIterator<Item = FooterLink<'a>>) -> Node {
                 {links}
             </ul>
             <a
-                href="/public/LICENSE.txt"
+                href="/static/LICENSE.txt"
                 class="text-xs font-thin text-slate-400 dark:text-slate-600 hover:text-slate-500"
             >
                 "site licensed under agpl-3.0."

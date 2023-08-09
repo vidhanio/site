@@ -24,10 +24,10 @@ RUN ./tailwindcss-linux-x64 build -i ./styles.input.css -o ./styles.css --minify
 
 FROM debian:stable-slim AS runtime
 WORKDIR /app
-COPY ./public ./public
+COPY ./static ./static
 COPY ./content ./content
-COPY --from=css-builder /app/styles.css ./public/css/styles.css
+COPY --from=css-builder /app/styles.css ./static/css/styles.css
 COPY --from=builder /app/site /usr/local/bin/
-ENV PUBLIC_DIR /app/public
+ENV STATIC_DIR /app/static
 ENV CONTENT_DIR /app/content
 ENTRYPOINT ["/usr/local/bin/site"]

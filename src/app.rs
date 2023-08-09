@@ -57,7 +57,7 @@ impl App {
         Server::bind(&self.config.socket_address())
             .serve(
                 pages::router()
-                    .nest_service("/public", ServeDir::new(&self.config.public_dir))
+                    .nest_service("/static", ServeDir::new(&self.config.static_dir))
                     .layer(request_id_layer)
                     .with_state(self)
                     .into_make_service(),

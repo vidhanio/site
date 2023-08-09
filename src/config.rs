@@ -17,8 +17,8 @@ pub struct Config {
     /// The directory containing content files.
     pub content_dir: PathBuf,
 
-    /// The directory containing public files.
-    pub public_dir: PathBuf,
+    /// The directory containing static files.
+    pub static_dir: PathBuf,
 }
 
 impl Config {

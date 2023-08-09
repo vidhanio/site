@@ -20,7 +20,7 @@ pub fn document(path: Option<&str>, content: Node) -> Node {
         <html lang="en">
             <head>
                 {seo(path)}
-                <link rel="stylesheet" href="/public/css/styles.css" />
+                <link rel="stylesheet" href="/static/css/styles.css" />
             </head>
 
             <body class="bg-slate-100 font-mono text-slate-900 [font-feature-settings:'ss05'] dark:bg-slate-900 dark:text-slate-100">

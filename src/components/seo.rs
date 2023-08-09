@@ -18,7 +18,7 @@ pub fn seo(path: Option<&str>) -> Node {
             <title>{Text::from(&title)}</title>
             <meta name="description" content="vidhan's home on the internet." />
             <meta name="theme-color" content="#6466e9" />
-            <link rel="icon" href="/public/favicon.ico" />
+            <link rel="icon" href="/static/favicon.ico" />
 
             <meta name="og:title" content=&title />
             <meta name="og:description" content="vidhan's home on the internet." />

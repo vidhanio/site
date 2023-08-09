@@ -71,7 +71,7 @@ pub fn document(path: Option<&str>, content: Node) -> Node {
         <html lang="en">
             <head>
                 {seo(path)}
-                <link rel="stylesheet" href="/public/css/styles.css" />
+                <link rel="stylesheet" href="/static/css/styles.css" />
             </head>
 
             <body
