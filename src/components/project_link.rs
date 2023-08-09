@@ -41,7 +41,7 @@ impl<'a> From<ProjectLink<'a>> for Node {
                             fill-slate-600 dark:fill-slate-400 \
                         "
                     >
-                        {icons::chevron_right(Some("h-8 w-8"))}
+                        {icons::chevron_right(Some("h-8"))}
                     </div>
                 </a>
             </li>

@@ -1,8 +1,10 @@
 mod link;
+mod ring;
 
 use html_node::{html, Node};
 
 pub use self::link::FooterLink;
+use self::ring::ring;
 
 pub fn footer<'a>(links: impl IntoIterator<Item = FooterLink<'a>>) -> Node {
     html! {
@@ -19,6 +21,8 @@ pub fn footer<'a>(links: impl IntoIterator<Item = FooterLink<'a>>) -> Node {
             >
                 "site licensed under agpl-3.0."
             </a>
+
+            {ring()}
         </footer>
     }
 }
