@@ -1,7 +1,6 @@
 FROM lukemathwalker/cargo-chef:latest as chef
 WORKDIR /app
 
-
 FROM chef AS planner
 COPY ./Cargo.toml ./Cargo.lock ./
 COPY ./src ./src
