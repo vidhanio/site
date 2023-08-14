@@ -1,19 +1,25 @@
 use html_node::{html, Node, Text, UnsafeText};
 use pulldown_cmark::{CodeBlockKind, Event, MetadataBlockKind, Options, Parser, Tag, TagEnd};
 
-use super::BlogPostMetadata;
+use super::{BlogPostMetadata, BlogSlug};
 use crate::{components::icons, error::Error, highlighter_configs::HighlighterConfigurations};
 
 #[derive(Debug)]
 pub struct BlogPost<'a> {
     highlighter_configs: &'a HighlighterConfigurations,
+    slug: &'a BlogSlug,
     parser: Parser<'a, 'a>,
 }
 
 impl<'a> BlogPost<'a> {
-    pub fn new(highlighter_configs: &'a HighlighterConfigurations, markdown: &'a str) -> Self {
+    pub fn new(
+        highlighter_configs: &'a HighlighterConfigurations,
+        slug: &'a BlogSlug,
+        markdown: &'a str,
+    ) -> Self {
         Self {
             highlighter_configs,
+            slug,
             parser: Parser::new_ext(markdown, Options::all()),
         }
     }
@@ -70,8 +76,8 @@ impl<'a> BlogPost<'a> {
                         })
                         .collect::<crate::Result<String>>()?;
 
-                    let parsed_metadata =
-                        serde_yaml::from_str::<BlogPostMetadata>(&metadata_string)?;
+                    let parsed_metadata = serde_yaml::from_str(&metadata_string)
+                        .map_err(|e| Error::DeserializePostMetadata(self.slug.clone(), e))?;
 
                     metadata = Some(parsed_metadata);
                 }
@@ -79,29 +85,9 @@ impl<'a> BlogPost<'a> {
             }
         }
 
-        let metadata = metadata.ok_or(Error::MissingMetadata)?;
+        let metadata = metadata.ok_or_else(|| Error::NoPostMetadata(self.slug.clone()))?;
 
         Ok((events, metadata))
-    }
-
-    pub fn metadata(mut self) -> crate::Result<BlogPostMetadata> {
-        while let Some(event) = self.parser.next() {
-            if event == Event::Start(Tag::MetadataBlock(MetadataBlockKind::YamlStyle)) {
-                let metadata_string = self
-                    .parser
-                    .by_ref()
-                    .map_while(|event| match event {
-                        Event::Text(text) => Some(Ok(text.into_string())),
-                        Event::End(TagEnd::MetadataBlock(MetadataBlockKind::YamlStyle)) => None,
-                        _ => Some(Err(Error::UnexpectedMarkdownTag)),
-                    })
-                    .collect::<crate::Result<String>>()?;
-
-                return Ok(serde_yaml::from_str(&metadata_string)?);
-            }
-        }
-
-        Err(Error::MissingMetadata)
     }
 }
 
@@ -117,13 +103,13 @@ impl TryFrom<BlogPost<'_>> for Node {
 
         Ok(html! {
             <header>
-                <h1>{Text::from(&metadata.title)}</h1>
+                <h1>{ Text::from(&metadata.title) }</h1>
                 <time class="flex flex-row gap-2 items-center text-slate-600 dark:text-slate-400 mt-2" datetime=metadata.date>
-                    {icons::date(Some("h-4"))}
-                    {Text::from(metadata.date_text())}
+                    { icons::date(Some("h-4")) }
+                    { Text::from(metadata.date_text()) }
                 </time>
                 <p class="text-lg text-slate-500 mt-4">
-                    {Text::from(metadata.description)}
+                    { Text::from(metadata.description) }
                 </p>
             </header>
 
@@ -140,7 +126,7 @@ impl TryFrom<BlogPost<'_>> for Node {
                     max-w-none \
                 "
             >
-                {UnsafeText::from(buf)}
+                { UnsafeText::from(buf) }
             </article>
         })
     }

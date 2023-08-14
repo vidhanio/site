@@ -21,15 +21,16 @@ pub fn ring() -> Node {
         </a>
         <div class="flex flex-row flex-wrap items-center justify-center gap-4 text-slate-400 dark:text-slate-600">
             { LINKS.into_iter().map(|(icon, href)| {
-                html! {
-                    <a
-                        href=href
-                        class="text-slate-400 dark:text-slate-600 hover:text-slate-500 transition-colors"
-                    >
-                        {icon(Some("h-6"))}
-                    </a>
-                }
-            }) }
+                    html! {
+                        <a
+                            href=href
+                            class="text-slate-400 dark:text-slate-600 hover:text-slate-500 transition-colors"
+                        >
+                            { icon(Some("h-6")) }
+                        </a>
+                    }
+                })
+            }
         </div>
     }
 }

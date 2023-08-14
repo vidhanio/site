@@ -16,7 +16,7 @@ impl<'a> From<FooterLink<'a>> for Node {
                     class="text-sm font-light hover:text-slate-500 transition-colors"
                     rel=link.rel as &str
                 >
-                    {Text::from(link.name)}
+                    { Text::from(link.name) }
                 </a>
             </li>
         }

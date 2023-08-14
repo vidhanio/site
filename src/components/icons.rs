@@ -15,7 +15,7 @@ macro_rules! icons {
                         class=class as &str
                         role="img"
                     >
-                        <title>{Text::from(concat!(stringify!($name), " icon"))}</title>
+                        <title>{ Text::from(concat!(stringify!($name), " icon")) }</title>
                         $($tt)*
                     </svg>
                 }

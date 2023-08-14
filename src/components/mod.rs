@@ -70,7 +70,7 @@ pub fn document(path: Option<&str>, content: Node) -> Node {
         <!DOCTYPE html>
         <html lang="en">
             <head>
-                {seo(path)}
+                { seo(path) }
                 <link rel="stylesheet" href="/static/css/styles.css" />
             </head>
 
@@ -83,11 +83,11 @@ pub fn document(path: Option<&str>, content: Node) -> Node {
                     bg-slate-100 dark:bg-slate-900 dark:text-slate-300 text-slate-700\
                 "
             >
-                {nav(NAV_LINKS)}
+                { nav(NAV_LINKS) }
                 <main class="w-full py-8 flex-1 border-indigo-600 flex flex-col gap-8">
-                    {content}
+                    { content }
                 </main>
-                {footer(FOOTER_LINKS)}
+                { footer(FOOTER_LINKS) }
             </body>
         </html>
     }

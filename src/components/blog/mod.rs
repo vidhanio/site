@@ -30,25 +30,28 @@ impl BlogPostMetadata {
             .expect("date formatting should not fail")
     }
 
-    pub fn from_markdown(md: &str) -> crate::Result<Self> {
-        let mut parser = Parser::new_ext(md, Options::all());
+    pub fn from_markdown(slug: &BlogSlug, md: &str) -> crate::Result<Self> {
+        let metadata_str = Parser::new_ext(md, Options::all())
+            .skip_while(|event| {
+                *event != Event::Start(Tag::MetadataBlock(MetadataBlockKind::YamlStyle))
+            })
+            .take_while(|event| {
+                *event != Event::End(TagEnd::MetadataBlock(MetadataBlockKind::YamlStyle))
+            })
+            .map(|event| match event {
+                Event::Text(text) => Ok(text),
+                _ => Err(Error::UnexpectedMarkdownTag),
+            })
+            .skip(1) // skip the start tag
+            .try_fold(None::<String>, |acc, text| {
+                let mut acc = acc.unwrap_or_default();
+                acc.push_str(&text?);
+                Ok::<_, Error>(Some(acc))
+            })?
+            .ok_or_else(|| Error::NoPostMetadata(slug.clone()))?;
 
-        while let Some(event) = parser.next() {
-            if event == Event::Start(Tag::MetadataBlock(MetadataBlockKind::YamlStyle)) {
-                let metadata_string = parser
-                    .by_ref()
-                    .map_while(|event| match event {
-                        Event::Text(text) => Some(Ok(text.into_string())),
-                        Event::End(TagEnd::MetadataBlock(MetadataBlockKind::YamlStyle)) => None,
-                        _ => Some(Err(Error::UnexpectedMarkdownTag)),
-                    })
-                    .collect::<crate::Result<String>>()?;
-
-                return Ok(serde_yaml::from_str(&metadata_string)?);
-            }
-        }
-
-        Err(Error::MissingMetadata)
+        serde_yaml::from_str(&metadata_str)
+            .map_err(|e| Error::DeserializePostMetadata(slug.clone(), e))
     }
 }
 
@@ -63,7 +66,7 @@ impl BlogSlug {
         if SLUG_REGEX.is_match(&slug) {
             Ok(Self(slug))
         } else {
-            Err(Error::InvalidBlogSlug)
+            Err(Error::InvalidBlogSlug(slug))
         }
     }
 

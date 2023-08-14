@@ -19,12 +19,12 @@ pub fn document(path: Option<&str>, content: Node) -> Node {
         <!DOCTYPE html>
         <html lang="en">
             <head>
-                {seo(path)}
+                { seo(path) }
                 <link rel="stylesheet" href="/static/css/styles.css" />
             </head>
 
             <body class="bg-slate-100 font-mono text-slate-900 [font-feature-settings:'ss05'] dark:bg-slate-900 dark:text-slate-100">
-                {layout(content)}
+                { layout(content) }
             </body>
         </html>
     }

@@ -9,7 +9,6 @@ services:
     environment:
       IP: 0.0.0.0
       PORT: 8080
-      RUST_LOG: info,vidhan_site=debug
     ports:
       - 8080:8080
 

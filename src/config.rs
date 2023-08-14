@@ -24,7 +24,7 @@ pub struct Config {
 impl Config {
     /// Load the configuration from the environment.
     pub fn from_env() -> Result<Self, envy::Error> {
-        envy::from_env::<Self>()
+        envy::from_env()
     }
 
     /// Get the socket address to bind to.

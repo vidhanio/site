@@ -1,4 +1,4 @@
-use std::{cmp::Reverse, path::PathBuf, sync::Arc};
+use std::{cmp::Reverse, io, path::PathBuf, sync::Arc};
 
 use axum::{extract::FromRef, Server};
 use futures_util::TryStreamExt;
@@ -82,15 +82,23 @@ impl App {
     pub(crate) async fn blog_post_markdown(&self, slug: &BlogSlug) -> crate::Result<String> {
         let path = self.blog_post_path(slug);
 
-        Ok(fs::read_to_string(&path).await?)
+        fs::read_to_string(&path).await.map_err(|e| {
+            if e.kind() == io::ErrorKind::NotFound {
+                Error::PostNotFound(slug.clone())
+            } else {
+                Error::ReadPost(slug.clone(), e)
+            }
+        })
     }
 
     pub(crate) async fn blog_posts_metadatas(
         &self,
     ) -> crate::Result<Vec<(BlogSlug, BlogPostMetadata)>> {
-        let dir = fs::read_dir(&self.blog_post_dir()).await?;
+        let dir = fs::read_dir(&self.blog_post_dir())
+            .await
+            .map_err(Error::ReadPostDirectory)?;
         let mut metadatas = ReadDirStream::new(dir)
-            .map_err(Error::from)
+            .map_err(Error::ReadPostDirectory)
             .try_filter_map(|dir_entry| async move {
                 let path = dir_entry.path();
 
@@ -100,10 +108,13 @@ impl App {
                     .and_then(|_| path.file_stem());
 
                 if let Some(slug) = maybe_slug {
-                    let md = fs::read_to_string(&path).await?;
-
                     let slug = BlogSlug::new(slug.to_string_lossy().into())?;
-                    let metadata = BlogPostMetadata::from_markdown(&md)?;
+
+                    let md = fs::read_to_string(&path)
+                        .await
+                        .map_err(|e| Error::ReadPost(slug.clone(), e))?;
+
+                    let metadata = BlogPostMetadata::from_markdown(&slug, &md)?;
 
                     Ok(Some((slug, metadata)))
                 } else {
@@ -124,8 +135,10 @@ impl App {
 
     pub(crate) async fn projects(&self) -> crate::Result<Vec<Project>> {
         let path = self.projects_path();
-        let yaml = fs::read_to_string(&path).await?;
+        let yaml = fs::read_to_string(&path)
+            .await
+            .map_err(Error::ReadProjects)?;
 
-        Ok(serde_yaml::from_str(&yaml)?)
+        serde_yaml::from_str(&yaml).map_err(Error::DeserializeProjects)
     }
 }

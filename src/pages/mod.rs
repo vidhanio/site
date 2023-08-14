@@ -3,6 +3,7 @@ mod projects;
 
 use axum::Router;
 use html_node::{html, Node};
+use tracing::instrument;
 
 use crate::{components::document, App};
 
@@ -13,7 +14,7 @@ pub fn router() -> Router<App> {
         .nest("/blog", blog::router())
 }
 
-#[allow(clippy::unused_async)]
+#[instrument]
 pub async fn get() -> Node {
     document(
         None,

@@ -27,10 +27,10 @@ impl<'a> From<ProjectLink<'a>> for Node {
                 <a href=link.href class="group w-full flex flex-row justify-between rounded bg-slate-200 dark:bg-slate-800">
                     <div class="p-4">
                         <h2 class="text-lg text-slate-700 dark:text-slate-300">
-                            {Text::from(link.name)}
+                            { Text::from(link.name) }
                         </h2>
                         <p class="text-slate-600 dark:text-slate-400">
-                            {Text::from(link.description)}
+                            { Text::from(link.description) }
                         </p>
                     </div>
                     <div
@@ -41,7 +41,7 @@ impl<'a> From<ProjectLink<'a>> for Node {
                             fill-slate-600 dark:fill-slate-400 \
                         "
                     >
-                        {icons::chevron_right(Some("h-8"))}
+                        { icons::chevron_right(Some("h-8")) }
                     </div>
                 </a>
             </li>

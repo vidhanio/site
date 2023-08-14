@@ -146,24 +146,29 @@ impl HighlighterConfigurations {
 
 impl Debug for HighlighterConfigurations {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        struct HighlightConfiguration;
+
+        impl Debug for HighlightConfiguration {
+            fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+                f.debug_struct("HighlightConfiguration")
+                    .finish_non_exhaustive()
+            }
+        }
+
         f.debug_map()
-            .entries(
-                self.0
-                    .keys()
-                    .map(|&k| (k, "HighlightConfiguration { ... }")),
-            )
+            .entries(self.0.keys().map(|&k| (k, HighlightConfiguration)))
             .finish()
     }
 }
 
 fn encoded_with_line_starts(s: &str, is_true_start: bool, is_true_end: bool) -> String {
-    let escaped = if is_true_end {
-        html_escape::encode_text_minimal(s.strip_suffix('\n').unwrap_or(s))
-    } else {
-        html_escape::encode_text_minimal(s)
-    };
+    let s = is_true_end
+        .then(|| s.strip_suffix('\n'))
+        .flatten()
+        .unwrap_or(s);
 
-    let with_line_starts = escaped.replace('\n', "\n<span class=\"line-start\"></span>");
+    let with_line_starts =
+        html_escape::encode_text_minimal(s).replace('\n', "\n<span class=\"line-start\"></span>");
 
     if is_true_start {
         format!("<span class=\"line-start\"></span>{with_line_starts}")

@@ -13,7 +13,7 @@ pub fn footer<'a>(links: impl IntoIterator<Item = FooterLink<'a>>) -> Node {
                 "made with <3 by vidhan."
             </p>
             <ul class="flex flex-row flex-wrap items-center justify-center gap-4 text-slate-400 dark:text-slate-600">
-                {links}
+                { links }
             </ul>
             <a
                 href="/static/LICENSE.txt"
@@ -22,7 +22,7 @@ pub fn footer<'a>(links: impl IntoIterator<Item = FooterLink<'a>>) -> Node {
                 "site licensed under agpl-3.0."
             </a>
 
-            {ring()}
+            { ring() }
         </footer>
     }
 }
