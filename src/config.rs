@@ -19,6 +19,10 @@ pub struct Config {
 
     /// The directory containing static files.
     pub static_dir: PathBuf,
+
+    /// Whether the site is running in a production environment.
+    #[serde(default)]
+    pub production: bool,
 }
 
 impl Config {

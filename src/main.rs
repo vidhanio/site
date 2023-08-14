@@ -20,10 +20,10 @@ async fn main() -> color_eyre::Result<()> {
         ",
     ));
 
-    if cfg!(debug_assertions) {
-        fmt.pretty().init();
+    if config.production {
+        fmt.json().init();
     } else {
-        fmt.init();
+        fmt.pretty().init();
     }
 
     vidhan_site::serve(config).await?;
