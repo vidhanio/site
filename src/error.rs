@@ -99,20 +99,20 @@ impl From<Error> for Node {
                         .flat_map(|(i, e)| {
                             let indent = text!(
                                 "{}",
-                                "  ".repeat(i)
+                                "  ".repeat(i.saturating_sub(1))
                             );
 
-                            let tree = if i > 0 {
+                            let corner = if i == 0 {
+                                Self::EMPTY
+                            } else {
                                 html! {
                                     <span class="text-violet-500 font-bold">"└ "</span>
                                 }
-                            } else {
-                                Self::EMPTY
                             };
 
                             [
                                 indent,
-                                tree,
+                                corner,
                                 text!("{e}\n"),
                             ]
                         })
