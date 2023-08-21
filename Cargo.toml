@@ -22,7 +22,7 @@ request-id = { version = "0.2", features = ["ulid"] }
 serde = { version = "1", features = ["derive"] }
 serde_yaml = "0.9.25"
 thiserror = "1"
-time = { version = "0.3.25", features = [
+time = { version = "0.3.26", features = [
     "macros",
     "serde",
     "serde-human-readable",
