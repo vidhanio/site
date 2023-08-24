@@ -25,7 +25,7 @@ request-id = { version = "0.2", features = ["ulid"] }
 serde = { version = "1", features = ["derive"] }
 serde_yaml = "0.9"
 thiserror = "1"
-time = { version = "0.3", features = ["formatting", "macros", "serde"] }
+time = { version = "0.3", features = ["macros", "serde-human-readable"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 tower = "0.4"
 tower-http = { version = "0.4", features = ["request-id", "trace", "util"] }
