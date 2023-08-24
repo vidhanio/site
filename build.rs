@@ -19,6 +19,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     command.args([
         "build",
+        "-c",
+        &tailwind_config_file.to_string_lossy(),
         "-i",
         &input_file.to_string_lossy(),
         "-o",
