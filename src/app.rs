@@ -96,7 +96,7 @@ impl App {
 
         let router = Router::new()
             .nest("/", pages::router())
-            .nest("/static", r#static::router(&self.config.static_dir))
+            .nest("/static", r#static::router())
             .layer(request_id_layer)
             .with_state(self);
 

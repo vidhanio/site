@@ -4,7 +4,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?);
 
     let tailwind_config_file = manifest_dir.join("tailwind.config.js");
-    let input_file = manifest_dir.join("styles.input.css");
+    let input_file = manifest_dir.join("static").join("styles.input.css");
     let src_dir = manifest_dir.join("src");
 
     for path in [&tailwind_config_file, &input_file, &src_dir] {

@@ -1,4 +1,4 @@
-use std::io;
+use std::{ffi::OsStr, io, path::PathBuf};
 
 use axum::{
     http::StatusCode,
@@ -43,6 +43,17 @@ pub enum Error {
     /// The projects file could not be deserialized.
     #[error("failed to deserialize projects file")]
     DeserializeProjects(#[source] serde_yaml::Error),
+
+    /// Invalid font path.
+    #[error(
+        "invalid font extension (must be `woff` or `woff2`): `{}`",
+        .0.extension().and_then(OsStr::to_str).unwrap_or("<none>")
+    )]
+    InvalidFontExtension(PathBuf),
+
+    /// Font not found.
+    #[error("font not found: `{0}`")]
+    FontNotFound(PathBuf),
 }
 
 impl Error {
@@ -57,7 +68,8 @@ impl Error {
             | Self::UnexpectedMarkdownTag
             | Self::DeserializePostMetadata(_, _)
             | Self::DeserializeProjects(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            Self::BlogPostNotFound(_) => StatusCode::NOT_FOUND,
+            Self::BlogPostNotFound(_) | Self::FontNotFound(_) => StatusCode::NOT_FOUND,
+            Self::InvalidFontExtension(_) => StatusCode::BAD_REQUEST,
         }
     }
 }

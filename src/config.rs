@@ -1,7 +1,4 @@
-use std::{
-    net::{IpAddr, SocketAddr},
-    path::PathBuf,
-};
+use std::net::{IpAddr, SocketAddr};
 
 use serde::Deserialize;
 use tokio::net::TcpListener;
@@ -10,16 +7,13 @@ use tracing::instrument;
 use crate::Error;
 
 /// The configuration for this crate.
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Copy, Clone, Debug, Deserialize)]
 pub struct Config {
     /// The ip address to bind to.
     pub ip: IpAddr,
 
     /// The port to bind to.
     pub port: u16,
-
-    /// The directory containing static files.
-    pub static_dir: PathBuf,
 
     /// Whether the site is running in a production environment.
     #[serde(default)]

@@ -1,5 +1,5 @@
 module.exports = {
-  content: ["./src/**/*.rs", "./styles.input.css"],
+  content: ["./src/**/*.rs"],
   theme: {
     extend: {
       fontFamily: {

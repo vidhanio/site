@@ -11,31 +11,24 @@ axum = { git = "https://github.com/tokio-rs/axum", features = [
     "macros",
     "tracing",
 ] }
-axum-extra = { git = "https://github.com/tokio-rs/axum" }
+axum-extra = { git = "https://github.com/tokio-rs/axum", features = [
+    "typed-header",
+] }
 color-eyre = "0.6"
 envy = "0.4"
 html-escape = "0.2"
 html-node = { version = "0.2", features = ["axum"] }
 include_dir = "0.7"
+mime = "0.3"
 pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }
 request-id = { version = "0.2", features = ["ulid"] }
 serde = { version = "1", features = ["derive"] }
 serde_yaml = "0.9"
 thiserror = "1"
-time = { version = "0.3", features = [
-    "macros",
-    "serde",
-    "serde-human-readable",
-] }
-tokio = { version = "1", features = ["fs", "macros", "rt-multi-thread"] }
+time = { version = "0.3", features = ["formatting", "macros", "serde"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 tower = "0.4"
-tower-http = { version = "0.4", features = [
-    "cors",
-    "fs",
-    "request-id",
-    "trace",
-    "util",
-] }
+tower-http = { version = "0.4", features = ["request-id", "trace", "util"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 tree-sitter = "0.20"
@@ -46,3 +39,4 @@ tree-sitter-rust = "0.20"
 
 [patch.crates-io]
 axum = { git = "https://github.com/tokio-rs/axum" }
+axum-extra = { git = "https://github.com/tokio-rs/axum" }
