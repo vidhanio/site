@@ -9,24 +9,19 @@ RUN cargo chef prepare
 FROM chef AS builder
 COPY --from=planner /app/recipe.json .
 RUN cargo chef cook --release
-COPY ./Cargo.toml ./Cargo.lock ./
+COPY ./Cargo.toml ./Cargo.lock ./build.rs ./tailwind.config.js ./styles.input.css ./
 COPY ./src ./src
+COPY ./content ./content
+COPY ./tree-sitter ./tree-sitter
+ADD --chmod=755 \
+    https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 \
+    /usr/local/bin/tailwindcss
 RUN cargo build --release
 RUN mv ./target/release/vidhan-site ./site
-
-FROM debian:stable-slim AS css-builder
-WORKDIR /app
-ADD --chmod=755 https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 ./
-COPY ./styles.input.css ./tailwind.config.js ./
-COPY ./src ./src
-RUN ./tailwindcss-linux-x64 build -i ./styles.input.css -o ./styles.css --minify
 
 FROM debian:stable-slim AS runtime
 WORKDIR /app
 COPY ./static ./static
-COPY ./content ./content
-COPY --from=css-builder /app/styles.css ./static/css/styles.css
 COPY --from=builder /app/site /usr/local/bin/
 ENV STATIC_DIR /app/static
-ENV CONTENT_DIR /app/content
 ENTRYPOINT ["/usr/local/bin/site"]

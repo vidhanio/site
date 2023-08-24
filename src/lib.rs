@@ -10,12 +10,15 @@
 #![allow(clippy::module_name_repetitions)]
 
 mod app;
-mod components;
+mod blog_post;
 mod config;
 mod error;
 mod highlighter_configs;
+mod icons;
+mod layout;
 mod pages;
 mod project;
+mod r#static;
 
 pub use self::{app::App, config::Config, error::Error};
 

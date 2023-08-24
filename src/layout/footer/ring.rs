@@ -1,6 +1,6 @@
 use html_node::{html, Node};
 
-use crate::components::icons::{self, Icon};
+use crate::icons::{self, Icon};
 
 const LINKS: [(Icon, &str); 3] = [
     (icons::left_arrow, "https://ring.simonwu.dev/prev/vidhan"),

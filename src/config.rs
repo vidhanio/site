@@ -4,6 +4,10 @@ use std::{
 };
 
 use serde::Deserialize;
+use tokio::net::TcpListener;
+use tracing::instrument;
+
+use crate::Error;
 
 /// The configuration for this crate.
 #[derive(Clone, Debug, Deserialize)]
@@ -13,9 +17,6 @@ pub struct Config {
 
     /// The port to bind to.
     pub port: u16,
-
-    /// The directory containing content files.
-    pub content_dir: PathBuf,
 
     /// The directory containing static files.
     pub static_dir: PathBuf,
@@ -35,5 +36,13 @@ impl Config {
     #[must_use]
     pub const fn socket_address(&self) -> SocketAddr {
         SocketAddr::new(self.ip, self.port)
+    }
+
+    /// Bind the socket address to a TCP listener.
+    #[instrument(level = "debug", err(Debug))]
+    pub async fn tcp_listener(&self) -> crate::Result<TcpListener> {
+        TcpListener::bind(self.socket_address())
+            .await
+            .map_err(Error::Serve)
     }
 }

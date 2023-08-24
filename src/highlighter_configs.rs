@@ -61,6 +61,17 @@ const HIGHLIGHT_NAMES: &[&str] = &[
 
 pub struct HighlighterConfigurations(HashMap<&'static str, HighlightConfiguration>);
 
+macro_rules! tree_sitter_query {
+    ($path:literal) => {
+        include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tree-sitter/queries/",
+            $path,
+            ".scm"
+        ))
+    };
+}
+
 impl HighlighterConfigurations {
     pub fn new() -> crate::Result<Self> {
         [
@@ -68,8 +79,8 @@ impl HighlighterConfigurations {
                 "rust",
                 HighlightConfiguration::new(
                     tree_sitter_rust::language(),
-                    include_str!("tree-sitter/queries/rust/highlights.scm"),
-                    include_str!("tree-sitter/queries/rust/injections.scm"),
+                    tree_sitter_query!("rust/highlights"),
+                    tree_sitter_query!("rust/injections"),
                     "",
                 ),
             ),
@@ -86,8 +97,8 @@ impl HighlighterConfigurations {
                 "html",
                 HighlightConfiguration::new(
                     tree_sitter_html::language(),
-                    include_str!("tree-sitter/queries/html/highlights.scm"),
-                    include_str!("tree-sitter/queries/html/injections.scm"),
+                    tree_sitter_query!("html/highlights"),
+                    tree_sitter_query!("html/injections"),
                     "",
                 ),
             ),
@@ -106,7 +117,9 @@ impl HighlighterConfigurations {
 
     pub fn highlight(&self, language: &str, code: &str) -> crate::Result<String> {
         let Some(config) = self.0.get(language) else {
-            return Ok(encoded_with_line_starts(code, true, true));
+            let mut buf = String::new();
+            encoded_with_line_starts(&mut buf, code, (true, true));
+            return Ok(buf);
         };
 
         let mut highlighter = Highlighter::new();
@@ -114,32 +127,30 @@ impl HighlighterConfigurations {
         let mut highlights =
             highlighter.highlight(config, code.as_bytes(), None, |lang| self.0.get(lang))?;
 
-        highlights.try_fold(String::new(), |mut html, event| {
-            let event = event?;
-
-            match event {
+        highlights.try_fold(String::new(), |mut buf, event| {
+            match event? {
                 HighlightEvent::Source { start, end } => {
-                    html.push_str(&encoded_with_line_starts(
+                    encoded_with_line_starts(
+                        &mut buf,
                         &code[start..end],
-                        start == 0,
-                        end == code.len(),
-                    ));
+                        (start == 0, end == code.len()),
+                    );
                 }
                 HighlightEvent::HighlightStart(Highlight(idx)) => {
                     use std::fmt::Write;
                     write!(
-                        html,
+                        buf,
                         "<span class=\"{}\">",
                         HIGHLIGHT_NAMES[idx].replace('.', " ")
                     )
-                    .expect("writing to string should not fail");
+                    .expect("writing to a string should be infallible");
                 }
                 HighlightEvent::HighlightEnd => {
-                    html.push_str("</span>");
+                    buf.push_str("</span>");
                 }
             }
 
-            Ok(html)
+            Ok(buf)
         })
     }
 }
@@ -161,18 +172,18 @@ impl Debug for HighlighterConfigurations {
     }
 }
 
-fn encoded_with_line_starts(s: &str, is_true_start: bool, is_true_end: bool) -> String {
+fn encoded_with_line_starts(buf: &mut String, s: &str, (is_true_start, is_true_end): (bool, bool)) {
+    if is_true_start {
+        buf.push_str("<span class=\"line-start\"></span>");
+    }
+
     let s = is_true_end
         .then(|| s.strip_suffix('\n'))
         .flatten()
         .unwrap_or(s);
 
-    let with_line_starts =
+    let escaped =
         html_escape::encode_text_minimal(s).replace('\n', "\n<span class=\"line-start\"></span>");
 
-    if is_true_start {
-        format!("<span class=\"line-start\"></span>{with_line_starts}")
-    } else {
-        with_line_starts
-    }
+    buf.push_str(&escaped);
 }

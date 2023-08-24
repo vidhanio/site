@@ -1,22 +1,17 @@
 use std::io;
 
 use axum::{
-    extract::rejection::PathRejection,
     http::StatusCode,
     response::{IntoResponse, Response},
 };
 use html_node::{html, text, Node};
 use thiserror::Error;
 
-use crate::components::{document, BlogSlug};
+use crate::layout::document;
 
 /// An enum encompassing all possible errors from this crate.
 #[derive(Error, Debug)]
 pub enum Error {
-    /// A [`hyper::Error`].
-    #[error("hyper error")]
-    Hyper(#[from] hyper::Error),
-
     /// A [`tree_sitter::QueryError`]
     #[error("tree-sitter query error")]
     TreeSitterQuery(#[from] tree_sitter::QueryError),
@@ -25,41 +20,25 @@ pub enum Error {
     #[error("tree-sitter highlight error")]
     TreeSitterHighlight(#[from] tree_sitter_highlight::Error),
 
-    /// A [`PathRejection`]
-    #[error("path rejection")]
-    PathRejection(#[from] PathRejection),
-
-    /// An invalid blog slug was provided.
-    #[error("invalid blog slug (must be alphanumeric or `-`): `{0}`)")]
-    InvalidBlogSlug(String),
+    /// An error occurred while trying to serve the application.
+    #[error("application serve error")]
+    Serve(#[source] io::Error),
 
     /// A blog post was missing metadata.
     #[error("metadata missing for blog post: `{0}`")]
-    NoPostMetadata(BlogSlug),
+    NoPostMetadata(String),
 
     /// A blog post's metadata could not be deserialized.
     #[error("failed to deserialize metadata for blog post: `{0}`")]
-    DeserializePostMetadata(BlogSlug, #[source] serde_yaml::Error),
+    DeserializePostMetadata(String, #[source] serde_yaml::Error),
 
     /// Unexpected markdown tag.
     #[error("unexpected markdown tag")]
     UnexpectedMarkdownTag,
 
-    /// The blog post directory could not be read.
-    #[error("failed to read blog post directory")]
-    ReadPostDirectory(#[source] io::Error),
-
-    /// The blog post could not be read.
-    #[error("failed to read blog post: `{0}`")]
-    ReadPost(BlogSlug, #[source] io::Error),
-
     /// The blog post was not found
     #[error("blog post not found: `{0}`")]
-    PostNotFound(BlogSlug),
-
-    /// The projects file could not be read.
-    #[error("failed to read projects file")]
-    ReadProjects(#[source] io::Error),
+    BlogPostNotFound(String),
 
     /// The projects file could not be deserialized.
     #[error("failed to deserialize projects file")]
@@ -69,21 +48,16 @@ pub enum Error {
 impl Error {
     /// The status code of this error.
     #[must_use]
-    pub fn status_code(&self) -> StatusCode {
+    pub const fn status_code(&self) -> StatusCode {
         match self {
-            Self::Hyper(_)
+            Self::Serve(_)
             | Self::TreeSitterQuery(_)
             | Self::TreeSitterHighlight(_)
             | Self::NoPostMetadata(_)
             | Self::UnexpectedMarkdownTag
             | Self::DeserializePostMetadata(_, _)
-            | Self::ReadPostDirectory(_)
-            | Self::ReadPost(_, _)
-            | Self::ReadProjects(_)
-            | Self::DeserializeProjects(_)
-            | Self::InvalidBlogSlug(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            Self::PostNotFound(_) => StatusCode::NOT_FOUND,
-            Self::PathRejection(e) => e.status(),
+            | Self::DeserializeProjects(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::BlogPostNotFound(_) => StatusCode::NOT_FOUND,
         }
     }
 }

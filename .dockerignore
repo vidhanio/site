@@ -1,12 +1,11 @@
 *
 
 !/src/
+!/build.rs
 !/Cargo.toml
 !/Cargo.lock
+!/static/
+!/content/
+!/tree-sitter/
 !/tailwind.config.js
 !/styles.input.css
-!/static/
-/static/css/styles.css
-!/content/
-
-**/.gitkeep

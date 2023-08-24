@@ -5,7 +5,7 @@ use axum::Router;
 use html_node::{html, Node};
 use tracing::instrument;
 
-use crate::{components::document, App};
+use crate::{layout::document, App};
 
 pub fn router() -> Router<App> {
     Router::new()
@@ -14,7 +14,7 @@ pub fn router() -> Router<App> {
         .nest("/blog", blog::router())
 }
 
-#[instrument]
+#[instrument(level = "debug")]
 pub async fn get() -> Node {
     document(
         None,
