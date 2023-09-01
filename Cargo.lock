@@ -419,9 +419,9 @@ dependencies = [
 
 [[package]]
 name = "html-node"
-version = "0.2.1"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "57c6029ad01323e58a4dd18ebe690c7a4f649e93ea8fc53a0bbfd9304e3f8cf7"
+checksum = "ea07ce10451134066f653be58cdacf4e5d25fc13ae49e7cf233470d189131c79"
 dependencies = [
  "html-node-core",
  "html-node-macro",
