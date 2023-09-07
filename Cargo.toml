@@ -18,7 +18,7 @@ color-eyre = "0.6"
 dotenvy = "0.15.7"
 envy = "0.4"
 html-escape = "0.2"
-html-node = { version = "0.2", features = ["axum"] }
+html-node = { version = "0.4", features = ["axum"] }
 include_dir = "0.7"
 mime = "0.3"
 pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }

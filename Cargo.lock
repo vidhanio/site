@@ -40,7 +40,7 @@ dependencies = [
 [[package]]
 name = "axum"
 version = "0.6.16"
-source = "git+https://github.com/tokio-rs/axum#24f0f3eae8054c7a495cd364087f2dd7fa8b87e0"
+source = "git+https://github.com/tokio-rs/axum#d244d3f936c875f04cca854ab6ec5871bc66570f"
 dependencies = [
  "async-trait",
  "axum-core",
@@ -74,7 +74,7 @@ dependencies = [
 [[package]]
 name = "axum-core"
 version = "0.3.4"
-source = "git+https://github.com/tokio-rs/axum#24f0f3eae8054c7a495cd364087f2dd7fa8b87e0"
+source = "git+https://github.com/tokio-rs/axum#d244d3f936c875f04cca854ab6ec5871bc66570f"
 dependencies = [
  "async-trait",
  "bytes",
@@ -114,7 +114,7 @@ dependencies = [
 [[package]]
 name = "axum-macros"
 version = "0.3.7"
-source = "git+https://github.com/tokio-rs/axum#24f0f3eae8054c7a495cd364087f2dd7fa8b87e0"
+source = "git+https://github.com/tokio-rs/axum#d244d3f936c875f04cca854ab6ec5871bc66570f"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -419,9 +419,9 @@ dependencies = [
 
 [[package]]
 name = "html-node"
-version = "0.2.1"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "57c6029ad01323e58a4dd18ebe690c7a4f649e93ea8fc53a0bbfd9304e3f8cf7"
+checksum = "b30d43ffdc98f56d7613b833882f1aa4f60ce80742a12d39df27020e75db4b8d"
 dependencies = [
  "html-node-core",
  "html-node-macro",
@@ -429,9 +429,9 @@ dependencies = [
 
 [[package]]
 name = "html-node-core"
-version = "0.2.1"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8d41dc17af543a9b2d64176f8760ce8c3d1d9f41d81f179d366b3cd38bb5fb51"
+checksum = "22bf19c2808864b05baaa4598a70b2606e8d65c2b3d27e5562dda421c613dcb5"
 dependencies = [
  "axum",
  "html-escape",
@@ -440,9 +440,9 @@ dependencies = [
 
 [[package]]
 name = "html-node-macro"
-version = "0.2.1"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a6bc65329f27f89359ca6e5c84eabbf1c3f52093c46d56b1380222111a7eca56"
+checksum = "2638cd0367a2aa74755350f4d4a5616058f9b55d851da9aa0b8df83c7c8ed338"
 dependencies = [
  "proc-macro2",
  "proc-macro2-diagnostics",
