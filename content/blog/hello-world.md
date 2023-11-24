@@ -14,19 +14,19 @@ it also uses [tailwind css](https://tailwindcss.com/) for styling.
 take a look at a cool code block example below!
 
 ```rust
-pub fn document(path: Option<&str>, content: Markup) -> Markup {
-    html! {
-        <!DOCTYPE html>
-        <html lang="en">
-            <head>
-                { seo(path) }
-                <link rel="stylesheet" href="/static/styles.css" />
-            </head>
+#[cfg(test)]
+mod tests {
+    use claims::assert_ok;
 
-            <body class="bg-stone-100 font-mono text-stone-900 [font-feature-settings:'ss05'] dark:bg-stone-900 dark:text-stone-100">
-                { layout(content) }
-            </body>
-        </html>
+    use super::*;
+
+    #[ignore = "don't want to spam the api"]
+    #[tokio::test]
+    async fn player_works() {
+        println!(
+            "{:#?}",
+            assert_ok!(AssistLeaders::<Player>::default().send().await)
+        );
     }
 }
 ```
