@@ -3,7 +3,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        mono: ["'Cartograph CF'", "monospace"],
+        mono: ["'Berkeley Mono'", "monospace"],
       },
     },
   },

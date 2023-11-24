@@ -3,7 +3,7 @@
   href: https://github.com/vidhanio/site
 
 - name: html-node
-  description: an html macro for rust (used to build this website!)
+  description: an html macro for rust
   href: https://github.com/vidhanio/html-node
 
 - name: fncli

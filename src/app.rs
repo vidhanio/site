@@ -8,12 +8,6 @@ use std::{
 
 use axum::{extract::FromRef, Router};
 use include_dir::{include_dir, Dir};
-use request_id::MakeRequestUlid;
-use tower::ServiceBuilder;
-use tower_http::{
-    trace::{DefaultMakeSpan, DefaultOnResponse, TraceLayer},
-    ServiceBuilderExt,
-};
 use tracing::instrument;
 
 use crate::{
@@ -83,24 +77,15 @@ impl App {
     /// Serve the application.
     #[instrument(level = "debug", ret, err(Debug))]
     pub async fn serve(self) -> crate::Result<()> {
-        let trace_layer = TraceLayer::new_for_http()
-            .make_span_with(DefaultMakeSpan::new().include_headers(true))
-            .on_response(DefaultOnResponse::new().include_headers(true));
-
-        let request_id_layer = ServiceBuilder::new()
-            .set_x_request_id(MakeRequestUlid)
-            .layer(trace_layer)
-            .propagate_x_request_id();
-
         let tcp_listener = self.config.tcp_listener().await?;
 
         let router = Router::new()
             .nest("/", pages::router())
             .nest("/static", r#static::router())
-            .layer(request_id_layer)
             .with_state(self);
 
-        axum::serve(tcp_listener, router)
+        axum::Server::from_tcp(tcp_listener)?
+            .serve(router.into_make_service())
             .await
             .map_err(Error::Serve)?;
 

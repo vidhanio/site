@@ -1,4 +1,4 @@
-use html_node::{html, Node, Text};
+use maud::{html, Markup, Render};
 
 #[derive(Copy, Clone, Debug)]
 pub struct NavLink<'a> {
@@ -6,17 +6,15 @@ pub struct NavLink<'a> {
     pub link: &'a str,
 }
 
-impl<'a> From<NavLink<'a>> for Node {
-    fn from(item: NavLink<'a>) -> Self {
+impl Render for NavLink<'_> {
+    fn render(&self) -> Markup {
         html! {
-            <li>
-                <a
-                    href=item.link
-                    class="text-xl font-extrabold italic text-indigo-500 transition-colors hover:text-emerald-500"
-                >
-                    { Text::from(item.name) }
-                </a>
-            </li>
+            li {
+                a.text-xl.font-extrabold."text-stone-500".transition-colors."hover:text-stone-700"."dark:hover:text-stone-300"
+                href=(self.link) {
+                    (self.name)
+                }
+            }
         }
     }
 }

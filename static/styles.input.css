@@ -4,128 +4,39 @@
 
 @layer base {
   h1 {
-    @apply text-4xl font-extrabold italic text-indigo-500;
+    @apply text-4xl font-extrabold text-stone-500;
   }
 
   @font-face {
-    font-family: "Cartograph CF";
-    font-weight: 100;
-    src: url("/static/fonts/CartographCF-Thin.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-Thin.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "Cartograph CF";
-    font-weight: 100;
-    font-style: italic;
-    src: url("/static/fonts/CartographCF-ThinItalic.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-ThinItalic.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "Cartograph CF";
-    font-weight: 200;
-    src: url("/static/fonts/CartographCF-ExtraLight.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-ExtraLight.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "Cartograph CF";
-    font-weight: 200;
-    font-style: italic;
-    src: url("/static/fonts/CartographCF-ExtraLightItalic.woff2")
-        format("woff2"),
-      url("/static/fonts/CartographCF-ExtraLightItalic.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "Cartograph CF";
-    font-weight: 300;
-    src: url("/static/fonts/CartographCF-Light.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-Light.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "Cartograph CF";
-    font-weight: 300;
-    font-style: italic;
-    src: url("/static/fonts/CartographCF-LightItalic.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-LightItalic.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "Cartograph CF";
+    font-family: "Berkeley Mono";
     font-weight: 400;
-    src: url("/static/fonts/CartographCF-Regular.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-Regular.woff") format("woff");
+    font-style: normal;
+    src: url("/static/fonts/BerkeleyMono-Regular.woff2") format("woff2"),
+      url("/static/fonts/BerkeleyMono-Regular.woff") format("woff");
   }
 
   @font-face {
-    font-family: "Cartograph CF";
+    font-family: "Berkeley Mono";
+    font-weight: 700;
+    font-style: normal;
+    src: url("/static/fonts/BerkeleyMono-Bold.woff2") format("woff2"),
+      url("/static/fonts/BerkeleyMono-Bold.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Berkeley Mono";
     font-weight: 400;
     font-style: italic;
-    src: url("/static/fonts/CartographCF-RegularItalic.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-RegularItalic.woff") format("woff");
+    src: url("/static/fonts/BerkeleyMono-Italic.woff2") format("woff2"),
+      url("/static/fonts/BerkeleyMono-Italic.woff") format("woff");
   }
 
   @font-face {
-    font-family: "Cartograph CF";
-    font-weight: 500;
-    src: url("/static/fonts/CartographCF-DemiBold.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-DemiBold.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "Cartograph CF";
-    font-weight: 500;
-    font-style: italic;
-    src: url("/static/fonts/CartographCF-DemiBoldItalic.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-DemiBoldItalic.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "Cartograph CF";
-    font-weight: 600;
-    src: url("/static/fonts/CartographCF-Bold.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-Bold.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "Cartograph CF";
-    font-weight: 600;
-    font-style: italic;
-    src: url("/static/fonts/CartographCF-BoldItalic.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-BoldItalic.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "Cartograph CF";
-    font-weight: 700;
-    src: url("/static/fonts/CartographCF-ExtraBold.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-ExtraBold.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "Cartograph CF";
+    font-family: "Berkeley Mono";
     font-weight: 700;
     font-style: italic;
-    src: url("/static/fonts/CartographCF-ExtraBoldItalic.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-ExtraBoldItalic.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "Cartograph CF";
-    font-weight: 800;
-    src: url("/static/fonts/CartographCF-Heavy.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-Heavy.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "Cartograph CF";
-    font-weight: 800;
-    font-style: italic;
-    src: url("/static/fonts/CartographCF-HeavyItalic.woff2") format("woff2"),
-      url("/static/fonts/CartographCF-HeavyItalic.woff") format("woff");
+    src: url("/static/fonts/BerkeleyMono-BoldItalic.woff2") format("woff2"),
+      url("/static/fonts/BerkeleyMono-BoldItalic.woff") format("woff");
   }
 }
 
@@ -141,7 +52,7 @@
   }
 
   code.highlighted-code span.line-start {
-    @apply inline-block text-slate-400 dark:text-slate-600 text-right w-[2ch] pr-4 mr-4 border-r-2 border-solid border-slate-300 dark:border-slate-700 box-content;
+    @apply inline-block text-stone-400 dark:text-stone-600 text-right w-[2ch] pr-4 mr-4 border-r-2 border-solid border-stone-300 dark:border-stone-700 box-content;
     counter-increment: linenumber;
   }
 
@@ -161,15 +72,15 @@
 
   code.highlighted-code .punctuation,
   code.highlighted-code .operator {
-    @apply text-slate-600 dark:text-slate-400;
+    @apply text-stone-600 dark:text-stone-400;
   }
 
   code.highlighted-code .punctuation.delimiter {
-    @apply text-slate-500;
+    @apply text-stone-500;
   }
 
   code.highlighted-code .comment {
-    @apply text-slate-400 dark:text-slate-600;
+    @apply text-stone-400 dark:text-stone-600;
   }
 
   code.highlighted-code .constructor {

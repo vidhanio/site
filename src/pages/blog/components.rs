@@ -1,35 +1,39 @@
-use html_node::{html, Node, Text};
+use maud::{html, Markup, Render};
 
-use crate::{blog_post::BlogPostMetadata, icons};
+use crate::{blog_post::BlogPostMetadata, icon::CHEVRON};
 
-pub fn link(slug: &str, metadata: &BlogPostMetadata) -> Node {
-    let href = format!("/blog/{slug}");
+pub struct Link<'a> {
+    slug: &'a str,
+    metadata: &'a BlogPostMetadata,
+}
 
-    html! {
-        <li>
-            <a href=href class="group w-full flex flex-row justify-between rounded bg-slate-200 dark:bg-slate-800">
-                <div class="p-4">
-                    <h2 class="text-lg text-slate-700 dark:text-slate-300">
-                        { Text::from(&metadata.title) }
-                    </h2>
-                    <time class="text-slate-600 dark:text-slate-400" datetime=metadata.date>
-                        { Text::from(metadata.date_text()) }
-                    </time>
-                    <p class="text-slate-600 dark:text-slate-400">
-                        { Text::from(&metadata.description) }
-                    </p>
-                </div>
-                <div
-                    class="\
-                        grid place-items-center \
-                        p-4 \
-                        group-hover:translate-x-1 transition-transform \
-                        fill-slate-600 dark:fill-slate-400 \
-                    "
-                >
-                    { icons::chevron_right(Some("h-8")) }
-                </div>
-            </a>
-        </li>
+impl<'a> Link<'a> {
+    pub const fn new(slug: &'a str, metadata: &'a BlogPostMetadata) -> Self {
+        Self { slug, metadata }
+    }
+}
+
+impl Render for Link<'_> {
+    fn render(&self) -> Markup {
+        html! {
+            li {
+                a.group.w-full.flex.flex-row.justify-between.rounded."bg-stone-200"."dark:bg-stone-800" href={"/blog/" (self.slug)} {
+                    div."p-4" {
+                        h2.text-lg."text-stone-700"."dark:text-stone-300" {
+                            (&self.metadata.title)
+                        }
+                        time."text-stone-600"."dark:text-stone-400" datetime=(self.metadata.date) {
+                            (self.metadata.date_text())
+                        }
+                        p."text-stone-600"."dark:text-stone-400" {
+                            (&self.metadata.description)
+                        }
+                    }
+                    div.grid.place-items-center."p-4"."group-hover:translate-x-1".transition-transform."fill-stone-600"."dark:fill-stone-400" {
+                        (CHEVRON)
+                    }
+                }
+            }
+        }
     }
 }

@@ -4,7 +4,7 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
-use html_node::{html, text, Node};
+use maud::{html, Markup, Render};
 use thiserror::Error;
 
 use crate::layout::document;
@@ -20,9 +20,13 @@ pub enum Error {
     #[error("tree-sitter highlight error")]
     TreeSitterHighlight(#[from] tree_sitter_highlight::Error),
 
+    /// An error occurred while trying to bind to the socket address.
+    #[error("tcp listener bind error")]
+    Bind(#[source] io::Error),
+
     /// An error occurred while trying to serve the application.
     #[error("application serve error")]
-    Serve(#[source] io::Error),
+    Serve(#[from] hyper::Error),
 
     /// A blog post was missing metadata.
     #[error("metadata missing for blog post: `{0}`")]
@@ -46,8 +50,8 @@ pub enum Error {
 
     /// Invalid font path.
     #[error(
-        "invalid font extension (must be `woff` or `woff2`): `{}`",
-        .0.extension().and_then(OsStr::to_str).unwrap_or("<none>")
+    "invalid font extension (must be `woff` or `woff2`): `{}`",
+    .0.extension().and_then(OsStr::to_str).unwrap_or("<none>")
     )]
     InvalidFontExtension(PathBuf),
 
@@ -61,7 +65,8 @@ impl Error {
     #[must_use]
     pub const fn status_code(&self) -> StatusCode {
         match self {
-            Self::Serve(_)
+            Self::Bind(_)
+            | Self::Serve(_)
             | Self::TreeSitterQuery(_)
             | Self::TreeSitterHighlight(_)
             | Self::NoPostMetadata(_)
@@ -74,37 +79,22 @@ impl Error {
     }
 }
 
-impl From<Error> for Node {
-    fn from(error: Error) -> Self {
+impl Render for Error {
+    fn render(&self) -> Markup {
         html! {
-            <pre class="bg-slate-200 dark:bg-slate-800 overflow-x-auto rounded-lg p-4 [font-feature-settings:normal]">
-                <code>
-                {
-                    ErrorSourceIter::new(&error)
-                        .enumerate()
-                        .flat_map(|(i, e)| {
-                            let indent = text!(
-                                "{}",
-                                "  ".repeat(i.saturating_sub(1))
-                            );
+            pre."bg-stone-200"."dark:bg-stone-800".overflow-x-auto.rounded-lg."p-4"."[font-feature-settings:normal]" {
+                code {
+                    @for (i, e) in ErrorSourceIter::new(self).enumerate() {
+                        @let indent = "  ".repeat(i.saturating_sub(1));
 
-                            let corner = if i == 0 {
-                                Self::EMPTY
-                            } else {
-                                html! {
-                                    <span class="text-violet-500 font-bold">"└ "</span>
-                                }
-                            };
-
-                            [
-                                indent,
-                                corner,
-                                text!("{e}\n"),
-                            ]
-                        })
+                        @if i == 0 {
+                            (indent) (maud::display(e))
+                        } else {
+                            (indent) span."text-violet-500".font-bold { "└" } (maud::display(e))
+                        }
+                    }
                 }
-                </code>
-            </pre>
+            }
         }
     }
 }
@@ -112,11 +102,13 @@ impl From<Error> for Node {
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
         let status_code = self.status_code();
+
         let body = document(
             None,
             html! {
-                <h1>{ text!("{} error", self.status_code().as_u16()) }</h1>
-                { self }
+                h1 { (status_code.as_u16()) " error" }
+
+                (self)
             },
         );
 

@@ -2,7 +2,7 @@ mod blog;
 mod projects;
 
 use axum::Router;
-use html_node::{html, Node};
+use maud::{html, Markup};
 use tracing::instrument;
 
 use crate::{layout::document, App};
@@ -15,18 +15,17 @@ pub fn router() -> Router<App> {
 }
 
 #[instrument(level = "debug")]
-pub async fn get() -> Node {
+pub async fn get() -> Markup {
     document(
         None,
         html! {
-            <h1>"vidhan.io"</h1>
-            <p>
-                "hey! i'm vidhan. i'm a software engineer, fullstack developer, discord \
+            h1 { "hey, i'm vidhan!" }
+            p."text-2xl" {
+                "i'm a software engineer, fullstack developer, discord \
                 bot developer, and a cs student at mcmaster. i'm currently working \
                 on a ton of cool projects, which you can find on "
-                <a class="underline" href="https://github.com/vidhanio">"my github"</a>
-                "."
-            </p>
+                a.underline href="https://github.com/vidhanio" { "my github" } "."
+            }
         },
     )
 }

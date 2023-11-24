@@ -1,28 +1,27 @@
 mod link;
 mod ring;
 
-use html_node::{html, Node};
+use maud::{html, Markup};
 
 pub use self::link::FooterLink;
 use self::ring::ring;
 
-pub fn footer<'a>(links: impl IntoIterator<Item = FooterLink<'a>>) -> Node {
+pub fn footer<'a>(links: impl IntoIterator<Item = FooterLink<'a>>) -> Markup {
     html! {
-        <footer class="text-center w-full p-8 flex flex-col items-center gap-4 border-t-2 border-indigo-300 dark:border-indigo-700">
-            <p class="italic text-lg text-slate-400 dark:text-slate-600">
+        footer.test-center.w-full."p-8".flex.flex-col.items-center."gap-4"."border-t-2"."border-stone-300"."dark:border-stone-700" {
+            p.font-bold.text-lg."text-stone-400"."dark:text-stone-600" {
                 "made with <3 by vidhan."
-            </p>
-            <ul class="flex flex-row flex-wrap items-center justify-center gap-4 text-slate-400 dark:text-slate-600">
-                { links }
-            </ul>
-            <a
-                href="/static/LICENSE.txt"
-                class="text-xs font-thin text-slate-400 dark:text-slate-600 hover:text-slate-500"
-            >
+            }
+            ul.flex.flex-row.flex-wrap.items-center.justify-center."gap-4"."text-stone-400"."dark:text-stone-600" {
+                @for link in links {
+                    (link)
+                }
+            }
+            a.text-xs.font-thin."text-stone-400"."dark:text-stone-600"."hover:text-stone-500" href="/static/LICENSE.txt" {
                 "site licensed under agpl-3.0."
-            </a>
+            }
 
-            { ring() }
-        </footer>
+            (ring())
+        }
     }
 }

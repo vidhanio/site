@@ -2,7 +2,7 @@ mod footer;
 mod nav;
 mod seo;
 
-use html_node::{html, Node};
+use maud::{html, Markup, DOCTYPE};
 
 use self::{
     footer::{footer, FooterLink},
@@ -58,30 +58,23 @@ const FOOTER_LINKS: [FooterLink<'static>; 6] = [
     },
 ];
 
-pub fn document(path: Option<&str>, content: Node) -> Node {
+#[allow(clippy::needless_pass_by_value)]
+pub fn document(path: Option<&str>, content: Markup) -> Markup {
     html! {
-        <!DOCTYPE html>
-        <html lang="en">
-            <head>
-                { seo(path) }
-                <link rel="stylesheet" href="/static/styles.css" />
-            </head>
+        (DOCTYPE)
+        html lang="en" {
+            head {
+                (seo(path))
+                link rel="stylesheet" href="/static/styles.css";
+            }
 
-            <body
-                class="\
-                    min-h-screen \
-                    px-[10%] lg:px-[25%] \
-                    flex flex-col items-center \
-                    font-mono [font-feature-settings:'ss05'] \
-                    bg-slate-100 dark:bg-slate-900 dark:text-slate-300 text-slate-700\
-                "
-            >
-                { nav(NAV_LINKS) }
-                <main class="w-full py-8 flex-1 border-indigo-600 flex flex-col gap-8">
-                    { content }
-                </main>
-                { footer(FOOTER_LINKS) }
-            </body>
-        </html>
+            body.min-h-screen."px-[10%]"."lg:px-[25%]".flex.flex-col.items-center.font-mono."[font-feature-settings:'ss05']"."bg-stone-100"."dark:bg-stone-900"."dark:text-stone-300"."text-stone-700" {
+                (nav(NAV_LINKS))
+                main.w-full."py-8"."flex-1"."border-stone-600".flex.flex-col."gap-8" {
+                    (content)
+                }
+                (footer(FOOTER_LINKS))
+            }
+        }
     }
 }

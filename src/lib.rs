@@ -14,7 +14,7 @@ mod blog_post;
 mod config;
 mod error;
 mod highlighter_configs;
-mod icons;
+mod icon;
 mod layout;
 mod pages;
 mod project;

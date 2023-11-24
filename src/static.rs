@@ -1,7 +1,7 @@
 use std::{ffi::OsStr, path::PathBuf};
 
-use axum::{extract::Path, Router};
-use axum_extra::{headers::ContentType, response::Css, TypedHeader};
+use axum::{extract::Path, headers::ContentType, Router, TypedHeader};
+use axum_extra::response::Css;
 use include_dir::{include_dir, Dir};
 use tracing::instrument;
 
@@ -9,7 +9,7 @@ use crate::{App, Error};
 
 pub fn router() -> Router<App> {
     Router::new()
-        .route("/favicon.ico", axum::routing::get(favicon))
+        // .route("/favicon.ico", axum::routing::get(favicon))
         .route("/LICENSE.txt", axum::routing::get(license))
         .route("/styles.css", axum::routing::get(styles))
         .route("/fonts/:font", axum::routing::get(fonts))
@@ -21,10 +21,10 @@ macro_rules! static_path {
     };
 }
 
-#[instrument(level = "debug")]
-async fn favicon() -> &'static [u8] {
-    include_bytes!(static_path!("favicon.ico"))
-}
+// #[instrument(level = "debug")]
+// async fn favicon() -> &'static [u8] {
+//     include_bytes!(static_path!("favicon.ico"))
+// }
 
 #[instrument(level = "debug")]
 async fn license() -> &'static [u8] {

@@ -1,4 +1,4 @@
-use html_node::{Node, UnsafeText};
+use maud::{Markup, PreEscaped, Render};
 use pulldown_cmark::{CodeBlockKind, Event, MetadataBlockKind, Options, Parser, Tag, TagEnd};
 use serde::Deserialize;
 use time::{format_description::FormatItem, macros::format_description, Date};
@@ -53,10 +53,12 @@ impl<'a> BlogPost<'a> {
                         })
                         .collect::<crate::Result<String>>()?;
 
-                    let highlighted_code = match block_kind {
-                        CodeBlockKind::Fenced(lang) => highlighter_configs.highlight(&lang, &code),
-                        CodeBlockKind::Indented => highlighter_configs.highlight("", &code),
-                    }?;
+                    let lang = match &block_kind {
+                        CodeBlockKind::Fenced(lang) => lang,
+                        CodeBlockKind::Indented => "",
+                    };
+
+                    let highlighted_code = highlighter_configs.highlight(lang, &code)?;
 
                     let event = Event::Html(
                         format!(
@@ -99,11 +101,12 @@ impl<'a> BlogPost<'a> {
 
         Ok(Self { metadata, events })
     }
+}
 
-    pub fn to_post_html(&self) -> Node {
+impl Render for BlogPost<'_> {
+    fn render(&self) -> Markup {
         let mut buf = String::new();
         pulldown_cmark::html::push_html(&mut buf, self.events.iter().cloned());
-
-        UnsafeText::from(buf).into()
+        PreEscaped(buf)
     }
 }
