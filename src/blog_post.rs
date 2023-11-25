@@ -63,9 +63,7 @@ impl<'a> BlogPost<'a> {
                     let event = Event::Html(
                         format!(
                             "\
-                            <pre \
-                                class=\"highlighted-code\"\
-                            >\
+                            <pre>\
                                 <code class=\"highlighted-code\">\
                                     {highlighted_code}\
                                 </code>\

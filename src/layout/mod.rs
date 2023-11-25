@@ -68,7 +68,7 @@ pub fn document(path: Option<&str>, content: Markup) -> Markup {
                 link rel="stylesheet" href="/static/styles.css";
             }
 
-            body.min-h-screen."px-[10%]"."lg:px-[25%]".flex.flex-col.items-center.font-mono."[font-feature-settings:'ss05']"."bg-stone-100"."dark:bg-stone-900"."dark:text-stone-300"."text-stone-700" {
+            body.min-h-screen."px-[10%]"."lg:px-[25%]".flex.flex-col.items-center.font-mono."bg-stone-100"."dark:bg-stone-900"."dark:text-stone-300"."text-stone-700" {
                 (nav(NAV_LINKS))
                 main.w-full."py-8"."flex-1"."border-stone-600".flex.flex-col."gap-8" {
                     (content)

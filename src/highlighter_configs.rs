@@ -157,17 +157,12 @@ impl HighlighterConfigurations {
 
 impl Debug for HighlighterConfigurations {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        struct HighlightConfiguration;
-
-        impl Debug for HighlightConfiguration {
-            fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-                f.debug_struct("HighlightConfiguration")
-                    .finish_non_exhaustive()
-            }
-        }
-
         f.debug_map()
-            .entries(self.0.keys().map(|&k| (k, HighlightConfiguration)))
+            .entries(
+                self.0
+                    .keys()
+                    .map(|&k| (k, format_args!("HighlightConfiguration"))),
+            )
             .finish()
     }
 }
