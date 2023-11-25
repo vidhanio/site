@@ -17,7 +17,7 @@ impl Render for Link<'_> {
     fn render(&self) -> Markup {
         html! {
             li {
-                a.group.w-full.flex.flex-row.justify-between.rounded."bg-stone-200"."dark:bg-stone-800" href={"/blog/" (self.slug)} {
+                a.group.w-full.flex.flex-row.justify-between."bg-stone-200"."dark:bg-stone-800" href={"/blog/" (self.slug)} {
                     div."p-4" {
                         h2.text-lg."text-stone-700"."dark:text-stone-300" {
                             (&self.metadata.title)

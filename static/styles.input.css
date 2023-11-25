@@ -44,7 +44,7 @@
   /* basic code block styles */
 
   :not(pre) > code {
-    @apply px-1 rounded;
+    @apply px-1;
   }
 
   code.highlighted-code {

@@ -26,6 +26,11 @@ pub async fn get() -> Markup {
                 on a ton of cool projects, which you can find on "
                 a.underline href="https://github.com/vidhanio" { "my github" } "."
             }
+            div.grid.place-items-center."flex-1" {
+                a.font-bold."text-4xl" href="https://github.com/vidhanio/vidhanio/releases/latest/download/resume.pdf" {
+                    "[resume.pdf]"
+                }
+            }
         },
     )
 }

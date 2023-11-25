@@ -57,7 +57,7 @@ pub async fn get_post(State(app): State<App>, Path(slug): Path<String>) -> crate
             hr."w-3/4"."border-stone-500";
 
             article.prose.prose-slate."dark:prose-invert"
-                ."prose-pre:bg-stone-200"."dark:prose-pre:bg-stone-800"
+                ."prose-pre:bg-stone-200"."dark:prose-pre:bg-stone-800"."prose-pre:rounded-none"
                 ."prose-code:font-normal"."prose-code:bg-stone-200"."dark:prose-code:bg-stone-800"."prose-code:text-stone-800"."dark:prose-code:text-stone-200"
                     ."prose-code:before:content-none"."prose-code:after:content-none"
                 .max-w-none {

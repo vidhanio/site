@@ -15,7 +15,7 @@ impl Project {
     pub fn link(&self) -> Markup {
         html! {
             li {
-                a.group.w-full.flex.flex-row.justify-between.rounded."bg-stone-200"."dark:bg-stone-800" href=(self.href) {
+                a.group.w-full.flex.flex-row.justify-between."bg-stone-200"."dark:bg-stone-800" href=(self.href) {
                     div."p-4" {
                         h2.text-lg."text-stone-700"."dark:text-stone-300" {
                             (self.name)

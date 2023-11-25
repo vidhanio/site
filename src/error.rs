@@ -82,7 +82,7 @@ impl Error {
 impl Render for Error {
     fn render(&self) -> Markup {
         html! {
-            pre."bg-stone-200"."dark:bg-stone-800".overflow-x-auto.rounded-lg."p-4" {
+            pre."bg-stone-200"."dark:bg-stone-800".overflow-x-auto."p-4" {
                 code {
                     @for (i, e) in ErrorSourceIter::new(self).enumerate() {
                         @let indent = "  ".repeat(i.saturating_sub(1));
