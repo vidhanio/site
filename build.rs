@@ -1,6 +1,13 @@
 use std::{env, error::Error, path::PathBuf, process::Command};
 
 fn main() -> Result<(), Box<dyn Error>> {
+    build_tailwind()?;
+    set_git_hash()?;
+
+    Ok(())
+}
+
+fn build_tailwind() -> Result<(), Box<dyn Error>> {
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?);
 
     let tailwind_config_file = manifest_dir.join("tailwind.config.js");
@@ -36,6 +43,19 @@ fn main() -> Result<(), Box<dyn Error>> {
     if !status.success() {
         return Err("tailwindcss failed".into());
     }
+
+    Ok(())
+}
+
+fn set_git_hash() -> Result<(), Box<dyn Error>> {
+    let git_out = Command::new("git")
+        .args(["rev-parse", "HEAD"])
+        .output()?
+        .stdout;
+
+    let git_hash = String::from_utf8(git_out)?;
+
+    println!("cargo:rustc-env=GIT_HASH={git_hash}");
 
     Ok(())
 }

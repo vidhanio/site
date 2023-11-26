@@ -1267,6 +1267,7 @@ dependencies = [
  "thiserror",
  "time",
  "tokio",
+ "tower",
  "tracing",
  "tracing-subscriber",
  "tree-sitter",

@@ -1,8 +1,13 @@
-use std::{ffi::OsStr, path::PathBuf};
+use std::{ffi::OsStr, path::PathBuf, time::Duration};
 
-use axum::{extract::Path, headers::ContentType, Router, TypedHeader};
+use axum::{
+    extract::Path,
+    headers::{CacheControl, ContentType},
+    Router, TypedHeader,
+};
 use axum_extra::response::Css;
 use include_dir::{include_dir, Dir};
+use tower::ServiceBuilder;
 use tracing::instrument;
 
 use crate::{App, Error};
@@ -13,6 +18,13 @@ pub fn router() -> Router<App> {
         .route("/LICENSE.txt", axum::routing::get(license))
         .route("/styles.css", axum::routing::get(styles))
         .route("/fonts/:font", axum::routing::get(fonts))
+        .layer(ServiceBuilder::new().map_response(|res| {
+            let cc = CacheControl::new()
+                .with_max_age(Duration::from_secs(60 * 60 * 24 * 365))
+                .with_immutable();
+
+            (TypedHeader(cc), res)
+        }))
 }
 
 macro_rules! static_path {

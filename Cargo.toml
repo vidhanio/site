@@ -34,6 +34,7 @@ serde_yaml = "0.9"
 thiserror = "1"
 time = { version = "0.3", features = ["macros", "serde-human-readable"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+tower = { version = "0.4", features = ["util"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 tree-sitter = "0.20"
