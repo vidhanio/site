@@ -1,4 +1,4 @@
-use maud::{Markup, PreEscaped, Render};
+use maud::{html, Markup, PreEscaped, Render};
 use pulldown_cmark::{CodeBlockKind, Event, MetadataBlockKind, Options, Parser, Tag, TagEnd};
 use serde::Deserialize;
 use time::{format_description::FormatItem, macros::format_description, Date};
@@ -61,15 +61,14 @@ impl<'a> BlogPost<'a> {
                     let highlighted_code = highlighter_configs.highlight(lang, &code)?;
 
                     let event = Event::Html(
-                        format!(
-                            "\
-                            <pre>\
-                                <code class=\"highlighted-code\">\
-                                    {highlighted_code}\
-                                </code>\
-                            </pre>\
-                            "
-                        )
+                        html! {
+                            pre {
+                                code.highlighted-code {
+                                    (PreEscaped(highlighted_code))
+                                }
+                            }
+                        }
+                        .into_string()
                         .into(),
                     );
 
