@@ -1,4 +1,4 @@
-use std::{ffi::OsStr, io, path::PathBuf};
+use std::{borrow::Cow, ffi::OsString, io, path::PathBuf};
 
 use axum::{
     http::StatusCode,
@@ -50,10 +50,10 @@ pub enum Error {
 
     /// Invalid font path.
     #[error(
-    "invalid font extension (must be `woff` or `woff2`): `{}`",
-    .0.extension().and_then(OsStr::to_str).unwrap_or("<none>")
+        "invalid font extension (must be `woff` or `woff2`): `{}`",
+        .0.as_ref().map_or(Cow::Borrowed("<none>"), |s| s.to_string_lossy())
     )]
-    InvalidFontExtension(PathBuf),
+    InvalidFontExtension(Option<OsString>),
 
     /// Font not found.
     #[error("font not found: `{0}`")]

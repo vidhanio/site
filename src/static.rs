@@ -54,14 +54,14 @@ async fn styles() -> Css<&'static str> {
 async fn fonts(
     Path(font): Path<String>,
 ) -> crate::Result<(TypedHeader<ContentType>, &'static [u8])> {
-    const FONTS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/static/fonts");
+    static FONTS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/static/fonts");
 
     let font = PathBuf::from(font);
 
     let mime = match font.extension() {
         Some(ext) if ext == OsStr::new("woff2") => mime::FONT_WOFF2,
         Some(ext) if ext == OsStr::new("woff") => mime::FONT_WOFF,
-        _ => return Err(Error::InvalidFontExtension(font)),
+        ext => return Err(Error::InvalidFontExtension(ext.map(Into::into))),
     };
 
     FONTS_DIR
