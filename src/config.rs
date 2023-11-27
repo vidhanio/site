@@ -1,6 +1,7 @@
-use std::net::{IpAddr, SocketAddr, TcpListener};
+use std::net::{IpAddr, SocketAddr};
 
 use serde::Deserialize;
+use tokio::net::TcpListener;
 use tracing::instrument;
 
 use crate::Error;
@@ -34,6 +35,8 @@ impl Config {
     /// Bind the socket address to a TCP listener.
     #[instrument(level = "debug", err(Debug))]
     pub async fn tcp_listener(&self) -> crate::Result<TcpListener> {
-        TcpListener::bind(self.socket_addr()).map_err(Error::Bind)
+        TcpListener::bind(self.socket_addr())
+            .await
+            .map_err(Error::Bind)
     }
 }

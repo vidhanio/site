@@ -1,11 +1,11 @@
 use std::{ffi::OsStr, path::PathBuf, time::Duration};
 
-use axum::{
-    extract::Path,
+use axum::{extract::Path, Router};
+use axum_extra::{
     headers::{CacheControl, ContentType},
-    Router, TypedHeader,
+    response::Css,
+    TypedHeader,
 };
-use axum_extra::response::Css;
 use include_dir::{include_dir, Dir};
 use tower::ServiceBuilder;
 use tracing::instrument;

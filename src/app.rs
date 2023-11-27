@@ -84,8 +84,7 @@ impl App {
             .nest("/static", r#static::router())
             .with_state(self);
 
-        axum::Server::from_tcp(tcp_listener)?
-            .serve(router.into_make_service())
+        axum::serve(tcp_listener, router.into_make_service())
             .await
             .map_err(Error::Serve)?;
 

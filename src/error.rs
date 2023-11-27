@@ -26,7 +26,7 @@ pub enum Error {
 
     /// An error occurred while trying to serve the application.
     #[error("application serve error")]
-    Serve(#[from] hyper::Error),
+    Serve(#[source] io::Error),
 
     /// A blog post was missing metadata.
     #[error("metadata missing for blog post: `{0}`")]

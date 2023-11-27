@@ -18,15 +18,18 @@ version = "0.1.0"
     pedantic = "warn"
 
 [dependencies]
-axum = { version = "0.6", features = ["headers", "macros", "tracing"] }
-axum-extra = { version = "0.8" }
+axum = { version = "0.7", features = ["macros", "tracing"] }
+axum-extra = { version = "0.9", features = ["typed-header"] }
 color-eyre = "0.6"
 dotenvy = "0.15"
 envy = "0.4"
 html-escape = "0.2"
-hyper = "0.14"
+hyper = "1.0"
 include_dir = "0.7"
-maud = { version = "0.25", features = ["axum"] }
+# TODO: use the latest version of maud once it's released
+maud = { git = "https://github.com/vidhanio/maud", branch = "patch-1", features = [
+    "axum",
+] }
 mime = "0.3"
 pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }
 serde = { version = "1", features = ["derive"] }
