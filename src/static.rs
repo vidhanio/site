@@ -1,4 +1,4 @@
-use std::{ffi::OsStr, path::PathBuf, time::Duration};
+use std::{ffi::OsStr, future, path::PathBuf, time::Duration};
 
 use axum::{extract::Path, Router};
 use axum_extra::{
@@ -7,7 +7,6 @@ use axum_extra::{
     TypedHeader,
 };
 use include_dir::{include_dir, Dir};
-use tower::ServiceBuilder;
 use tracing::instrument;
 
 use crate::{App, Error};
@@ -18,12 +17,12 @@ pub fn router() -> Router<App> {
         .route("/LICENSE.txt", axum::routing::get(license))
         .route("/styles.css", axum::routing::get(styles))
         .route("/fonts/:font", axum::routing::get(fonts))
-        .layer(ServiceBuilder::new().map_response(|res| {
+        .layer(axum::middleware::map_response(|res| {
             let cc = CacheControl::new()
                 .with_max_age(Duration::from_secs(60 * 60 * 24 * 365))
                 .with_immutable();
 
-            (TypedHeader(cc), res)
+            future::ready((TypedHeader(cc), res))
         }))
 }
 
