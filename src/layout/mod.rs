@@ -58,8 +58,7 @@ const FOOTER_LINKS: [FooterLink<'static>; 6] = [
     },
 ];
 
-#[allow(clippy::needless_pass_by_value)]
-pub fn document(path: Option<&str>, content: Markup) -> Markup {
+pub fn document(path: Option<&str>, content: &Markup) -> Markup {
     html! {
         (DOCTYPE)
         html lang="en" {

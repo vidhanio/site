@@ -8,7 +8,7 @@ use crate::{layout::document, App};
 pub async fn get(State(app): State<App>) -> Markup {
     document(
         Some("/projects"),
-        html! {
+        &html! {
             h1 { "projects" }
             ul.flex.flex-col."gap-4" {
                 @for project in &*app.projects {

@@ -20,7 +20,7 @@ pub fn router() -> Router<App> {
 pub async fn get(State(app): State<App>) -> Markup {
     document(
         Some("/blog"),
-        html! {
+        &html! {
             h1 { "blog" }
             ul.flex.flex-col."gap-4" {
                 @for (slug, metadata) in &*app.blog_posts_metadatas() {
@@ -42,7 +42,7 @@ pub async fn get_post(State(app): State<App>, Path(slug): Path<String>) -> crate
 
     Ok(document(
         Some(&format!("/blog/{slug}")),
-        html! {
+        &html! {
             header {
                 h1 { (blog_post.metadata.title) }
                 time.flex.flex-row."gap-2".items-center."text-stone-600"."dark:text-stone-400"."mt-2" datetime=(blog_post.metadata.date) {

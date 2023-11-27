@@ -104,7 +104,7 @@ impl IntoResponse for Error {
 
         let body = document(
             None,
-            html! {
+            &html! {
                 h1 { (status_code.as_u16()) " error" }
 
                 (self)

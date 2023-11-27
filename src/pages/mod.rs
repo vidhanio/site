@@ -18,7 +18,7 @@ pub fn router() -> Router<App> {
 pub async fn get() -> Markup {
     document(
         None,
-        html! {
+        &html! {
             h1 { "hey, i'm vidhan!" }
             p."text-2xl" {
                 "i'm a software engineer, fullstack developer, discord \
