@@ -24,7 +24,7 @@ color-eyre = "0.6"
 dotenvy = "0.15"
 envy = "0.4"
 html-escape = "0.2"
-hyper = "0.14"
+hyper = "1.0"
 include_dir = "0.7"
 maud = { version = "0.25", features = ["axum"] }
 mime = "0.3"
