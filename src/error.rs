@@ -84,14 +84,13 @@ impl Render for Error {
         html! {
             pre."bg-stone-200"."dark:bg-stone-800".overflow-x-auto."p-4" {
                 code {
-                    @for (i, e) in ErrorSourceIter::new(self).enumerate() {
-                        @let indent = "  ".repeat(i.saturating_sub(1));
+                    (maud::display(self));
 
-                        @if i == 0 {
-                            (indent) (maud::display(e))
-                        } else {
-                            (indent) span."text-violet-500".font-bold { "└" } (maud::display(e))
-                        }
+                    @for (i, e) in ErrorSourceIter::new(self)
+                        .skip(1)
+                        .enumerate()
+                    {
+                        "\n" (" ".repeat(i * 2)) span."text-violet-500".font-bold { "└" } " " (e)
                     }
                 }
             }
