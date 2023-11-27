@@ -42,3 +42,6 @@ tree-sitter-highlight = "0.20"
 tree-sitter-html = "0.19"
 tree-sitter-java = "0.20"
 tree-sitter-rust = "0.20"
+
+[build-dependencies]
+gix = { version = "0.55", default-features = false }

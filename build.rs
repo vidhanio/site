@@ -48,14 +48,11 @@ fn build_tailwind() -> Result<(), Box<dyn Error>> {
 }
 
 fn set_git_hash() -> Result<(), Box<dyn Error>> {
-    let git_out = Command::new("git")
-        .args(["rev-parse", "HEAD"])
-        .output()?
-        .stdout;
+    let repo = gix::open(".")?;
 
-    let git_hash = String::from_utf8(git_out)?;
+    let commit_id = repo.head()?.id().ok_or("head commit should have id")?;
 
-    println!("cargo:rustc-env=GIT_HASH={git_hash}");
+    println!("cargo:rustc-env=GIT_COMMIT_HASH={commit_id}");
 
     Ok(())
 }

@@ -65,7 +65,7 @@ pub fn document(path: Option<&str>, content: Markup) -> Markup {
         html lang="en" {
             head {
                 (seo(path))
-                link rel="stylesheet" href=(concat!("/static/styles.css?git-hash=", env!("GIT_HASH")));
+                link rel="stylesheet" href=(concat!("/static/styles.css?v=", env!("GIT_COMMIT_HASH")));
             }
 
             body.min-h-screen."px-[10%]"."lg:px-[25%]".flex.flex-col.items-center.font-mono."bg-stone-100"."dark:bg-stone-900"."dark:text-stone-300"."text-stone-700" {
