@@ -1181,7 +1181,7 @@ checksum = "0e7465ac9959cc2b1404e8e2367b43684a6d13790fe23056cc8c6c5a6b7bcb94"
 [[package]]
 name = "maud"
 version = "0.25.0"
-source = "git+https://github.com/vidhanio/maud?branch=patch-1#8d3427a898f39d3949b87532ef19280187124c1a"
+source = "git+https://github.com/vidhanio/maud?branch=patch-1#fb77d399d001a345f3a369eb2c7a12da243376a6"
 dependencies = [
  "axum-core",
  "http",
@@ -1192,7 +1192,7 @@ dependencies = [
 [[package]]
 name = "maud_macros"
 version = "0.25.0"
-source = "git+https://github.com/vidhanio/maud?branch=patch-1#8d3427a898f39d3949b87532ef19280187124c1a"
+source = "git+https://github.com/vidhanio/maud?branch=patch-1#fb77d399d001a345f3a369eb2c7a12da243376a6"
 dependencies = [
  "proc-macro-error",
  "proc-macro2",
