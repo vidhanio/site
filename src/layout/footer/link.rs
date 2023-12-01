@@ -10,7 +10,7 @@ impl Render for FooterLink<'_> {
     fn render(&self) -> Markup {
         html! {
             li {
-                a.test-sm.font-light."hover:text-stone-500".transition-colors href=(self.url) rel=[self.rel] {
+                a.text-sm.font-light."hover:text-stone-500".transition-colors href=(self.url) rel=[self.rel] {
                     (self.name)
                 }
             }

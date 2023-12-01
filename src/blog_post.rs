@@ -21,6 +21,7 @@ impl BlogPostMetadata {
         self.date
             .format(FORMAT_DESCRIPTION)
             .expect("date formatting should not fail")
+            .to_lowercase()
     }
 }
 
