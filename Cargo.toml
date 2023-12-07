@@ -47,4 +47,4 @@ tree-sitter-java = "0.20"
 tree-sitter-rust = "0.20"
 
 [build-dependencies]
-gix = { version = "0.55", default-features = false }
+gix = { version = "0.56", default-features = false }
