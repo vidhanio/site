@@ -7,16 +7,16 @@ use crate::{highlighter_configs::HighlighterConfigurations, Error};
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "kebab-case")]
-pub struct BlogPostMetadata {
+pub struct Metadata {
     pub title: String,
     pub date: Date,
     pub description: String,
 }
 
-impl BlogPostMetadata {
+impl Metadata {
     pub fn date_text(&self) -> String {
         static FORMAT_DESCRIPTION: &[FormatItem<'static>] =
-            format_description!("[month repr:long] [day padding:none], [year]");
+            format_description!("[year]/[month]/[day]");
 
         self.date
             .format(FORMAT_DESCRIPTION)
@@ -26,12 +26,13 @@ impl BlogPostMetadata {
 }
 
 #[derive(Clone, Debug)]
-pub struct BlogPost<'a> {
-    pub metadata: BlogPostMetadata,
+pub struct Post<'a> {
+    pub slug: &'a str,
+    pub metadata: Metadata,
     pub events: Box<[Event<'a>]>,
 }
 
-impl<'a> BlogPost<'a> {
+impl<'a> Post<'a> {
     pub fn new(
         highlighter_configs: &HighlighterConfigurations,
         slug: &'a str,
@@ -64,9 +65,7 @@ impl<'a> BlogPost<'a> {
                     let event = Event::Html(
                         html! {
                             pre {
-                                code.highlighted-code {
-                                    (PreEscaped(highlighted_code))
-                                }
+                                code.highlighted { (PreEscaped(highlighted_code)) }
                             }
                         }
                         .into_string()
@@ -85,8 +84,12 @@ impl<'a> BlogPost<'a> {
                         })
                         .collect::<crate::Result<String>>()?;
 
-                    let parsed_metadata = serde_yaml::from_str(&metadata_string)
-                        .map_err(|e| Error::DeserializePostMetadata(slug.into(), e))?;
+                    let parsed_metadata = serde_yaml::from_str(&metadata_string).map_err(|e| {
+                        Error::DeserializePostMetadata {
+                            slug: slug.into(),
+                            source: e,
+                        }
+                    })?;
 
                     metadata = Some(parsed_metadata);
                 }
@@ -97,11 +100,15 @@ impl<'a> BlogPost<'a> {
         let metadata = metadata.ok_or_else(|| Error::NoPostMetadata(slug.into()))?;
         let events = events.into();
 
-        Ok(Self { metadata, events })
+        Ok(Self {
+            slug,
+            metadata,
+            events,
+        })
     }
 }
 
-impl Render for BlogPost<'_> {
+impl Render for Post<'_> {
     fn render(&self) -> Markup {
         let mut buf = String::new();
         pulldown_cmark::html::push_html(&mut buf, self.events.iter().cloned());

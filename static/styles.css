@@ -1,0 +1,320 @@
+@font-face {
+  font-family: "Berkeley Mono";
+  font-weight: 400;
+  font-style: normal;
+  src: url("/static/fonts/BerkeleyMono-Regular.woff2") format("woff2"),
+    url("/static/fonts/BerkeleyMono-Regular.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Berkeley Mono";
+  font-weight: 700;
+  font-style: normal;
+  src: url("/static/fonts/BerkeleyMono-Bold.woff2") format("woff2"),
+    url("/static/fonts/BerkeleyMono-Bold.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Berkeley Mono";
+  font-weight: 400;
+  font-style: italic;
+  src: url("/static/fonts/BerkeleyMono-Italic.woff2") format("woff2"),
+    url("/static/fonts/BerkeleyMono-Italic.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Berkeley Mono";
+  font-weight: 700;
+  font-style: italic;
+  src: url("/static/fonts/BerkeleyMono-BoldItalic.woff2") format("woff2"),
+    url("/static/fonts/BerkeleyMono-BoldItalic.woff") format("woff");
+}
+
+:root {
+  --light-color: #efefef;
+  --dark-color: #101010;
+}
+
+:root {
+  --text-color: var(--dark-color);
+  --background-color: var(--light-color);
+
+  --code-text-color: #8a9199;
+  --code-background-color: #e7e7e7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-color: var(--light-color);
+    --background-color: var(--dark-color);
+
+    --code-text-color: #bfbdb6;
+    --code-background-color: #181818;
+  }
+}
+
+:root {
+  background-color: var(--background-color);
+  color: var(--text-color);
+
+  font-family: "Berkeley Mono", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 0 10%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media only screen and (min-width: 768px) {
+  body {
+    padding: 0 25%;
+  }
+}
+
+main {
+  flex: 1;
+}
+
+nav {
+  padding: 2rem 0;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+nav a,
+footer a,
+section ul > li > a {
+  text-decoration: inherit;
+}
+
+nav a:hover,
+footer a:hover,
+section ul > li > a:hover {
+  text-decoration: underline;
+}
+
+footer {
+  padding: 2rem 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+
+  text-align: center;
+}
+
+footer > div#ring {
+  font-size: 2rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+hr {
+  border: 0.0625rem solid var(--text-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 1.125rem;
+}
+
+a {
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+:not(pre) > code {
+  padding: 0 0.125rem;
+
+  background-color: var(--code-background-color);
+}
+
+pre {
+  padding: 1rem;
+
+  background-color: var(--code-background-color);
+  overflow-x: auto;
+}
+
+code {
+  font-family: "Berkeley Mono", monospace;
+}
+
+code {
+  color: var(--code-text-color);
+}
+
+/* syntax highlighting */
+
+code.highlighted .comment {
+  color: #787b8099;
+}
+
+@media (prefers-color-scheme: dark) {
+  code.highlighted .comment {
+    color: #acb6bf8c;
+  }
+}
+
+code.highlighted .constant {
+  color: #a37acc;
+}
+
+@media (prefers-color-scheme: dark) {
+  code.highlighted .constant {
+    color: #d2a6ff;
+  }
+}
+
+code.highlighted .error {
+  color: #e65050;
+}
+
+@media (prefers-color-scheme: dark) {
+  code.highlighted .error {
+    color: #d95757;
+  }
+}
+
+code.highlighted .function {
+  color: #f2ae49;
+}
+
+@media (prefers-color-scheme: dark) {
+  code.highlighted .function {
+    color: #ffb454;
+  }
+}
+
+code.highlighted .keyword,
+code.highlighted .builtin {
+  color: #fa8d3e;
+}
+
+@media (prefers-color-scheme: dark) {
+  code.highlighted .keyword,
+  code.highlighted .builtin {
+    color: #ff8f40;
+  }
+}
+
+code.highlighted .markup {
+  color: #f07171;
+}
+
+@media (prefers-color-scheme: dark) {
+  code.highlighted .markup {
+    color: #f07178;
+  }
+}
+
+code.highlighted .markup.bold {
+  font-weight: bold;
+}
+
+code.highlighted .markup.italic {
+  font-style: italic;
+}
+
+code.highlighted .module {
+  color: #399ee6;
+}
+
+@media (prefers-color-scheme: dark) {
+  code.highlighted .module {
+    color: #399ee6;
+  }
+}
+
+code.highlighted .number {
+  color: #a37acc;
+}
+
+@media (prefers-color-scheme: dark) {
+  code.highlighted .number {
+    color: #d2a6ff;
+  }
+}
+
+code.highlighted .operator {
+  color: #ed9366;
+}
+
+@media (prefers-color-scheme: dark) {
+  code.highlighted .operator {
+    color: #f29668;
+  }
+}
+
+code.highlighted .string {
+  color: #86b300;
+}
+
+@media (prefers-color-scheme: dark) {
+  code.highlighted .string {
+    color: #aad94c;
+  }
+}
+
+code.highlighted .string.regexp {
+  color: #4cbf99;
+}
+
+@media (prefers-color-scheme: dark) {
+  code.highlighted .string.regexp {
+    color: #95e6cb;
+  }
+}
+
+code.highlighted .string.special {
+  color: #e6ba7e;
+}
+
+@media (prefers-color-scheme: dark) {
+  code.highlighted .string.special {
+    color: #e6b673;
+  }
+}
+
+code.highlighted .tag {
+  color: #55b4d4;
+}
+
+@media (prefers-color-scheme: dark) {
+  code.highlighted .tag {
+    color: #39bae6;
+  }
+}
+
+code.highlighted .type {
+  color: #399ee6;
+}
+
+@media (prefers-color-scheme: dark) {
+  code.highlighted .type {
+    color: #59c2ff;
+  }
+}

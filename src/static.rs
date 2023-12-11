@@ -2,7 +2,7 @@ use std::{ffi::OsStr, future, path::PathBuf, time::Duration};
 
 use axum::{extract::Path, Router};
 use axum_extra::{
-    headers::{CacheControl, ContentType},
+    headers::{CacheControl, ContentDisposition, ContentType},
     response::Css,
     TypedHeader,
 };
@@ -38,13 +38,23 @@ macro_rules! static_path {
 // }
 
 #[instrument(level = "debug")]
-async fn license() -> &'static [u8] {
-    include_bytes!(static_path!("LICENSE.txt"))
+async fn license() -> (
+    TypedHeader<ContentDisposition>,
+    TypedHeader<ContentType>,
+    &'static [u8],
+) {
+    const LICENSE: &[u8] = include_bytes!(static_path!("LICENSE.txt"));
+
+    (
+        TypedHeader(ContentDisposition::inline()),
+        TypedHeader(mime::TEXT_PLAIN.into()),
+        LICENSE,
+    )
 }
 
 #[instrument(level = "debug")]
 async fn styles() -> Css<&'static str> {
-    const STYLES_CSS: &str = include_str!(concat!(env!("OUT_DIR"), "/styles.css"));
+    const STYLES_CSS: &str = include_str!(static_path!("styles.css"));
 
     Css(STYLES_CSS)
 }

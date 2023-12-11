@@ -23,12 +23,11 @@ jobs:
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
 
-      - name: Install `tailwindcss`
+      - name: Install `typst`
         run: >
-          curl 
-          -L https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
-          -o /usr/local/bin/tailwindcss
-          && chmod +x /usr/local/bin/tailwindcss
+          curl -L https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz
+          | tar -xJf -
+          && mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
 
       - name: Execute tests
         uses: actions-rs/cargo@v1
@@ -54,12 +53,11 @@ jobs:
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
 
-      - name: Install `tailwindcss`
+      - name: Install `typst`
         run: >
-          curl 
-          -L https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
-          -o /usr/local/bin/tailwindcss
-          && chmod +x /usr/local/bin/tailwindcss
+          curl -L https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz
+          | tar -xJf -
+          && mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
 
       - name: Install `clippy`
         run: rustup component add clippy

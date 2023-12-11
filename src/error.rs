@@ -7,7 +7,7 @@ use axum::{
 use maud::{html, Markup, Render};
 use thiserror::Error;
 
-use crate::layout::document;
+use crate::layout::Document;
 
 /// An enum encompassing all possible errors from this crate.
 #[derive(Error, Debug)]
@@ -33,8 +33,14 @@ pub enum Error {
     NoPostMetadata(String),
 
     /// A blog post's metadata could not be deserialized.
-    #[error("failed to deserialize metadata for blog post: `{0}`")]
-    DeserializePostMetadata(String, #[source] serde_yaml::Error),
+    #[error("failed to deserialize metadata for blog post: `{slug}`")]
+    DeserializePostMetadata {
+        /// The slug of the blog post.
+        slug: String,
+
+        /// The source of the error.
+        source: serde_yaml::Error,
+    },
 
     /// Unexpected markdown tag.
     #[error("unexpected markdown tag")]
@@ -43,10 +49,6 @@ pub enum Error {
     /// The blog post was not found
     #[error("blog post not found: `{0}`")]
     BlogPostNotFound(String),
-
-    /// The projects file could not be deserialized.
-    #[error("failed to deserialize projects file")]
-    DeserializeProjects(#[source] serde_yaml::Error),
 
     /// Invalid font path.
     #[error(
@@ -71,8 +73,9 @@ impl Error {
             | Self::TreeSitterHighlight(_)
             | Self::NoPostMetadata(_)
             | Self::UnexpectedMarkdownTag
-            | Self::DeserializePostMetadata(_, _)
-            | Self::DeserializeProjects(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            | Self::DeserializePostMetadata { slug: _, source: _ } => {
+                StatusCode::INTERNAL_SERVER_ERROR
+            }
             Self::BlogPostNotFound(_) | Self::FontNotFound(_) => StatusCode::NOT_FOUND,
             Self::InvalidFontExtension(_) => StatusCode::BAD_REQUEST,
         }
@@ -82,7 +85,7 @@ impl Error {
 impl Render for Error {
     fn render(&self) -> Markup {
         html! {
-            pre."bg-stone-200"."dark:bg-stone-800".overflow-x-auto."p-4" {
+            pre {
                 code {
                     (maud::display(self));
 
@@ -90,7 +93,7 @@ impl Render for Error {
                         .skip(1)
                         .enumerate()
                     {
-                        "\n" (" ".repeat(i * 2)) span."text-violet-500".font-bold { "└" } " " (e)
+                        "\n" (" ".repeat(i * 2)) "└ " (e)
                     }
                 }
             }
@@ -102,20 +105,21 @@ impl IntoResponse for Error {
     fn into_response(self) -> Response {
         let status_code = self.status_code();
 
-        let body = document(
-            None,
-            &html! {
-                h1 { (status_code.as_u16()) " error" }
-
-                (self)
+        (
+            status_code,
+            Document {
+                path: None,
+                title: status_code.to_string().to_lowercase(),
+                subheader: None,
+                content: self.render(),
             },
-        );
-
-        (status_code, body).into_response()
+        )
+            .into_response()
     }
 }
 
 #[derive(Clone, Debug)]
+#[allow(clippy::module_name_repetitions)]
 pub struct ErrorSourceIter<'a> {
     current: Option<&'a (dyn std::error::Error + 'static)>,
 }

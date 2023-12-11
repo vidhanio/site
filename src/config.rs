@@ -22,6 +22,10 @@ pub struct Config {
 
 impl Config {
     /// Load the configuration from the environment.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the environment variables are not valid.
     pub fn from_env() -> Result<Self, envy::Error> {
         envy::from_env()
     }

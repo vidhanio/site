@@ -10,9 +10,9 @@ FROM chef AS builder
 COPY --from=planner /app/recipe.json .
 RUN cargo chef cook --release
 COPY . .
-ADD --chmod=755 \
-    https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 \
-    /usr/local/bin/tailwindcss
+RUN curl -L https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz \
+    | tar xJf - \
+    && mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
 RUN cargo build --release
 RUN mv ./target/release/vidhan-site ./site
 

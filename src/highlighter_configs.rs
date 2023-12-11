@@ -1,6 +1,6 @@
 use std::{
     collections::HashMap,
-    fmt::{self, Debug, Formatter},
+    fmt::{self, Debug, Formatter, Write},
 };
 
 use tree_sitter_highlight::{Highlight, HighlightConfiguration, HighlightEvent, Highlighter};
@@ -117,9 +117,7 @@ impl HighlighterConfigurations {
 
     pub fn highlight(&self, language: &str, code: &str) -> crate::Result<String> {
         let Some(config) = self.0.get(language) else {
-            let mut buf = String::new();
-            encoded_with_line_starts(&mut buf, code, (true, true));
-            return Ok(buf);
+            return Ok(html_escape::encode_text_minimal(code).into());
         };
 
         let mut highlighter = Highlighter::new();
@@ -130,14 +128,9 @@ impl HighlighterConfigurations {
         highlights.try_fold(String::new(), |mut buf, event| {
             match event? {
                 HighlightEvent::Source { start, end } => {
-                    encoded_with_line_starts(
-                        &mut buf,
-                        &code[start..end],
-                        (start == 0, end == code.len()),
-                    );
+                    html_escape::encode_text_minimal_to_string(&code[start..end], &mut buf);
                 }
                 HighlightEvent::HighlightStart(Highlight(idx)) => {
-                    use std::fmt::Write;
                     write!(
                         buf,
                         "<span class=\"{}\">",
@@ -165,20 +158,4 @@ impl Debug for HighlighterConfigurations {
             )
             .finish()
     }
-}
-
-fn encoded_with_line_starts(buf: &mut String, s: &str, (is_true_start, is_true_end): (bool, bool)) {
-    if is_true_start {
-        buf.push_str("<span class=\"line-start\"></span>");
-    }
-
-    let s = is_true_end
-        .then(|| s.strip_suffix('\n'))
-        .flatten()
-        .unwrap_or(s);
-
-    let escaped =
-        html_escape::encode_text_minimal(s).replace('\n', "\n<span class=\"line-start\"></span>");
-
-    buf.push_str(&escaped);
 }

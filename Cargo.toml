@@ -6,16 +6,6 @@ name = "vidhan-site"
 publish = false
 version = "0.1.0"
 
-[lints]
-    [lints.rust]
-    missing_copy_implementations = "warn"
-    missing_debug_implementations = "warn"
-    # missing_docs = "warn"
-    unsafe_code = "forbid"
-
-    [lints.clippy]
-    nursery = "warn"
-    pedantic = "warn"
 
 [dependencies]
 axum = { version = "0.7", features = ["macros", "tracing"] }
@@ -31,7 +21,9 @@ maud = { git = "https://github.com/vidhanio/maud", branch = "patch-1", features 
     "axum",
 ] }
 mime = "0.3"
+postcard = "1.0.8"
 pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }
+rand = "0.8"
 serde = { version = "1", features = ["derive"] }
 serde_yaml = "0.9"
 thiserror = "1"
@@ -48,3 +40,14 @@ tree-sitter-rust = "0.20"
 
 [build-dependencies]
 gix = { version = "0.56", default-features = false }
+
+[lints]
+    [lints.rust]
+    missing_copy_implementations = "warn"
+    missing_debug_implementations = "warn"
+    # missing_docs = "warn"
+    unsafe_code = "forbid"
+
+    [lints.clippy]
+    nursery = "warn"
+    pedantic = "warn"
