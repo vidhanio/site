@@ -192,7 +192,7 @@ jobs:
 
       - name: Deploy to Cloud Run
         id: cloud-run-deploy
-        uses: google-github-actions/deploy-cloudrun@v1
+        uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: "site"
           image: "us-east1-docker.pkg.dev/vidhan-io/site/site:latest"
