@@ -245,7 +245,7 @@ code.highlighted .module {
 
 @media (prefers-color-scheme: dark) {
   code.highlighted .module {
-    color: #399ee6;
+    color: #59c2ff;
   }
 }
 
