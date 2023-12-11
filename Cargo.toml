@@ -14,22 +14,18 @@ color-eyre = "0.6"
 dotenvy = "0.15"
 envy = "0.4"
 html-escape = "0.2"
-hyper = "1.0"
 include_dir = "0.7"
 # TODO: use the latest version of maud once it's released
 maud = { git = "https://github.com/vidhanio/maud", branch = "patch-1", features = [
     "axum",
 ] }
 mime = "0.3"
-postcard = "1.0.8"
 pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }
-rand = "0.8"
 serde = { version = "1", features = ["derive"] }
 serde_yaml = "0.9"
 thiserror = "1"
 time = { version = "0.3", features = ["macros", "serde-human-readable"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-tower = { version = "0.4", features = ["util"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 tree-sitter = "0.20"
