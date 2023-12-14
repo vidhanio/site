@@ -2,7 +2,7 @@ use std::{ffi::OsStr, future, path::PathBuf, time::Duration};
 
 use axum::{extract::Path, Router};
 use axum_extra::{
-    headers::{CacheControl, ContentDisposition, ContentType},
+    headers::{CacheControl, ContentType},
     response::Css,
     TypedHeader,
 };
@@ -14,7 +14,6 @@ use crate::{App, Error};
 pub fn router() -> Router<App> {
     Router::new()
         // .route("/favicon.ico", axum::routing::get(favicon))
-        .route("/LICENSE.txt", axum::routing::get(license))
         .route("/styles.css", axum::routing::get(styles))
         .route("/fonts/:font", axum::routing::get(fonts))
         .layer(axum::middleware::map_response(|res| {
@@ -32,34 +31,19 @@ macro_rules! static_path {
     };
 }
 
-// #[instrument(level = "debug")]
+// #[instrument(level = "trace")]
 // async fn favicon() -> &'static [u8] {
 //     include_bytes!(static_path!("favicon.ico"))
 // }
 
-#[instrument(level = "debug")]
-async fn license() -> (
-    TypedHeader<ContentDisposition>,
-    TypedHeader<ContentType>,
-    &'static [u8],
-) {
-    const LICENSE: &[u8] = include_bytes!(static_path!("LICENSE.txt"));
-
-    (
-        TypedHeader(ContentDisposition::inline()),
-        TypedHeader(mime::TEXT_PLAIN.into()),
-        LICENSE,
-    )
-}
-
-#[instrument(level = "debug")]
+#[instrument(level = "trace")]
 async fn styles() -> Css<&'static str> {
     const STYLES_CSS: &str = include_str!(static_path!("styles.css"));
 
     Css(STYLES_CSS)
 }
 
-#[instrument(level = "debug")]
+#[instrument(level = "trace")]
 async fn fonts(
     Path(font): Path<String>,
 ) -> crate::Result<(TypedHeader<ContentType>, &'static [u8])> {

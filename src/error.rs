@@ -7,7 +7,7 @@ use axum::{
 use maud::{html, Markup, Render};
 use thiserror::Error;
 
-use crate::layout::Document;
+use crate::document::Document;
 
 /// An enum encompassing all possible errors from this crate.
 #[derive(Error, Debug)]
@@ -28,14 +28,14 @@ pub enum Error {
     #[error("application serve error")]
     Serve(#[source] io::Error),
 
-    /// A blog post was missing metadata.
-    #[error("metadata missing for blog post: `{0}`")]
+    /// A post was missing metadata.
+    #[error("metadata missing for post: `{0}`")]
     NoPostMetadata(String),
 
-    /// A blog post's metadata could not be deserialized.
-    #[error("failed to deserialize metadata for blog post: `{slug}`")]
+    /// A post's metadata could not be deserialized.
+    #[error("failed to deserialize metadata for post: `{slug}`")]
     DeserializePostMetadata {
-        /// The slug of the blog post.
+        /// The slug of the post.
         slug: String,
 
         /// The source of the error.
@@ -46,9 +46,9 @@ pub enum Error {
     #[error("unexpected markdown tag")]
     UnexpectedMarkdownTag,
 
-    /// The blog post was not found
-    #[error("blog post not found: `{0}`")]
-    BlogPostNotFound(String),
+    /// The post was not found
+    #[error("post not found: `{0}`")]
+    PostNotFound(String),
 
     /// Invalid font path.
     #[error(
@@ -76,7 +76,7 @@ impl Error {
             | Self::DeserializePostMetadata { slug: _, source: _ } => {
                 StatusCode::INTERNAL_SERVER_ERROR
             }
-            Self::BlogPostNotFound(_) | Self::FontNotFound(_) => StatusCode::NOT_FOUND,
+            Self::PostNotFound(_) | Self::FontNotFound(_) => StatusCode::NOT_FOUND,
             Self::InvalidFontExtension(_) => StatusCode::BAD_REQUEST,
         }
     }
@@ -107,12 +107,19 @@ impl IntoResponse for Error {
 
         (
             status_code,
-            Document {
-                path: None,
-                title: status_code.to_string().to_lowercase(),
-                subheader: None,
-                content: self.render(),
-            },
+            Document::new(
+                "error",
+                html! {
+                    header {
+                        h1 {
+                            (status_code.to_string().to_lowercase())
+                        }
+                        hr;
+                    }
+
+                    (self)
+                },
+            ),
         )
             .into_response()
     }

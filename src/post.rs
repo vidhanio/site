@@ -10,7 +10,6 @@ use crate::{highlighter_configs::HighlighterConfigurations, Error};
 pub struct Metadata {
     pub title: String,
     pub date: Date,
-    pub description: String,
 }
 
 impl Metadata {
@@ -29,7 +28,7 @@ impl Metadata {
 pub struct Post<'a> {
     pub slug: &'a str,
     pub metadata: Metadata,
-    pub events: Box<[Event<'a>]>,
+    pub content: Markup,
 }
 
 impl<'a> Post<'a> {
@@ -62,7 +61,7 @@ impl<'a> Post<'a> {
 
                     let highlighted_code = highlighter_configs.highlight(lang, &code)?;
 
-                    let event = Event::Html(
+                    events.push(Event::Html(
                         html! {
                             pre {
                                 code.highlighted { (PreEscaped(highlighted_code)) }
@@ -70,9 +69,7 @@ impl<'a> Post<'a> {
                         }
                         .into_string()
                         .into(),
-                    );
-
-                    events.push(event);
+                    ));
                 }
                 Event::Start(Tag::MetadataBlock(MetadataBlockKind::YamlStyle)) => {
                     let metadata_string = parser
@@ -97,21 +94,19 @@ impl<'a> Post<'a> {
             }
         }
 
-        let metadata = metadata.ok_or_else(|| Error::NoPostMetadata(slug.into()))?;
-        let events = events.into();
+        let mut content = String::new();
+        pulldown_cmark::html::push_html(&mut content, events.into_iter());
 
         Ok(Self {
             slug,
-            metadata,
-            events,
+            metadata: metadata.ok_or_else(|| Error::NoPostMetadata(slug.into()))?,
+            content: PreEscaped(content),
         })
     }
 }
 
 impl Render for Post<'_> {
-    fn render(&self) -> Markup {
-        let mut buf = String::new();
-        pulldown_cmark::html::push_html(&mut buf, self.events.iter().cloned());
-        PreEscaped(buf)
+    fn render_to(&self, buffer: &mut String) {
+        self.content.render_to(buffer);
     }
 }

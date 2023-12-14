@@ -10,7 +10,7 @@ use crate::{post::Post, Error};
 /// The application.
 #[derive(Clone, FromRef)]
 pub struct App {
-    pub(crate) blog_posts: Arc<[Post<'static>]>,
+    pub(crate) posts: Arc<[Post<'static>]>,
 }
 
 impl Debug for App {
@@ -20,10 +20,10 @@ impl Debug for App {
 }
 
 impl App {
-    pub(crate) fn get_blog_post(&self, slug: &str) -> crate::Result<&Post> {
-        self.blog_posts
+    pub(crate) fn get_post(&self, slug: &str) -> crate::Result<&Post> {
+        self.posts
             .iter()
-            .find(|blog_post| blog_post.slug == slug)
-            .ok_or_else(|| Error::BlogPostNotFound(slug.into()))
+            .find(|post| post.slug == slug)
+            .ok_or_else(|| Error::PostNotFound(slug.into()))
     }
 }
