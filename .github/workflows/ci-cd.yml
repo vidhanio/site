@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
@@ -46,6 +48,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
@@ -76,6 +80,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
@@ -103,6 +109,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Generate Docker metadata
         id: docker-metadata
@@ -174,6 +182,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Login to Google Cloud
         uses: google-github-actions/auth@v2
