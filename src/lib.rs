@@ -25,7 +25,7 @@ static POSTS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/content/posts");
 ///
 /// # Errors
 ///
-/// Returns an error if the application fails to serve.
+/// Returns an error if the application fails to start.
 pub async fn serve(config: Config) -> crate::Result<()> {
     let highlighter_configs = HighlighterConfigurations::new()?;
 
@@ -40,7 +40,11 @@ pub async fn serve(config: Config) -> crate::Result<()> {
                 None
             }?;
 
-            Some(Post::new(&highlighter_configs, slug, file.contents_utf8()?))
+            Some(Post::new(
+                &highlighter_configs,
+                slug.into(),
+                file.contents_utf8()?,
+            ))
         })
         .collect::<crate::Result<Vec<_>>>()?;
 

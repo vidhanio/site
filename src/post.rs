@@ -25,17 +25,17 @@ impl Metadata {
 }
 
 #[derive(Clone, Debug)]
-pub struct Post<'a> {
-    pub slug: &'a str,
+pub struct Post {
+    pub slug: String,
     pub metadata: Metadata,
     pub content: Markup,
 }
 
-impl<'a> Post<'a> {
+impl Post {
     pub fn new(
         highlighter_configs: &HighlighterConfigurations,
-        slug: &'a str,
-        markdown: &'a str,
+        slug: String,
+        markdown: &str,
     ) -> crate::Result<Self> {
         let mut parser = Parser::new_ext(markdown, Options::all());
 
@@ -83,7 +83,7 @@ impl<'a> Post<'a> {
 
                     let parsed_metadata = serde_yaml::from_str(&metadata_string).map_err(|e| {
                         Error::DeserializePostMetadata {
-                            slug: slug.into(),
+                            slug: slug.clone(),
                             source: e,
                         }
                     })?;
@@ -98,14 +98,14 @@ impl<'a> Post<'a> {
         pulldown_cmark::html::push_html(&mut content, events.into_iter());
 
         Ok(Self {
-            slug,
-            metadata: metadata.ok_or_else(|| Error::NoPostMetadata(slug.into()))?,
+            slug: slug.clone(),
+            metadata: metadata.ok_or_else(|| Error::NoPostMetadata(slug))?,
             content: PreEscaped(content),
         })
     }
 }
 
-impl Render for Post<'_> {
+impl Render for Post {
     fn render_to(&self, buffer: &mut String) {
         self.content.render_to(buffer);
     }

@@ -35,9 +35,7 @@ impl Render for Link<'_> {
     fn render(&self) -> maud::Markup {
         html! {
             a href=(self.href) {
-                b {
-                    (self.name)
-                }
+                b { (self.name) }
                 " - "
                 (self.description)
             }

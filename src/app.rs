@@ -10,7 +10,7 @@ use crate::{post::Post, Error};
 /// The application.
 #[derive(Clone, FromRef)]
 pub struct App {
-    pub(crate) posts: Arc<[Post<'static>]>,
+    pub(crate) posts: Arc<[Post]>,
 }
 
 impl Debug for App {
