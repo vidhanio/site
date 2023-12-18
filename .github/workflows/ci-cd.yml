@@ -13,14 +13,14 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    container:
-      image: rust:latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           lfs: true
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
@@ -42,14 +42,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    container:
-      image: rust:latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           lfs: true
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: clippy
 
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
@@ -59,9 +61,6 @@ jobs:
           curl -L https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz
           | tar -xJf -
           && mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
-
-      - name: Install `clippy`
-        run: rustup component add clippy
 
       - name: Check code
         run: cargo clippy  --all-features --all-targets -- -D warnings
@@ -74,14 +73,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    container:
-      image: rustlang/rust:nightly
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           lfs: true
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rustfmt
 
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
@@ -180,11 +181,6 @@ jobs:
       - build
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          lfs: true
-
       - name: Login to Google Cloud
         uses: google-github-actions/auth@v2
         with:
