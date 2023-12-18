@@ -30,10 +30,7 @@ jobs:
           && mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
 
       - name: Execute tests
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --no-fail-fast
+        run: cargo test --all-features --all-targets
 
   check:
     name: Check
@@ -63,10 +60,7 @@ jobs:
         run: rustup component add clippy
 
       - name: Check code
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --all-features --all-targets -- -D warnings
+        run: cargo clippy  --all-features --all-targets -- -D warnings
 
   format:
     name: Format
@@ -87,10 +81,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Check formatting
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+        run: cargo fmt --all -- --check
 
   build:
     name: Build
