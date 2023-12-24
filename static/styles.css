@@ -88,7 +88,8 @@ section ul > li > a,
 }
 
 section ul > li > a:hover {
-  text-decoration: underline;
+  background-color: var(--color);
+  color: var(--background-color);
 }
 
 #resume {
