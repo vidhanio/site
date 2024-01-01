@@ -1,4 +1,4 @@
-use std::{borrow::Cow, ffi::OsString, io, path::PathBuf};
+use std::{error::Error, io};
 
 use axum::{
     http::StatusCode,
@@ -9,80 +9,41 @@ use thiserror::Error;
 
 use crate::document::Document;
 
-/// An enum encompassing all possible errors from this crate.
+/// An enum encompassing all possible errors from this site.
+#[allow(clippy::module_name_repetitions)]
 #[derive(Error, Debug)]
-pub enum Error {
-    /// A [`tree_sitter::QueryError`]
-    #[error("tree-sitter query error")]
-    TreeSitterQuery(#[from] tree_sitter::QueryError),
+pub enum SiteError {
+    /// An IO error occurred.
+    #[error("io error")]
+    Io(#[from] io::Error),
 
-    /// A [`tree_sitter_highlight::Error`]
-    #[error("tree-sitter highlight error")]
-    TreeSitterHighlight(#[from] tree_sitter_highlight::Error),
-
-    /// An error occurred while trying to bind to the socket address.
-    #[error("tcp listener bind error")]
-    Bind(#[source] io::Error),
-
-    /// An error occurred while trying to serve the application.
-    #[error("application serve error")]
-    Serve(#[source] io::Error),
-
-    /// A post was missing metadata.
-    #[error("metadata missing for post: `{0}`")]
-    NoPostMetadata(String),
-
-    /// A post's metadata could not be deserialized.
-    #[error("failed to deserialize metadata for post: `{slug}`")]
-    DeserializePostMetadata {
-        /// The slug of the post.
-        slug: String,
-
-        /// The source of the error.
-        source: serde_yaml::Error,
-    },
-
-    /// Unexpected markdown tag.
-    #[error("unexpected markdown tag")]
-    UnexpectedMarkdownTag,
-
-    /// The post was not found
+    /// Post not found.
     #[error("post not found: `{0}`")]
     PostNotFound(String),
 
-    /// Invalid font path.
-    #[error(
-        "invalid font extension (must be `woff` or `woff2`): `{}`",
-        .0.as_ref().map_or(Cow::Borrowed("<none>"), |s| s.to_string_lossy())
-    )]
-    InvalidFontExtension(Option<OsString>),
+    /// Asset not found.
+    #[error("asset not found: `{0}`")]
+    AssetNotFound(String),
 
     /// Font not found.
     #[error("font not found: `{0}`")]
-    FontNotFound(PathBuf),
+    FontNotFound(String),
 }
 
-impl Error {
+impl SiteError {
     /// The status code of this error.
     #[must_use]
     pub const fn status_code(&self) -> StatusCode {
         match self {
-            Self::Bind(_)
-            | Self::Serve(_)
-            | Self::TreeSitterQuery(_)
-            | Self::TreeSitterHighlight(_)
-            | Self::NoPostMetadata(_)
-            | Self::UnexpectedMarkdownTag
-            | Self::DeserializePostMetadata { slug: _, source: _ } => {
-                StatusCode::INTERNAL_SERVER_ERROR
+            Self::Io(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::PostNotFound(_) | Self::AssetNotFound(_) | Self::FontNotFound(_) => {
+                StatusCode::NOT_FOUND
             }
-            Self::PostNotFound(_) | Self::FontNotFound(_) => StatusCode::NOT_FOUND,
-            Self::InvalidFontExtension(_) => StatusCode::BAD_REQUEST,
         }
     }
 }
 
-impl Render for Error {
+impl Render for SiteError {
     fn render(&self) -> Markup {
         html! {
             pre {
@@ -101,7 +62,7 @@ impl Render for Error {
     }
 }
 
-impl IntoResponse for Error {
+impl IntoResponse for SiteError {
     fn into_response(self) -> Response {
         let status_code = self.status_code();
 
@@ -128,11 +89,11 @@ impl IntoResponse for Error {
 #[derive(Clone, Debug)]
 #[allow(clippy::module_name_repetitions)]
 pub struct ErrorSourceIter<'a> {
-    current: Option<&'a (dyn std::error::Error + 'static)>,
+    current: Option<&'a (dyn Error + 'static)>,
 }
 
 impl<'a> ErrorSourceIter<'a> {
-    pub fn new(error: &'a (dyn std::error::Error + 'static)) -> Self {
+    pub fn new(error: &'a (dyn Error + 'static)) -> Self {
         Self {
             current: Some(error),
         }
@@ -140,11 +101,11 @@ impl<'a> ErrorSourceIter<'a> {
 }
 
 impl<'a> Iterator for ErrorSourceIter<'a> {
-    type Item = &'a (dyn std::error::Error + 'static);
+    type Item = &'a (dyn Error + 'static);
 
     fn next(&mut self) -> Option<Self::Item> {
         let current = self.current;
-        self.current = self.current.and_then(std::error::Error::source);
+        self.current = self.current.and_then(Error::source);
         current
     }
 }

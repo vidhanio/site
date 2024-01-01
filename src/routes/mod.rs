@@ -1,38 +1,30 @@
 mod r#static;
 
-use axum::{
-    extract::{Path, State},
-    Router,
-};
-use axum_extra::{
-    headers::{ContentDisposition, ContentType},
-    TypedHeader,
-};
-use maud::{html, Render};
+use axum::{extract::Path, Router};
+use maud::{html, Markup, Render};
 use tracing::instrument;
 
 use crate::{
     document::{Document, DocumentParts},
-    App,
+    post::Post,
+    public, SiteError, SiteResult,
 };
 
-pub fn router() -> Router<App> {
+pub fn router() -> Router {
     Router::new()
         .route("/", axum::routing::get(home))
         .route("/post/:slug", axum::routing::get(post))
-        .route("/resume.pdf", axum::routing::get(resume))
-        .route("/LICENSE.txt", axum::routing::get(license))
-        .nest("/static", r#static::router())
+        .nest("/", r#static::router())
 }
 
-struct Link<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
-    pub href: &'a str,
+struct Link {
+    pub name: &'static str,
+    pub description: &'static str,
+    pub href: &'static str,
 }
 
-impl Render for Link<'_> {
-    fn render(&self) -> maud::Markup {
+impl Render for Link {
+    fn render(&self) -> Markup {
         html! {
             a href=(self.href) {
                 b { (self.name) }
@@ -43,7 +35,7 @@ impl Render for Link<'_> {
     }
 }
 
-const PROJECTS: &[Link<'static>] = &[
+const PROJECTS: &[Link] = &[
     Link {
         name: "site",
         description: "this website!",
@@ -77,7 +69,12 @@ const PROJECTS: &[Link<'static>] = &[
     },
 ];
 
-const CONTACTS: &[Link<'static>] = &[
+const CONTACTS: &[Link] = &[
+    Link {
+        name: "email",
+        description: "me@vidhan.io",
+        href: "mailto:me@vidhan.io",
+    },
     Link {
         name: "github",
         description: "vidhanio",
@@ -93,16 +90,11 @@ const CONTACTS: &[Link<'static>] = &[
         description: "/in/vidhanio",
         href: "https://www.linkedin.com/in/vidhanio",
     },
-    Link {
-        name: "email",
-        description: "me@vidhan.io",
-        href: "mailto:me@vidhan.io",
-    },
 ];
 
 #[instrument(level = "debug")]
-pub async fn home(State(app): State<App>, doc: DocumentParts) -> Document {
-    doc.build_without_title(html! {
+pub async fn home(doc: DocumentParts) -> Document {
+    doc.build_simple(html! {
         header {
             h1 { "👋 hi, i'm vidhan! " }
             hr;
@@ -119,7 +111,7 @@ pub async fn home(State(app): State<App>, doc: DocumentParts) -> Document {
                 my favourite player is lebron james and i'm a huge fan of the los angeles lakers."
             }
 
-            a #resume href="/resume.pdf" {
+            a #resume href=(public!("/resume.pdf")) {
                 b { "📄 resume.pdf" }
             }
         }
@@ -128,11 +120,11 @@ pub async fn home(State(app): State<App>, doc: DocumentParts) -> Document {
             h2 { "📝 posts" }
             hr;
             ul {
-                @for post in &*app.posts {
+                @for post in Post::ALL {
                     li {
                         a href={"/post/" (post.slug)} {
-                            time datetime=(post.metadata.date) {
-                                (post.metadata.date_text())
+                            time datetime=(post.metadata.date_dashed()) {
+                                (post.metadata.date_slashed())
                             }
                             " - "
                             b {
@@ -167,22 +159,19 @@ pub async fn home(State(app): State<App>, doc: DocumentParts) -> Document {
 }
 
 #[instrument(level = "debug", err(Debug))]
-pub async fn post(
-    State(app): State<App>,
-    doc: DocumentParts,
-    Path(slug): Path<String>,
-) -> crate::Result<Document> {
-    let post = app.get_post(&slug)?;
+pub async fn post(doc: DocumentParts, Path(slug): Path<String>) -> SiteResult<Document> {
+    let post = Post::get(&slug).ok_or_else(|| SiteError::PostNotFound(slug))?;
 
     Ok(doc.build(
-        &post.metadata.title,
+        post.metadata.title,
+        format!(public!("/posts/{}/og.png"), post.slug),
         html! {
             header {
                 h1 {
                     (post.metadata.title)
                 }
-                time datetime=(post.metadata.date) {
-                    (post.metadata.date_text())
+                time datetime=(post.metadata.date_dashed()) {
+                    (post.metadata.date_slashed())
                 }
                 hr;
             }
@@ -192,34 +181,4 @@ pub async fn post(
             }
         },
     ))
-}
-
-#[instrument(level = "debug")]
-async fn resume() -> (
-    TypedHeader<ContentDisposition>,
-    TypedHeader<ContentType>,
-    &'static [u8],
-) {
-    const RESUME_BYTES: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/resume.pdf"));
-
-    (
-        TypedHeader(ContentDisposition::inline()),
-        TypedHeader(mime::APPLICATION_PDF.into()),
-        RESUME_BYTES,
-    )
-}
-
-#[instrument(level = "debug")]
-async fn license() -> (
-    TypedHeader<ContentDisposition>,
-    TypedHeader<ContentType>,
-    &'static [u8],
-) {
-    const LICENSE: &[u8] = include_bytes!("../../LICENSE.txt");
-
-    (
-        TypedHeader(ContentDisposition::inline()),
-        TypedHeader(mime::TEXT_PLAIN.into()),
-        LICENSE,
-    )
 }

@@ -7,6 +7,7 @@ license = "AGPL-3.0"
 publish = false
 version = "0.1.0"
 
+build = "build/main.rs"
 
 [dependencies]
 axum = { version = "0.7", features = ["macros", "tracing"] }
@@ -14,36 +15,38 @@ axum-extra = { version = "0.9", features = ["typed-header"] }
 color-eyre = "0.6"
 dotenvy = "0.15"
 envy = "0.4"
-html-escape = "0.2"
-include_dir = "0.7"
-# TODO: use the latest version of maud once it's released
-maud = { git = "https://github.com/vidhanio/maud", branch = "patch-1", features = [
-    "axum",
-] }
+maud = { git = "https://github.com/lambda-fairy/maud", features = ["axum"] }
 mime = "0.3"
-pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }
 serde = { version = "1", features = ["derive"] }
-serde_yaml = "0.9"
 thiserror = "1"
-time = { version = "0.3", features = ["macros", "serde-human-readable"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 tower-http = { version = "0.5", features = ["trace"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+[build-dependencies]
+base64 = "0.21"
+headless_chrome = "1"
+html-escape = "0.2"
+maud = { git = "https://github.com/lambda-fairy/maud" }
+prettyplease = "0.2"
+proc-macro2 = "1"
+pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }
+quote = "1"
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+syn = "2"
 tree-sitter = "0.20"
 tree-sitter-highlight = "0.20"
 tree-sitter-html = "0.19"
 tree-sitter-java = "0.20"
 tree-sitter-rust = "0.20"
 
-[build-dependencies]
-gix = { version = "0.56", default-features = false }
-
 [lints]
     [lints.rust]
     missing_copy_implementations = "warn"
     missing_debug_implementations = "warn"
-    # missing_docs = "warn"
+    missing_docs = "warn"
     unsafe_code = "forbid"
 
     [lints.clippy]

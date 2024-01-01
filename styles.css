@@ -4,32 +4,32 @@
   font-family: "Berkeley Mono";
   font-weight: 400;
   font-style: normal;
-  src: url("/static/fonts/BerkeleyMono-Regular.woff2") format("woff2"),
-    url("/static/fonts/BerkeleyMono-Regular.woff") format("woff");
+  src: url("/fonts/BerkeleyMono-Regular.woff2") format("woff2"),
+    url("/fonts/BerkeleyMono-Regular.woff") format("woff");
 }
 
 @font-face {
   font-family: "Berkeley Mono";
   font-weight: 700;
   font-style: normal;
-  src: url("/static/fonts/BerkeleyMono-Bold.woff2") format("woff2"),
-    url("/static/fonts/BerkeleyMono-Bold.woff") format("woff");
+  src: url("/fonts/BerkeleyMono-Bold.woff2") format("woff2"),
+    url("/fonts/BerkeleyMono-Bold.woff") format("woff");
 }
 
 @font-face {
   font-family: "Berkeley Mono";
   font-weight: 400;
   font-style: italic;
-  src: url("/static/fonts/BerkeleyMono-Italic.woff2") format("woff2"),
-    url("/static/fonts/BerkeleyMono-Italic.woff") format("woff");
+  src: url("/fonts/BerkeleyMono-Italic.woff2") format("woff2"),
+    url("/fonts/BerkeleyMono-Italic.woff") format("woff");
 }
 
 @font-face {
   font-family: "Berkeley Mono";
   font-weight: 700;
   font-style: italic;
-  src: url("/static/fonts/BerkeleyMono-BoldItalic.woff2") format("woff2"),
-    url("/static/fonts/BerkeleyMono-BoldItalic.woff") format("woff");
+  src: url("/fonts/BerkeleyMono-BoldItalic.woff2") format("woff2"),
+    url("/fonts/BerkeleyMono-BoldItalic.woff") format("woff");
 }
 
 /* general */
@@ -78,6 +78,10 @@ a {
 
 ul {
   list-style-type: "* ";
+}
+
+img {
+  width: 100%;
 }
 
 nav > a,

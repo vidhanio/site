@@ -1,11 +1,14 @@
 *
 
 !/src/
-!/build.rs
+!/build/
 !/Cargo.toml
 !/Cargo.lock
-!/static/
-!/content/
+!/fonts/
+!/styles.css
+!/resume/
+!/assets/
+!/posts/
 !/tree-sitter/
 !/LICENSE.txt
 !/.git/

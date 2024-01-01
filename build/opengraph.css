@@ -1,0 +1,35 @@
+:root {
+  box-sizing: border-box;
+  color: #00ff80;
+  background-color: #101010;
+  padding: 1.5rem;
+  height: 100vh;
+
+  font-size: 1.75rem;
+  font-family: "Berkeley Mono", monospace;
+}
+
+* {
+  box-sizing: inherit;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  margin: 0;
+}
+
+h1 {
+  flex: 1;
+  margin: 0;
+}
+
+footer {
+  font-size: 1.5em;
+}
+
+hr {
+  border: 0.0625rem solid #00ff80;
+}

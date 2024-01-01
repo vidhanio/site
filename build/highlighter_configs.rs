@@ -1,7 +1,4 @@
-use std::{
-    collections::HashMap,
-    fmt::{self, Debug, Formatter, Write},
-};
+use std::{collections::HashMap, error::Error, fmt::Write};
 
 use tree_sitter_highlight::{Highlight, HighlightConfiguration, HighlightEvent, Highlighter};
 
@@ -73,7 +70,7 @@ macro_rules! tree_sitter_query {
 }
 
 impl HighlighterConfigurations {
-    pub fn new() -> crate::Result<Self> {
+    pub fn new() -> Result<Self, Box<dyn Error>> {
         [
             (
                 "rust",
@@ -111,11 +108,11 @@ impl HighlighterConfigurations {
 
             Ok((name, config))
         })
-        .collect::<crate::Result<_>>()
+        .collect::<Result<_, _>>()
         .map(Self)
     }
 
-    pub fn highlight(&self, language: &str, code: &str) -> crate::Result<String> {
+    pub fn highlight(&self, language: &str, code: &str) -> Result<String, Box<dyn Error>> {
         let Some(config) = self.0.get(language) else {
             return Ok(html_escape::encode_text_minimal(code).into());
         };
@@ -145,17 +142,5 @@ impl HighlighterConfigurations {
 
             Ok(buf)
         })
-    }
-}
-
-impl Debug for HighlighterConfigurations {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        f.debug_map()
-            .entries(
-                self.0
-                    .keys()
-                    .map(|&k| (k, format_args!("HighlightConfiguration"))),
-            )
-            .finish()
     }
 }

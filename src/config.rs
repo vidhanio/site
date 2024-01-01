@@ -1,12 +1,9 @@
 use std::net::{IpAddr, SocketAddr};
 
 use serde::Deserialize;
-use tokio::net::TcpListener;
-
-use crate::Error;
 
 /// The configuration for this crate.
-#[derive(Copy, Clone, Debug, Deserialize)]
+#[derive(Debug, Clone, Copy, Deserialize)]
 pub struct Config {
     /// The ip address to bind to.
     pub ip: IpAddr,
@@ -33,12 +30,5 @@ impl Config {
     #[must_use]
     pub const fn socket_addr(&self) -> SocketAddr {
         SocketAddr::new(self.ip, self.port)
-    }
-
-    /// Bind the socket address to a TCP listener.
-    pub(crate) async fn tcp_listener(&self) -> crate::Result<TcpListener> {
-        TcpListener::bind(self.socket_addr())
-            .await
-            .map_err(Error::Bind)
     }
 }
