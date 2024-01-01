@@ -211,8 +211,8 @@ fn include_assets(manifest_dir: &Path, out_dir: &Path) -> Result<(), Box<dyn Err
 
         let mime = match ext {
             "png" => quote!(mime::IMAGE_PNG),
-            "jpeg" => quote!(mime::IMAGE_JPEG),
-            _ => panic!("asset extension should be png or jpeg"),
+            "jpg" => quote!(mime::IMAGE_JPEG),
+            _ => panic!("asset extension should be png or jpg"),
         };
 
         quote! {
