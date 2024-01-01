@@ -88,7 +88,7 @@ impl Render for Document {
 
                     title { (title) }
                     meta name="description" content=(DESCRIPTION);
-                    meta name="theme-color" content="#101010";
+                    meta name="theme-color" content="#00ff80";
 
                     meta name="og:title" content=(title);
                     meta name="og:description" content=(DESCRIPTION);
