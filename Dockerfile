@@ -7,12 +7,13 @@ COPY ./src ./src
 RUN cargo chef prepare
 
 FROM chef AS builder
+RUN apt-get update && apt-get install -y chromium
+RUN curl -L https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz | tar xJf - \
+    && mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
 COPY --from=planner /app/recipe.json .
 RUN cargo chef cook --release
 COPY . .
-RUN curl -L https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz \
-    | tar xJf - \
-    && mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
+RUN mkdir -p $HOME/.local/share/fonts/ && cp ./fonts/*.ttf $HOME/.local/share/fonts/
 RUN cargo build --release
 RUN mv ./target/release/vidhan-site ./site
 

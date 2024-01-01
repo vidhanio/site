@@ -1,0 +1,124 @@
+basics:
+  name: Vidhan Bhatt
+  label: Software Developer
+  email: me@vidhan.io
+  url: vidhan.io
+  profiles:
+    - network: GitHub
+      username: vidhanio
+      url: https://github.com/vidhanio
+    - network: LinkedIn
+      username: /in/vidhanio
+      url: https://www.linkedin.com/in/vidhanio
+
+education:
+  - institution: McMaster University
+    studyType: Bachelor
+    area: Computer Science
+    startDate: 2022-09-01
+    courses:
+      - Data Structures & Algorithms
+      - Computer Architecture
+      - Software Development (Python, Haskell, Java, C)
+    score: 3.98/4.0
+
+work:
+  - name: Tailered Sports
+    position: Discord Bot Developer
+    startDate: 2023-05-07
+    highlights:
+      - Made a Discord bot in Rust for users to make fake "bets" on baseball games
+      - Accessed the FanDuel API to retrieve live betting odds
+      - Created a live feed of the game using the MLB API
+      - Used PostgreSQL to store user data and betting history
+      - Also allowed the bettors to track their bets and append them to a spreadsheet nightly
+
+projects:
+  - name: vidhan.io
+    url: https://github.com/vidhanio/site
+    description: A personal website and blog, written in Rust.
+    startDate: 2023-07-26
+    keywords:
+      - Rust
+      - Markdown
+      - Typst
+      - GitHub Actions
+    highlights:
+      - Uses Typst to generate this very resume automaticaly and serve it as a static asset
+      - Parses markdown blog posts and renders them as HTML
+      - Uses tree-sitter to provide powerful IDE-like syntax highlighting for blog posts
+      - Implements industry-standard testing and continuous integration using GitHub Actions
+      - Recieved 40+ stars on GitHub
+
+  - name: MacEats
+    url: https://github.com/vidhanio/maceats
+    description: A full-stack modern reimplementation of MacEats, the McMaster University campus dining site.
+    startDate: 2022-10-17
+    endDate: 2022-10-31
+    keywords:
+      - Rust
+      - React
+      - Next.js
+      - Docker
+      - Fly.io
+      - Vercel
+    highlights:
+      - Created for the 2022 McMaster CSS Hacktober event
+      - Made a Rust library to scrape the original website and provide a programmatic interface to the data
+      - Made a Rust backend to serve the data for general use by anyone
+      - Made a React and Next.js frontend to access the modern site
+      - Received 100% in judge voting, placing second overall in the competition
+
+  - name: Checkpoint
+    url: https://github.com/vidhanio/checkpoint
+    description: A Discord verification bot for servers in the Peel District School Board.
+    startDate: 2021-10-06
+    endDate: 2022-03-01
+    keywords:
+      - Go
+      - Docker
+      - GitHub Actions
+      - Google Cloud Platform
+    highlights:
+      - Made to combat rampant spam bots which would join servers in our school
+      - Used Go for the Discord bot, which is deployed to Google Compute Engine using GitHub Actions
+      - Was implemented in 15+ school club Discord servers, and received outstanding testimonials from the club executives
+
+skills:
+  - name: Programming Languages
+    keywords:
+      - Rust
+      - Go
+      - JavaScript
+      - TypeScript
+      - Python
+      - Haskell
+      - Java
+      - Shell Scripting
+      - HTML
+      - CSS
+      - C++
+      - C
+      - Elm
+
+  - name: Frameworks/Databases
+    keywords:
+      - React
+      - Next.js
+      - Node.js
+      - Svelte
+      - Tailwind CSS
+      - SQL (PostgreSQL, SQLite, Supabase)
+      - MongoDB
+      - Sled
+
+  - name: Continuous Integration/Continuous Development
+    keywords:
+      - Docker
+      - Git
+      - GitHub
+      - GitHub Actions
+      - Kubernetes
+      - Fly.io
+      - Vercel
+      - Google Cloud Platform

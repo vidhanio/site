@@ -11,8 +11,7 @@ is powered by [tree-sitter](https://tree-sitter.github.io/tree-sitter/).
 take a look at the code which powers this site's syntax highlighting:
 
 ```rust
-/// Highlight a code block using the given language.
-pub fn highlight(&self, language: &str, code: &str) -> crate::Result<String> {
+pub fn highlight(&self, language: &str, code: &str) -> Result<String, Box<dyn Error>> {
     let Some(config) = self.0.get(language) else {
         return Ok(html_escape::encode_text_minimal(code).into());
     };

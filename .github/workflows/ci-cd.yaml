@@ -25,10 +25,12 @@ jobs:
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
 
-      - name: Install `typst`
+      - name: Install Chromium
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install Typst
         run: >
-          curl -L https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz
-          | tar -xJf -
+          curl -L https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz | tar -xJf -
           && mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
 
       - name: Execute tests
@@ -56,10 +58,12 @@ jobs:
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
 
-      - name: Install `typst`
+      - name: Install Chromium
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install Typst
         run: >
-          curl -L https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz
-          | tar -xJf -
+          curl -L https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz | tar -xJf -
           && mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
 
       - name: Check code
