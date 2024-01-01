@@ -164,7 +164,7 @@ pub async fn post(doc: DocumentParts, Path(slug): Path<String>) -> SiteResult<Do
 
     Ok(doc.build(
         post.metadata.title,
-        format!(public!("/posts/{}/og.png"), post.slug),
+        format!(public!("/post/{}/og.png"), post.slug),
         html! {
             header {
                 h1 {
