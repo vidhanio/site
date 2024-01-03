@@ -91,7 +91,7 @@ impl Render for Document {
                     meta name="description" content=(DESCRIPTION);
                     meta name="theme-color" content="#00ff80";
 
-                    meta name="og:title" content=(title);
+                    meta name="og:title" content=(self.title.as_deref().unwrap_or("vidhan.io"));
                     meta name="og:description" content=(DESCRIPTION);
                     meta name="og:url" content=(url);
                     meta name="og:type" content="website";
