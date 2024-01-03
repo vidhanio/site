@@ -1,7 +1,11 @@
 use std::error::Error;
 
+use heck::ToKebabCase;
 use maud::{html, PreEscaped};
-use pulldown_cmark::{CodeBlockKind, Event, MetadataBlockKind, Options, Parser, Tag, TagEnd};
+use pulldown_cmark::{
+    CodeBlockKind, CowStr, Event, HeadingLevel, LinkType, MetadataBlockKind, Options, Parser, Tag,
+    TagEnd,
+};
 use serde::{de, Deserialize};
 
 use crate::highlighter_configs::HighlighterConfigurations;
@@ -9,8 +13,6 @@ use crate::highlighter_configs::HighlighterConfigurations;
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub struct Metadata {
-    pub title: String,
-
     #[serde(deserialize_with = "deserialize_date")]
     pub date: (u16, u8, u8),
 }
@@ -39,8 +41,10 @@ where
 #[derive(Clone, Debug)]
 pub struct Post {
     pub slug: String,
-    pub metadata: Metadata,
+    pub title: String,
     pub content: String,
+    pub footnotes: Vec<(String, PreEscaped<String>)>,
+    pub metadata: Metadata,
 }
 
 impl Post {
@@ -53,68 +57,87 @@ impl Post {
         let mut parser = Parser::new_ext(markdown, Options::all());
 
         let mut metadata = None;
+        let mut title = None;
+        let mut footnotes = Vec::new();
+
         let mut events = Vec::new();
 
         while let Some(event) = parser.next() {
             match event {
                 Event::Start(Tag::MetadataBlock(MetadataBlockKind::YamlStyle)) => {
-                    let metadata_string = parser
-                        .by_ref()
-                        .map_while(|event| match event {
-                            Event::Text(text) => Some(Ok(text.into_string())),
-                            Event::End(TagEnd::MetadataBlock(MetadataBlockKind::YamlStyle)) => None,
-                            _ => Some(Err(
-                                "unexpected markdown tag: expected text or yaml metadata block end",
-                            )),
-                        })
-                        .collect::<Result<String, _>>()?;
+                    if metadata.is_some() {
+                        return Err(format!("multiple metadata blocks for {slug}").into());
+                    }
 
-                    let parsed_metadata = serde_yaml::from_str(&metadata_string)
-                        .map_err(|e| format!("failed to parse metadata for {slug}: {e}"))?;
-
-                    metadata = Some(parsed_metadata);
+                    metadata = Some(parse_metadata(slug, &mut parser)?);
                 }
-                Event::Start(Tag::CodeBlock(block_kind)) => {
-                    let code = parser
-                        .by_ref()
-                        .map_while(|event| match event {
-                            Event::Text(text) => Some(Ok(text.into_string())),
-                            Event::End(TagEnd::CodeBlock) => None,
-                            _ => Some(Err(
-                                "unexpected markdown tag: expected text or code block end",
-                            )),
-                        })
-                        .collect::<Result<String, _>>()?;
+                Event::Start(Tag::Heading {
+                    level: HeadingLevel::H1,
+                    ..
+                }) => {
+                    if title.is_some() {
+                        return Err(format!("multiple titles for {slug}").into());
+                    }
 
-                    let lang = match &block_kind {
-                        CodeBlockKind::Fenced(lang) => lang,
-                        CodeBlockKind::Indented => "",
-                    };
+                    let title_string =
+                        collect_text_until(slug, &mut parser, TagEnd::Heading(HeadingLevel::H1))?;
 
-                    let highlighted_code = highlighter_configs.highlight(lang, &code)?;
-
-                    events.push(Event::Html(
-                        html! {
-                            pre {
-                                code.highlighted { (PreEscaped(highlighted_code)) }
-                            }
-                        }
-                        .into_string()
-                        .into(),
-                    ));
+                    title = Some(title_string);
+                }
+                Event::Start(Tag::Heading {
+                    level,
+                    id,
+                    classes,
+                    attrs,
+                }) => {
+                    events.extend(linkify_heading(
+                        slug,
+                        &mut parser,
+                        level,
+                        id,
+                        classes,
+                        attrs,
+                    )?);
                 }
                 Event::Start(Tag::Image {
                     link_type,
                     dest_url,
                     title,
                     id,
-                }) => {
+                }) if dest_url.starts_with('/') => {
                     events.push(Event::Start(Tag::Image {
                         link_type,
-                        dest_url: format!("/assets/{dest_url}?v={commit_id}").into(),
+                        dest_url: format!("{dest_url}?v={commit_id}").into(),
                         title,
                         id,
                     }));
+                }
+                Event::Start(Tag::CodeBlock(block_kind)) => {
+                    events.push(Event::Html(
+                        highlight_code(highlighter_configs, slug, &mut parser, block_kind)?.into(),
+                    ));
+                }
+                Event::Start(Tag::FootnoteDefinition(name)) => {
+                    eat(slug, &mut parser, Event::Start(Tag::Paragraph))?;
+
+                    let text = collect_html_until(&mut parser, TagEnd::Paragraph);
+
+                    eat(slug, &mut parser, Event::End(TagEnd::FootnoteDefinition))?;
+
+                    footnotes.push((name.into_string(), text));
+                }
+                Event::FootnoteReference(name) => {
+                    events.push(Event::Html(
+                        html! {
+                            sup {
+                                a.footnote href={ "#footnote-" (name) } {
+                                    "[" (name) "]"
+                                }
+                            }
+                        }
+                        .into_string()
+                        .into(),
+                    ));
                 }
                 event => events.push(event),
             }
@@ -125,8 +148,134 @@ impl Post {
 
         Ok(Self {
             slug: slug.into(),
-            metadata: metadata.ok_or_else(|| format!("missing post metadata for {slug}"))?,
+            title: title.ok_or_else(|| format!("missing post title for {slug}"))?,
             content,
+            footnotes,
+            metadata: metadata.ok_or_else(|| format!("missing post metadata for {slug}"))?,
         })
     }
+}
+
+fn parse_metadata<'a>(
+    slug: &str,
+    parser: &mut impl Iterator<Item = Event<'a>>,
+) -> Result<Metadata, Box<dyn Error>> {
+    let metadata_string = collect_text_until(
+        slug,
+        parser,
+        TagEnd::MetadataBlock(MetadataBlockKind::YamlStyle),
+    )?;
+
+    serde_yaml::from_str(&metadata_string)
+        .map_err(|e| format!("failed to parse metadata for {slug}: {e}").into())
+}
+
+#[allow(clippy::needless_pass_by_value)]
+fn linkify_heading<'a>(
+    slug: &str,
+    parser: &mut impl Iterator<Item = Event<'a>>,
+    level: HeadingLevel,
+    id: Option<CowStr<'a>>,
+    classes: Vec<CowStr<'a>>,
+    attrs: Vec<(CowStr<'a>, Option<CowStr<'a>>)>,
+) -> Result<[Event<'a>; 5], Box<dyn Error>> {
+    let text = collect_text_until(slug, parser, TagEnd::Heading(level))?;
+
+    if id.is_some() {
+        return Err(format!("unexpected id for {slug} heading").into());
+    }
+
+    let id = text.to_kebab_case();
+
+    Ok([
+        Event::Start(Tag::Heading {
+            level,
+            id: Some(id.clone().into()),
+            classes,
+            attrs,
+        }),
+        Event::Start(Tag::Link {
+            link_type: LinkType::Reference,
+            dest_url: format!("#{id}").into(),
+            title: "".into(),
+            id: "".into(),
+        }),
+        Event::Text(text.into()),
+        Event::End(TagEnd::Link),
+        Event::End(TagEnd::Heading(level)),
+    ])
+}
+
+#[allow(clippy::needless_pass_by_value)]
+fn highlight_code<'a>(
+    highlighter_configs: &HighlighterConfigurations,
+    slug: &str,
+    parser: &mut impl Iterator<Item = Event<'a>>,
+    block_kind: CodeBlockKind,
+) -> Result<String, Box<dyn Error>> {
+    let code = collect_text_until(slug, parser, TagEnd::CodeBlock)?;
+
+    let lang = match &block_kind {
+        CodeBlockKind::Fenced(lang) => lang,
+        CodeBlockKind::Indented => "",
+    };
+
+    let highlighted_code = highlighter_configs.highlight(lang, &code)?;
+
+    Ok(html! {
+        pre {
+            code.highlighted { (PreEscaped(highlighted_code)) }
+        }
+    }
+    .into_string())
+}
+
+fn collect_text_until<'a>(
+    slug: &str,
+    i: &mut impl Iterator<Item = Event<'a>>,
+    tag_end: TagEnd,
+) -> Result<String, Box<dyn Error>> {
+    i.map_while(|event| match event {
+        Event::Text(text) => Some(Ok(text.into_string())),
+        Event::End(end) if end == tag_end => None,
+        _ => Some(Err(format!(
+            "unexpected markdown tag for {slug}: expected text or {tag_end:?}, got {event:?}",
+        )
+        .into())),
+    })
+    .collect()
+}
+
+fn collect_html_until<'a>(
+    i: &mut impl Iterator<Item = Event<'a>>,
+    tag_end: TagEnd,
+) -> PreEscaped<String> {
+    let mut buf = String::new();
+
+    pulldown_cmark::html::push_html(
+        &mut buf,
+        i.take_while(|event| event != &Event::End(tag_end)),
+    );
+
+    PreEscaped(buf)
+}
+
+#[allow(clippy::needless_pass_by_value)]
+fn eat<'a>(
+    slug: &str,
+    i: &mut impl Iterator<Item = Event<'a>>,
+    event: Event<'_>,
+) -> Result<(), Box<dyn Error>> {
+    i.next()
+        .ok_or_else(|| format!("missing markdown event for {slug}").into())
+        .and_then(|e| {
+            if e == event {
+                Ok(())
+            } else {
+                Err(
+                    format!("unexpected markdown event for {slug}: expected {event:?}, got {e:?}",)
+                        .into(),
+                )
+            }
+        })
 }

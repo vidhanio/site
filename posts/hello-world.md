@@ -1,7 +1,8 @@
 ---
-title: hello, world!
 date: 2023-12-10
 ---
+
+# hello, world
 
 hi, i'm vidhan! welcome to my new site, written from the ground up using [rust](https://www.rust-lang.org/).
 this site mainly uses two libraries, namely the http server, [axum](https://docs.rs/axum) and the html library

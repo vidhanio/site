@@ -1,12 +1,14 @@
-use maud::{Markup, PreEscaped, Render};
+use maud::PreEscaped;
 
 include!(concat!(env!("OUT_DIR"), "/posts.rs"));
 
 #[derive(Debug, Clone, Copy)]
 pub struct Post {
     pub slug: &'static str,
-    pub metadata: Metadata,
+    pub title: &'static str,
+    pub date: (u16, u8, u8),
     pub image: &'static [u8],
+    pub footnotes: &'static [(&'static str, PreEscaped<&'static str>)],
     pub content: PreEscaped<&'static str>,
 }
 
@@ -16,32 +18,12 @@ impl Post {
     pub fn get(slug: &str) -> Option<Self> {
         Self::ALL.iter().find(|post| post.slug == slug).copied()
     }
-}
 
-impl Render for Post {
-    fn render(&self) -> Markup {
-        PreEscaped(self.content.0.to_owned())
-    }
-
-    fn render_to(&self, buffer: &mut String) {
-        self.content.render_to(buffer);
-    }
-}
-
-#[derive(Debug, Clone, Copy)]
-pub struct Metadata {
-    pub title: &'static str,
-    pub year: u16,
-    pub month: u8,
-    pub day: u8,
-}
-
-impl Metadata {
     pub fn date_dashed(&self) -> String {
-        format!("{:04}-{:02}-{:02}", self.year, self.month, self.day)
+        format!("{:04}-{:02}-{:02}", self.date.0, self.date.1, self.date.2)
     }
 
     pub fn date_slashed(&self) -> String {
-        format!("{:04}/{:02}/{:02}", self.year, self.month, self.day)
+        format!("{:04}/{:02}/{:02}", self.date.0, self.date.1, self.date.2)
     }
 }

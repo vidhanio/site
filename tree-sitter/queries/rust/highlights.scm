@@ -153,10 +153,10 @@
 
 ; Fields
 
-(field_identifier) @attribute
+(field_identifier) @property
 
 (shorthand_field_initializer
-  (identifier) @attribute)
+  (identifier) @property)
 
 ; Patterns
 

@@ -47,10 +47,15 @@
 }
 
 :root {
+  box-sizing: border-box;
   background-color: var(--background-color);
   color: var(--color);
 
   font-family: "Berkeley Mono", monospace;
+}
+
+* {
+  box-sizing: inherit;
 }
 
 body {
@@ -84,28 +89,33 @@ img {
   width: 100%;
 }
 
-nav > a,
-section ul > li > a,
-#ring > a,
-#resume {
+img,
+pre {
+  border: 0.25em solid var(--color);
+}
+
+a:not(article a),
+article h1 > a,
+article h2 > a,
+article h3 > a,
+article h4 > a,
+article h5 > a,
+article h6 > a,
+a.footnote {
   text-decoration: inherit;
 }
 
-section ul > li > a:hover {
+a:hover {
+  text-decoration: inherit;
   background-color: var(--color);
   color: var(--background-color);
 }
 
-#resume {
+a#resume {
   display: block;
   text-align: center;
   padding: 0.25rem 0.5rem;
-  border: 0.25rem solid var(--color);
-}
-
-#resume:hover {
-  background-color: var(--color);
-  color: var(--background-color);
+  border: 0.25rem solid;
 }
 
 #ring {
@@ -115,48 +125,43 @@ section ul > li > a:hover {
 /* code blocks */
 
 :root {
-  --code-color: #141414;
-  --code-background-color: #ececec;
+  --code-color: #303030;
+  --code-background-color: #e8e8e8;
 
-  --code-comment-color: #808080;
-  --code-constant-color: #0040b0;
-  --code-function-color: #b00040;
-  --code-keyword-color: #b04000;
-  --code-module-color: #4040b0;
-  --code-operator-color: #b04040;
-  --code-punctuation-color: #808080;
-  --code-string-color: #40b040;
-  --code-number-color: #b040b0;
-  --code-type-color: #4000b0;
+  --code-gray: #808080;
+  --code-red: #d8031a;
+  --code-orange: #ff8041;
+  --code-yellow: #cfb015;
+  --code-green: #01c26d;
+  --code-blue: #156ebb;
+  --code-purple: #982fcd;
+  --code-pink: #ff4785;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --code-color: #ececec;
-    --code-background-color: #141414;
+    --code-color: #d0d0d0;
+    --code-background-color: #181818;
 
-    --code-comment-color: #808080;
-    --code-constant-color: #0080f0;
-    --code-function-color: #f04080;
-    --code-keyword-color: #f08040;
-    --code-module-color: #8080f0;
-    --code-operator-color: #f08080;
-    --code-punctuation-color: #808080;
-    --code-string-color: #80f080;
-    --code-number-color: #f080f0;
-    --code-type-color: #8040f0;
+    --code-gray: #808080;
+    --code-red: #ff2e45;
+    --code-orange: #ffaf00;
+    --code-yellow: #ffd300;
+    /* --code-green: #171916; */
+    /* --code-blue: #9bf6ff; */
+    --code-purple: #9033ed;
+    /* --code-pink: #bdb2ff; */
   }
 }
 
-:not(pre) > code {
-  padding: 0 0.125rem;
+:not(pre) > code::before,
+:not(pre) > code::after {
+  content: "`";
 
-  color: var(--code-color);
-  background-color: var(--code-background-color);
+  color: var(--code-gray);
 }
 
 pre {
-  color: var(--code-color);
   background-color: var(--code-background-color);
 
   padding: 1rem;
@@ -167,47 +172,59 @@ pre {
 code {
   font-family: "Berkeley Mono", monospace;
 
-  color: var(--code-text-color);
+  color: var(--code-color);
+}
+
+code.highlighted .attribute {
+  color: var(--code-blue);
 }
 
 code.highlighted .comment {
-  color: var(--code-comment-color);
+  color: var(--code-gray);
 }
 
 code.highlighted .constant {
-  color: var(--code-constant-color);
+  color: var(--code-pink);
 }
 
 code.highlighted .function,
 code.highlighted .constructor {
-  color: var(--code-function-color);
+  color: var(--code-red);
 }
 
 code.highlighted .keyword,
 code.highlighted .builtin {
-  color: var(--code-keyword-color);
+  color: var(--code-orange);
 }
 
 code.highlighted .module {
-  color: var(--code-module-color);
+  color: var(--code-blue);
 }
 
 code.highlighted .operator {
-  color: var(--code-operator-color);
+  color: var(--code-orange);
 }
 
 code.highlighted .punctuation {
-  color: var(--code-punctuation-color);
+  color: var(--code-gray);
 }
 
 code.highlighted .string {
-  color: var(--code-string-color);
+  color: var(--code-green);
 }
 
 code.highlighted .number {
-  color: var(--code-number-color);
+  color: var(--code-yellow);
+}
+
+code.highlighted .tag {
+  color: var(--code-blue);
+}
+
+code.highlighted .property {
+  color: var(--code-purple);
 }
 
 code.highlighted .type {
-  color: var(--code-type-color);
+  color: var(--code-pink);
 }

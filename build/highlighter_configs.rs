@@ -74,35 +74,40 @@ impl HighlighterConfigurations {
         [
             (
                 "rust",
-                HighlightConfiguration::new(
-                    tree_sitter_rust::language(),
-                    tree_sitter_query!("rust/highlights"),
-                    tree_sitter_query!("rust/injections"),
-                    "",
-                ),
+                tree_sitter_rust::language(),
+                tree_sitter_query!("rust/highlights"),
+                tree_sitter_rust::INJECTIONS_QUERY,
             ),
             (
                 "java",
-                HighlightConfiguration::new(
-                    tree_sitter_java::language(),
-                    tree_sitter_java::HIGHLIGHT_QUERY,
-                    "",
-                    "",
-                ),
+                tree_sitter_java::language(),
+                tree_sitter_java::HIGHLIGHT_QUERY,
+                "",
             ),
             (
                 "html",
-                HighlightConfiguration::new(
-                    tree_sitter_html::language(),
-                    tree_sitter_query!("html/highlights"),
-                    tree_sitter_query!("html/injections"),
-                    "",
-                ),
+                tree_sitter_html::language(),
+                tree_sitter_html::HIGHLIGHT_QUERY,
+                tree_sitter_html::INJECTION_QUERY,
+            ),
+            (
+                "css",
+                tree_sitter_css::language(),
+                &(tree_sitter_css::HIGHLIGHTS_QUERY.to_owned()
+                    + "\n\n"
+                    + tree_sitter_query!("css/highlights.ext")),
+                "",
+            ),
+            (
+                "dockerfile",
+                tree_sitter_dockerfile::language(),
+                tree_sitter_query!("dockerfile/highlights"),
+                "",
             ),
         ]
         .into_iter()
-        .map(|(name, config)| {
-            let mut config = config?;
+        .map(|(name, lang, highlights, injections)| {
+            let mut config = HighlightConfiguration::new(lang, highlights, injections, "")?;
 
             config.configure(HIGHLIGHT_NAMES);
 

@@ -69,6 +69,7 @@ impl Render for Document {
             || Cow::Borrowed("vidhan.io"),
             |title| Cow::Owned(format!("{title} | vidhan.io")),
         );
+
         let url = self.path.as_ref().map_or_else(
             || Cow::Borrowed("https://vidhan.io"),
             |path| Cow::Owned(format!("https://vidhan.io{path}")),

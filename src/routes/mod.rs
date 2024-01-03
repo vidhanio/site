@@ -123,12 +123,12 @@ pub async fn home(doc: DocumentParts) -> Document {
                 @for post in Post::ALL {
                     li {
                         a href={"/post/" (post.slug)} {
-                            time datetime=(post.metadata.date_dashed()) {
-                                (post.metadata.date_slashed())
+                            time datetime=(post.date_dashed()) {
+                                (post.date_slashed())
                             }
                             " - "
                             b {
-                                (post.metadata.title)
+                                (post.title)
                             }
                         }
                     }
@@ -163,21 +163,37 @@ pub async fn post(doc: DocumentParts, Path(slug): Path<String>) -> SiteResult<Do
     let post = Post::get(&slug).ok_or_else(|| SiteError::PostNotFound(slug))?;
 
     Ok(doc.build(
-        post.metadata.title,
+        post.title,
         format!(public!("/post/{}/og.png"), post.slug),
         html! {
             header {
                 h1 {
-                    (post.metadata.title)
+                    (post.title)
                 }
-                time datetime=(post.metadata.date_dashed()) {
-                    (post.metadata.date_slashed())
+                time datetime=(post.date_dashed()) {
+                    (post.date_slashed())
                 }
                 hr;
             }
 
             article {
-                (post)
+                (post.content)
+
+                @if !post.footnotes.is_empty() {
+                    h2 #footnotes {
+                        a href="#footnotes" { "footnotes" }
+                    }
+
+                    @for (name, content) in post.footnotes {
+                        p id={ "footnote-" (name) } {
+                            a.footnote href={"#footnote-" (name)} {
+                                "[" (name) "]"
+                            }
+                            " "
+                            (content)
+                        }
+                    }
+                }
             }
         },
     ))

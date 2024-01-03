@@ -1,0 +1,8 @@
+{
+  "markdownlint.config": {
+    "no-trailing-punctuation": false
+  },
+  "markdown.copyFiles.destination": {
+    "*": "/assets/"
+  }
+}

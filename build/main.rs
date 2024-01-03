@@ -1,7 +1,7 @@
 #![allow(missing_docs)]
 
 mod highlighter_configs;
-mod opengraph;
+mod open_graph;
 mod post;
 
 use core::panic;
@@ -15,7 +15,8 @@ use std::{
 };
 
 use headless_chrome::{Browser, LaunchOptions};
-use opengraph::generate_image;
+use maud::{html, PreEscaped};
+use open_graph::generate_image;
 use quote::quote;
 
 use crate::{
@@ -39,7 +40,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     include_posts(&browser, &manifest_dir, &out_dir, &commit_id)?;
     include_assets(&manifest_dir, &out_dir)?;
     compile_resume(&manifest_dir, &out_dir)?;
-    generate_image(&browser, &out_dir, "og.png", "vidhan.io", None)?;
+    generate_image(
+        &browser,
+        &out_dir,
+        "og.png",
+        "vidhan.io",
+        None::<&'static str>,
+    )?;
 
     Ok(())
 }
@@ -149,8 +156,8 @@ fn include_posts(
                 browser,
                 out_dir,
                 format!("post-images/{}.png", post.slug),
-                &post.metadata.title,
-                Some("post on vidhan.io"),
+                &post.title,
+                Some(html!("post on " b { "vidhan.io" })),
             )?;
 
             Ok(post)
@@ -159,28 +166,34 @@ fn include_posts(
 
     posts.sort_unstable_by_key(|post| Reverse(post.metadata.date));
 
-    let post_tokens = posts.into_iter().map(|post| {
-        let slug = post.slug;
-        let Metadata {
-            title,
-            date: (year, month, day),
-        } = post.metadata;
-        let content = post.content;
+    let post_tokens = posts.into_iter().map(
+        |Post {
+             slug,
+             title,
+             metadata: Metadata {
+                 date: (year, month, day),
+             },
+             footnotes,
+             content,
+         }| {
+            let footnotes = footnotes.iter().map(|(name, PreEscaped(content))| {
+                quote! {
+                    (#name, maud::PreEscaped(#content))
+                }
+            });
 
-        quote! {
-            crate::post::Post {
-                slug: #slug,
-                metadata: crate::post::Metadata {
+            quote! {
+                crate::post::Post {
+                    slug: #slug,
                     title: #title,
-                    year: #year,
-                    month: #month,
-                    day: #day,
-                },
-                content: maud::PreEscaped(#content),
-                image: include_bytes!(concat!(env!("OUT_DIR"), "/post-images/", #slug, ".png")),
+                    date: (#year, #month, #day),
+                    image: include_bytes!(concat!(env!("OUT_DIR"), "/post-images/", #slug, ".png")),
+                    footnotes: &[#(#footnotes,)*],
+                    content: maud::PreEscaped(#content),
+                }
             }
-        }
-    });
+        },
+    );
 
     let tokens = quote!(
         mod posts {
