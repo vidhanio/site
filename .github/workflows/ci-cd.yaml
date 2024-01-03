@@ -19,7 +19,7 @@ jobs:
         with:
           lfs: true
 
-      - name: Install Rust toolchain
+      - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
       - name: Cache dependencies
@@ -50,7 +50,7 @@ jobs:
         with:
           lfs: true
 
-      - name: Install Rust toolchain
+      - name: Install Rust
         uses: dtolnay/rust-toolchain@nightly
         with:
           components: clippy
@@ -83,7 +83,7 @@ jobs:
         with:
           lfs: true
 
-      - name: Install Rust toolchain
+      - name: Install Rust
         uses: dtolnay/rust-toolchain@nightly
         with:
           components: rustfmt
