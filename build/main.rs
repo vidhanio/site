@@ -132,7 +132,7 @@ fn include_posts(
     let posts_dir = manifest_dir.join("posts/");
     println!("cargo:rerun-if-changed={}", posts_dir.display());
 
-    fs::create_dir_all(out_dir.join("post-images"))?;
+    fs::create_dir_all(out_dir.join("post-og"))?;
 
     let highlighter_configs = HighlighterConfigurations::new()?;
 
@@ -155,7 +155,7 @@ fn include_posts(
             generate_image(
                 browser,
                 out_dir,
-                format!("post-images/{}.png", post.slug),
+                format!("post-og/{}.png", post.slug),
                 &post.title,
                 Some(html!("post on " b { "vidhan.io" })),
             )?;
@@ -187,7 +187,7 @@ fn include_posts(
                     slug: #slug,
                     title: #title,
                     date: (#year, #month, #day),
-                    image: include_bytes!(concat!(env!("OUT_DIR"), "/post-images/", #slug, ".png")),
+                    image: include_bytes!(concat!(env!("OUT_DIR"), "/post-og/", #slug, ".png")),
                     footnotes: &[#(#footnotes,)*],
                     content: maud::PreEscaped(#content),
                 }

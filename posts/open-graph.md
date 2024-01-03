@@ -101,7 +101,7 @@ let html = html! {
 };
 ```
 
-then used the chrome library to navigate to the html using a base64 data url, then took a screenshot and saved it to the `$OUT_DIR`.
+then used the chrome library to navigate to the html using a base64 data url, then took a screenshot and saved it to the `$OUT_DIR`:
 
 ```rust
 let tab = browser.new_tab()?;
@@ -114,6 +114,40 @@ tab.navigate_to(&format!(
 let png_data = tab.capture_screenshot(CaptureScreenshotFormatOption::Png, None, None, true)?;
 
 fs::write(out_dir.join(filename), png_data)?;
+```
+
+and then included the png data as a field in my generated blog post `struct`:
+
+```rust
+quote! {
+    crate::post::Post {
+        slug: #slug,
+        title: #title,
+        date: (#year, #month, #day), // this ↓
+        image: include_bytes!(concat!(env!("OUT_DIR"), "/post-og/", #slug, ".png")),
+        footnotes: &[#(#footnotes,)*],
+        content: maud::PreEscaped(#content),
+    }
+}
+```
+
+and finally served it in an `axum` route!
+
+```rust
+pub fn router() -> Router {
+    Router::new()
+        // ...
+        .route("/post/:slug/og.png", axum::routing::get(post_og_image))
+        // ...
+}
+
+async fn post_og_image(
+    Path(slug): Path<String>,
+) -> SiteResult<(TypedHeader<ContentType>, &'static [u8])> {
+    let post = Post::get(&slug).ok_or_else(|| SiteError::PostNotFound(slug))?;
+
+    Ok((TypedHeader(ContentType::from(mime::IMAGE_PNG)), post.image))
+}
 ```
 
 and i had a pretty nice looking open graph graphic!

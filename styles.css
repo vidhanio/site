@@ -144,12 +144,12 @@ a#resume {
     --code-background-color: #181818;
 
     --code-gray: #808080;
-    --code-red: #ff2e45;
+    --code-red: #ec475a;
     --code-orange: #ffaf00;
     --code-yellow: #ffd300;
     /* --code-green: #171916; */
-    /* --code-blue: #9bf6ff; */
-    --code-purple: #9033ed;
+    --code-blue: #397bf6;
+    --code-purple: #a965ec;
     /* --code-pink: #bdb2ff; */
   }
 }
