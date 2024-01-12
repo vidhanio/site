@@ -1,4 +1,4 @@
-use maud::PreEscaped;
+use hypertext::Raw;
 
 include!(concat!(env!("OUT_DIR"), "/posts.rs"));
 
@@ -8,8 +8,8 @@ pub struct Post {
     pub title: &'static str,
     pub date: (u16, u8, u8),
     pub image: &'static [u8],
-    pub footnotes: &'static [(&'static str, PreEscaped<&'static str>)],
-    pub content: PreEscaped<&'static str>,
+    pub footnotes: &'static [(&'static str, Raw<&'static str>)],
+    pub content: Raw<&'static str>,
 }
 
 impl Post {

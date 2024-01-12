@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use heck::ToKebabCase;
-use maud::{html, PreEscaped};
+use hypertext::{html_elements, maud, GlobalAttributes, Raw};
 use pulldown_cmark::{
     CodeBlockKind, CowStr, Event, HeadingLevel, LinkType, MetadataBlockKind, Options, Parser, Tag,
     TagEnd,
@@ -42,9 +42,9 @@ where
 pub struct Post {
     pub slug: String,
     pub title: String,
+    pub date: (u16, u8, u8),
     pub content: String,
-    pub footnotes: Vec<(String, PreEscaped<String>)>,
-    pub metadata: Metadata,
+    pub footnotes: Vec<(String, Raw<String>)>,
 }
 
 impl Post {
@@ -128,13 +128,14 @@ impl Post {
                 }
                 Event::FootnoteReference(name) => {
                     events.push(Event::Html(
-                        html! {
+                        maud! {
                             sup {
-                                a.footnote href={ "#footnote-" (name) } {
-                                    "[" (name) "]"
+                                a.footnote href={ "#footnote-" (&*name) } {
+                                    "[" (&*name) "]"
                                 }
                             }
                         }
+                        .render()
                         .into_string()
                         .into(),
                     ));
@@ -149,9 +150,12 @@ impl Post {
         Ok(Self {
             slug: slug.into(),
             title: title.ok_or_else(|| format!("missing post title for {slug}"))?,
-            content,
+            date: metadata
+                .as_ref()
+                .map(|metadata| metadata.date)
+                .ok_or_else(|| format!("missing post metadata for {slug}"))?,
             footnotes,
-            metadata: metadata.ok_or_else(|| format!("missing post metadata for {slug}"))?,
+            content,
         })
     }
 }
@@ -222,11 +226,12 @@ fn highlight_code<'a>(
 
     let highlighted_code = highlighter_configs.highlight(lang, &code)?;
 
-    Ok(html! {
+    Ok(maud! {
         pre {
-            code.highlighted { (PreEscaped(highlighted_code)) }
+            code.highlighted { (Raw(highlighted_code)) }
         }
     }
+    .render_once()
     .into_string())
 }
 
@@ -246,10 +251,7 @@ fn collect_text_until<'a>(
     .collect()
 }
 
-fn collect_html_until<'a>(
-    i: &mut impl Iterator<Item = Event<'a>>,
-    tag_end: TagEnd,
-) -> PreEscaped<String> {
+fn collect_html_until<'a>(i: &mut impl Iterator<Item = Event<'a>>, tag_end: TagEnd) -> Raw<String> {
     let mut buf = String::new();
 
     pulldown_cmark::html::push_html(
@@ -257,7 +259,7 @@ fn collect_html_until<'a>(
         i.take_while(|event| event != &Event::End(tag_end)),
     );
 
-    PreEscaped(buf)
+    Raw(buf)
 }
 
 #[allow(clippy::needless_pass_by_value)]

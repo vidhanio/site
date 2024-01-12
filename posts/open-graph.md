@@ -74,14 +74,14 @@ hr {
 }
 ```
 
-then, i wrote up a bit of html (using [maud](https://github.com/lambda-fairy/maud)):
+then, i wrote up a bit of html (using [hypertext](https://github.com/vidhanio/hypertext)):
 
 ```rust
-let html = html! {
+let html = maud! {
     (DOCTYPE)
     html {
         head {
-            style { (PreEscaped(include_str!("open-graph.css"))) }
+            style { (Raw(include_str!("open-graph.css"))) }
         }
 
         body {
@@ -126,7 +126,7 @@ quote! {
         date: (#year, #month, #day), // this ↓
         image: include_bytes!(concat!(env!("OUT_DIR"), "/post-og/", #slug, ".png")),
         footnotes: &[#(#footnotes,)*],
-        content: maud::PreEscaped(#content),
+        content: maud::Raw(#content),
     }
 }
 ```

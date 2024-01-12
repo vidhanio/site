@@ -15,14 +15,11 @@ use std::{
 };
 
 use headless_chrome::{Browser, LaunchOptions};
-use maud::{html, PreEscaped};
+use hypertext::{html_elements, maud, Raw};
 use open_graph::generate_image;
 use quote::quote;
 
-use crate::{
-    highlighter_configs::HighlighterConfigurations,
-    post::{Metadata, Post},
-};
+use crate::{highlighter_configs::HighlighterConfigurations, post::Post};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?);
@@ -157,28 +154,26 @@ fn include_posts(
                 out_dir,
                 format!("post-og/{}.png", post.slug),
                 &post.title,
-                Some(html!("post on " b { "vidhan.io" })),
+                Some(maud!("post on " b { "vidhan.io" })),
             )?;
 
             Ok(post)
         })
         .collect::<Result<Vec<_>, Box<dyn Error>>>()?;
 
-    posts.sort_unstable_by_key(|post| Reverse(post.metadata.date));
+    posts.sort_unstable_by_key(|post| Reverse(post.date));
 
     let post_tokens = posts.into_iter().map(
         |Post {
              slug,
              title,
-             metadata: Metadata {
-                 date: (year, month, day),
-             },
+             date: (year, month, day),
              footnotes,
              content,
          }| {
-            let footnotes = footnotes.iter().map(|(name, PreEscaped(content))| {
+            let footnotes = footnotes.iter().map(|(name, Raw(content))| {
                 quote! {
-                    (#name, maud::PreEscaped(#content))
+                    (#name, hypertext::Raw(#content))
                 }
             });
 
@@ -189,7 +184,7 @@ fn include_posts(
                     date: (#year, #month, #day),
                     image: include_bytes!(concat!(env!("OUT_DIR"), "/post-og/", #slug, ".png")),
                     footnotes: &[#(#footnotes,)*],
-                    content: maud::PreEscaped(#content),
+                    content: hypertext::Raw(#content),
                 }
             }
         },

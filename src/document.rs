@@ -8,7 +8,7 @@ use axum::{
     http::Uri,
     response::{IntoResponse, Response},
 };
-use maud::{html, Markup, Render, DOCTYPE};
+use hypertext::{html_elements, maud, GlobalAttributes, Renderable};
 
 use crate::public;
 
@@ -19,50 +19,50 @@ pub struct DocumentParts {
 }
 
 impl DocumentParts {
-    pub fn build(
+    pub fn build<R: Renderable>(
         self,
         title: impl Into<String>,
         image_path: impl Into<String>,
-        content: impl Render,
-    ) -> Document {
+        content: R,
+    ) -> Document<R> {
         Document {
             path: Some(self.path.0),
             title: Some(title.into()),
             image_path: Some(image_path.into()),
-            content: content.render(),
+            content,
         }
     }
 
-    pub fn build_simple(self, content: impl Render) -> Document {
+    pub fn build_simple<R: Renderable>(self, content: R) -> Document<R> {
         Document {
             path: Some(self.path.0),
             title: None,
             image_path: None,
-            content: content.render(),
+            content,
         }
     }
 }
 
-pub struct Document {
+pub struct Document<R> {
     path: Option<Uri>,
     title: Option<String>,
     image_path: Option<String>,
-    content: Markup,
+    content: R,
 }
 
-impl Document {
-    pub fn new(title: impl Into<String>, content: impl Render) -> Self {
+impl<R: Renderable> Document<R> {
+    pub fn new(title: impl Into<String>, content: R) -> Self {
         Self {
             path: None,
             title: Some(title.into()),
             image_path: None,
-            content: content.render(),
+            content,
         }
     }
 }
 
-impl Render for Document {
-    fn render(&self) -> Markup {
+impl<R: Renderable> Renderable for Document<R> {
+    fn render_to(self, output: &mut String) {
         const DESCRIPTION: &str = "vidhan's home on the internet.";
 
         let title = self.title.as_ref().map_or_else(
@@ -80,14 +80,14 @@ impl Render for Document {
             |image_path| Cow::Owned(format!("https://vidhan.io{image_path}")),
         );
 
-        html! {
-            (DOCTYPE)
+        maud! {
+            !DOCTYPE
             html lang="en" {
                 head {
                     meta name="viewport" content="width=device-width, initial-scale=1.0";
                     meta charset="utf-8";
 
-                    title { (title) }
+                    title { (&*title) }
                     meta name="description" content=(DESCRIPTION);
                     meta name="theme-color" content="#00ff80";
 
@@ -95,7 +95,7 @@ impl Render for Document {
                     meta name="og:description" content=(DESCRIPTION);
                     meta name="og:url" content=(url);
                     meta name="og:type" content="website";
-                    meta name="og:image" content=(image_path);
+                    meta name="og:image" content=(&*image_path);
 
                     meta name="twitter:card" content="summary_large_image";
                     meta name="twitter:site" content="@vidhanio";
@@ -135,17 +135,17 @@ impl Render for Document {
                     }
                 }
             }
-        }
+        }.render_to(output);
     }
 }
 
-impl IntoResponse for Document {
+impl<R: Renderable> IntoResponse for Document<R> {
     fn into_response(self) -> Response {
-        self.render().into_response()
+        self.into_render().render_once().into_response()
     }
 }
 
-impl Debug for Document {
+impl<R> Debug for Document<R> {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.debug_struct("Document")
             .field("path", &self.path)

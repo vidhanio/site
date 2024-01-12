@@ -2,20 +2,20 @@ use std::{error::Error, fs, path::Path};
 
 use base64::{engine::general_purpose::STANDARD_NO_PAD, Engine as _};
 use headless_chrome::{protocol::cdp::Page::CaptureScreenshotFormatOption, Browser};
-use maud::{html, PreEscaped, Render, DOCTYPE};
+use hypertext::{html_elements, maud, Raw, Renderable};
 
 pub fn generate_image(
     browser: &Browser,
     out_dir: &Path,
     filename: impl AsRef<Path>,
     title: &str,
-    footer: Option<impl Render>,
+    footer: Option<impl Renderable>,
 ) -> Result<(), Box<dyn Error>> {
-    let html = html! {
-        (DOCTYPE)
+    let html = maud! {
+        !DOCTYPE
         html {
             head {
-                style { (PreEscaped(include_str!("open-graph.css"))) }
+                style { (Raw(include_str!("open-graph.css"))) }
             }
 
             body {
@@ -38,7 +38,7 @@ pub fn generate_image(
 
     tab.navigate_to(&format!(
         "data:text/html;base64,{}",
-        STANDARD_NO_PAD.encode(html.into_string())
+        STANDARD_NO_PAD.encode(html.render_once().into_string())
     ))?;
 
     let png_data = tab.capture_screenshot(CaptureScreenshotFormatOption::Png, None, None, true)?;

@@ -4,7 +4,7 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
-use maud::{html, Markup, Render};
+use hypertext::{html_elements, maud, Displayed, Renderable};
 use thiserror::Error;
 
 use crate::document::Document;
@@ -43,22 +43,23 @@ impl SiteError {
     }
 }
 
-impl Render for SiteError {
-    fn render(&self) -> Markup {
-        html! {
+impl Renderable for SiteError {
+    fn render_to(self, output: &mut String) {
+        maud! {
             pre {
                 code {
-                    (maud::display(self));
+                    (Displayed(&self))
 
-                    @for (i, e) in ErrorSourceIter::new(self)
+                    @for (i, e) in ErrorSourceIter::new(&self)
                         .skip(1)
                         .enumerate()
                     {
-                        "\n" (" ".repeat(i * 2)) "└ " (e)
+                        "\n" (" ".repeat(i * 2)) "└ " (Displayed(e))
                     }
                 }
             }
         }
+        .render_to(output);
     }
 }
 
@@ -70,7 +71,7 @@ impl IntoResponse for SiteError {
             status_code,
             Document::new(
                 "error",
-                html! {
+                maud! {
                     header {
                         h1 {
                             (status_code.to_string().to_lowercase())

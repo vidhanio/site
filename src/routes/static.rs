@@ -1,14 +1,24 @@
 use std::time::Duration;
 
-use axum::{extract::Path, Router};
+use axum::{
+    extract::{Path, Query},
+    response::{IntoResponse, Response},
+    Router,
+};
 use axum_extra::{
     headers::{CacheControl, ContentDisposition, ContentType},
     response::Css,
     TypedHeader,
 };
+use serde::{de::IgnoredAny, Deserialize};
 use tracing::instrument;
 
 use crate::{post::Post, SiteError, SiteResult};
+
+#[derive(Debug, Clone, Deserialize)]
+struct CacheParams {
+    v: Option<IgnoredAny>,
+}
 
 pub fn router() -> Router {
     Router::new()
@@ -20,13 +30,19 @@ pub fn router() -> Router {
         .route("/fonts/:font", axum::routing::get(fonts))
         .route("/resume.pdf", axum::routing::get(resume))
         .route("/LICENSE.txt", axum::routing::get(license))
-        .layer(axum::middleware::map_response(|res| async {
-            let cc = CacheControl::new()
-                .with_max_age(Duration::from_secs(60 * 60 * 24 * 365))
-                .with_immutable();
+        .layer(axum::middleware::map_response(
+            |Query(params): Query<CacheParams>, res: Response| async move {
+                if params.v.is_some() {
+                    let cc = CacheControl::new()
+                        .with_max_age(Duration::from_secs(60 * 60 * 24 * 365))
+                        .with_immutable();
 
-            (TypedHeader(cc), res)
-        }))
+                    (TypedHeader(cc), res).into_response()
+                } else {
+                    res
+                }
+            },
+        ))
 }
 
 // #[instrument(level = "trace")]

@@ -715,6 +715,34 @@ dependencies = [
 ]
 
 [[package]]
+name = "hypertext"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce994ae6815672839b05fa4accb99210096df9cab8be4a6375e59ae083257b78"
+dependencies = [
+ "axum-core",
+ "html-escape",
+ "http 1.0.0",
+ "hypertext-macros",
+ "itoa",
+ "ryu",
+]
+
+[[package]]
+name = "hypertext-macros"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "349db6c8bc30540896f2830d82ece25558be8c16f1c16454aa58a031a08b6595"
+dependencies = [
+ "html-escape",
+ "proc-macro2",
+ "proc-macro2-diagnostics",
+ "quote",
+ "rstml",
+ "syn 2.0.47",
+]
+
+[[package]]
 name = "ident_case"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -790,28 +818,6 @@ name = "matchit"
 version = "0.7.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0e7465ac9959cc2b1404e8e2367b43684a6d13790fe23056cc8c6c5a6b7bcb94"
-
-[[package]]
-name = "maud"
-version = "0.25.0"
-source = "git+https://github.com/lambda-fairy/maud#320add87a12d8e5be115de9e0fe3f4b331512a4a"
-dependencies = [
- "axum-core",
- "http 1.0.0",
- "itoa",
- "maud_macros",
-]
-
-[[package]]
-name = "maud_macros"
-version = "0.25.0"
-source = "git+https://github.com/lambda-fairy/maud#320add87a12d8e5be115de9e0fe3f4b331512a4a"
-dependencies = [
- "proc-macro-error",
- "proc-macro2",
- "quote",
- "syn 2.0.47",
-]
 
 [[package]]
 name = "memchr"
@@ -979,6 +985,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "proc-macro2-diagnostics"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "af066a9c399a26e020ada66a034357a868728e72cd426f3adcd35f80d88d88c8"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.47",
+ "version_check",
+]
+
+[[package]]
 name = "pulldown-cmark"
 version = "0.9.2"
 source = "git+https://github.com/raphlinus/pulldown-cmark#753162069c9af133f94e24f1e096d78769cdf99f"
@@ -1093,6 +1111,20 @@ dependencies = [
  "spin",
  "untrusted",
  "windows-sys 0.48.0",
+]
+
+[[package]]
+name = "rstml"
+version = "0.11.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fe542870b8f59dd45ad11d382e5339c9a1047cde059be136a7016095bbdefa77"
+dependencies = [
+ "proc-macro2",
+ "proc-macro2-diagnostics",
+ "quote",
+ "syn 2.0.47",
+ "syn_derive",
+ "thiserror",
 ]
 
 [[package]]
@@ -1312,6 +1344,18 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "syn_derive"
+version = "0.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1329189c02ff984e9736652b1631330da25eaa6bc639089ed4915d25446cbe7b"
+dependencies = [
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.47",
 ]
 
 [[package]]
@@ -1759,7 +1803,7 @@ dependencies = [
  "headless_chrome",
  "heck",
  "html-escape",
- "maud",
+ "hypertext",
  "mime",
  "prettyplease",
  "proc-macro2",

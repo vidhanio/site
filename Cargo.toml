@@ -15,7 +15,7 @@ axum-extra = { version = "0.9", features = ["typed-header"] }
 color-eyre = "0.6"
 dotenvy = "0.15"
 envy = "0.4"
-maud = { git = "https://github.com/lambda-fairy/maud", features = ["axum"] }
+hypertext = { version = "0.3", features = ["axum"] }
 mime = "0.3"
 serde = { version = "1", features = ["derive"] }
 thiserror = "1"
@@ -29,7 +29,7 @@ base64 = "0.21"
 headless_chrome = "1"
 heck = "0.4"
 html-escape = "0.2"
-maud = { git = "https://github.com/lambda-fairy/maud" }
+hypertext = "0.3"
 prettyplease = "0.2"
 proc-macro2 = "1"
 pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }

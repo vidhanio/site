@@ -1,7 +1,7 @@
 mod r#static;
 
 use axum::{extract::Path, Router};
-use maud::{html, Markup, Render};
+use hypertext::{html_elements, maud, maud_move, GlobalAttributes, Renderable};
 use tracing::instrument;
 
 use crate::{
@@ -17,21 +17,23 @@ pub fn router() -> Router {
         .nest("/", r#static::router())
 }
 
+#[derive(Debug, Clone, Copy)]
 struct Link {
     pub name: &'static str,
     pub description: &'static str,
     pub href: &'static str,
 }
 
-impl Render for Link {
-    fn render(&self) -> Markup {
-        html! {
+impl Renderable for Link {
+    fn render_to(self, output: &mut String) {
+        maud! {
             a href=(self.href) {
                 b { (self.name) }
                 " - "
                 (self.description)
             }
         }
+        .render_to(output);
     }
 }
 
@@ -40,6 +42,11 @@ const PROJECTS: &[Link] = &[
         name: "site",
         description: "this website!",
         href: "https://github.com/vidhanio/site",
+    },
+    Link {
+        name: "hypertext",
+        description: "a blazing fast type-checked html macro.",
+        href: "https://github.com/vidhanio/hypertext",
     },
     Link {
         name: "html-node",
@@ -93,10 +100,10 @@ const CONTACTS: &[Link] = &[
 ];
 
 #[instrument(level = "debug")]
-pub async fn home(doc: DocumentParts) -> Document {
-    doc.build_simple(html! {
+pub async fn home(doc: DocumentParts) -> Document<impl Renderable> {
+    doc.build_simple(maud! {
         header {
-            h1 { "👋 hi, i'm vidhan! " }
+            h1 { "👋 hi, i'm vidhan!" }
             hr;
         }
 
@@ -111,7 +118,7 @@ pub async fn home(doc: DocumentParts) -> Document {
                 my favourite player is lebron james and i'm a huge fan of the los angeles lakers."
             }
 
-            a #resume href=(public!("/resume.pdf")) {
+            a.box href=(public!("/resume.pdf")) {
                 b { "📄 resume.pdf" }
             }
         }
@@ -140,7 +147,7 @@ pub async fn home(doc: DocumentParts) -> Document {
             h2 { "🛠️ projects" }
             hr;
             ul {
-                @for project in PROJECTS {
+                @for &project in PROJECTS {
                     li { (project) }
                 }
             }
@@ -150,7 +157,7 @@ pub async fn home(doc: DocumentParts) -> Document {
             h2 { "💬 contact" }
             hr;
             ul {
-                @for contact in CONTACTS {
+                @for &contact in CONTACTS {
                     li { (contact) }
                 }
             }
@@ -159,13 +166,16 @@ pub async fn home(doc: DocumentParts) -> Document {
 }
 
 #[instrument(level = "debug", err(Debug))]
-pub async fn post(doc: DocumentParts, Path(slug): Path<String>) -> SiteResult<Document> {
+pub async fn post(
+    doc: DocumentParts,
+    Path(slug): Path<String>,
+) -> SiteResult<Document<impl Renderable>> {
     let post = Post::get(&slug).ok_or_else(|| SiteError::PostNotFound(slug))?;
 
     Ok(doc.build(
         post.title,
         format!(public!("/post/{}/og.png"), post.slug),
-        html! {
+        maud_move! {
             header {
                 h1 {
                     (post.title)
@@ -184,7 +194,7 @@ pub async fn post(doc: DocumentParts, Path(slug): Path<String>) -> SiteResult<Do
                         a href="#footnotes" { "footnotes" }
                     }
 
-                    @for (name, content) in post.footnotes {
+                    @for &(name, content) in post.footnotes {
                         p id={ "footnote-" (name) } {
                             a.footnote href={"#footnote-" (name)} {
                                 "[" (name) "]"

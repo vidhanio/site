@@ -6,7 +6,7 @@ date: 2023-12-10
 
 hi, i'm vidhan! welcome to my new site, written from the ground up using [rust](https://www.rust-lang.org/).
 this site mainly uses two libraries, namely the http server, [axum](https://docs.rs/axum) and the html library
-[maud](https://docs.rs/maud). one of the coolest features of this site, the code block syntax highlighting,
+[hypertext](https://docs.rs/hypertext). one of the coolest features of this site, the code block syntax highlighting,
 is powered by [tree-sitter](https://tree-sitter.github.io/tree-sitter/).
 
 take a look at the code which powers this site's syntax highlighting:

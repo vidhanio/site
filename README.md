@@ -5,7 +5,7 @@ my personal site, written in rust.
 ## stack
 
 - http server: [axum](https://docs.rs/axum)
-- html templating: [maud](https://docs.rs/maud)
+- html templating: [hypertext](https://docs.rs/hypertext) (made by me!)
 - syntax highlighting: [tree-sitter](https://tree-sitter.github.io/tree-sitter/)
 - resume: [typst](https://typst.app)
 
