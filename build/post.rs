@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use heck::ToKebabCase;
-use hypertext::{html_elements, maud, GlobalAttributes, Raw};
+use hypertext::{html_elements, maud, GlobalAttributes, Raw, Renderable};
 use pulldown_cmark::{
     CodeBlockKind, CowStr, Event, HeadingLevel, LinkType, MetadataBlockKind, Options, Parser, Tag,
     TagEnd,
@@ -136,7 +136,7 @@ impl Post {
                             }
                         }
                         .render()
-                        .into_string()
+                        .into_inner()
                         .into(),
                     ));
                 }
@@ -231,8 +231,8 @@ fn highlight_code<'a>(
             code.highlighted { (Raw(highlighted_code)) }
         }
     }
-    .render_once()
-    .into_string())
+    .render()
+    .into_inner())
 }
 
 fn collect_text_until<'a>(

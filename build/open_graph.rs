@@ -38,7 +38,7 @@ pub fn generate_image(
 
     tab.navigate_to(&format!(
         "data:text/html;base64,{}",
-        STANDARD_NO_PAD.encode(html.render_once().into_string())
+        STANDARD_NO_PAD.encode(html.render().into_inner())
     ))?;
 
     let png_data = tab.capture_screenshot(CaptureScreenshotFormatOption::Png, None, None, true)?;

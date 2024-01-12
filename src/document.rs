@@ -141,7 +141,7 @@ impl<R: Renderable> Renderable for Document<R> {
 
 impl<R: Renderable> IntoResponse for Document<R> {
     fn into_response(self) -> Response {
-        self.into_render().render_once().into_response()
+        self.render().into_response()
     }
 }
 
