@@ -3,8 +3,9 @@
 mod config;
 mod document;
 mod error;
+mod pages;
 mod post;
-mod routes;
+mod r#static;
 
 use tokio::net::TcpListener;
 use tower_http::trace::TraceLayer;
@@ -20,7 +21,9 @@ type SiteResult<T> = std::result::Result<T, SiteError>;
 /// Returns an error if the application fails to start.
 pub async fn serve(config: Config) -> SiteResult<()> {
     let tcp_listener = TcpListener::bind(config.socket_addr()).await?;
-    let router = routes::router().layer(TraceLayer::new_for_http());
+    let router = pages::router()
+        .merge(r#static::router())
+        .layer(TraceLayer::new_for_http());
 
     axum::serve(tcp_listener, router).await.map_err(Into::into)
 }

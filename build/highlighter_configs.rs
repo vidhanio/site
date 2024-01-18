@@ -93,9 +93,11 @@ impl HighlighterConfigurations {
             (
                 "css",
                 tree_sitter_css::language(),
-                &(tree_sitter_css::HIGHLIGHTS_QUERY.to_owned()
-                    + "\n\n"
-                    + tree_sitter_query!("css/highlights.ext")),
+                &format!(
+                    "{}\n{}",
+                    tree_sitter_css::HIGHLIGHTS_QUERY,
+                    tree_sitter_query!("css/highlights.ext")
+                ),
                 "",
             ),
             (

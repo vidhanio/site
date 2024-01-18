@@ -110,7 +110,7 @@ async fn license() -> (
     TypedHeader<ContentType>,
     &'static [u8],
 ) {
-    const LICENSE: &[u8] = include_bytes!("../../LICENSE.txt");
+    const LICENSE: &[u8] = include_bytes!("../LICENSE.txt");
 
     (
         TypedHeader(ContentDisposition::inline()),

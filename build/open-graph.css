@@ -2,11 +2,11 @@
   box-sizing: border-box;
   color: #00ff80;
   background-color: #101010;
-  padding: 1.5rem;
+  padding: 2rem;
   height: 100vh;
 
-  font-size: 1.75rem;
-  font-family: "Berkeley Mono", monospace;
+  font-size: 2.5rem;
+  font-family: "Berkeley Mono";
 }
 
 * {
@@ -27,6 +27,7 @@ h1 {
 }
 
 footer {
+  text-align: right;
   font-size: 1.5em;
 }
 

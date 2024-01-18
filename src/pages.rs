@@ -1,5 +1,3 @@
-mod r#static;
-
 use axum::{extract::Path, Router};
 use hypertext::{html_elements, maud, maud_move, GlobalAttributes, Renderable};
 use tracing::instrument;
@@ -14,7 +12,6 @@ pub fn router() -> Router {
     Router::new()
         .route("/", axum::routing::get(home))
         .route("/post/:slug", axum::routing::get(post))
-        .nest("/", r#static::router())
 }
 
 #[derive(Debug, Clone, Copy)]

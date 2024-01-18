@@ -1,14 +1,11 @@
-use std::{
-    borrow::Cow,
-    fmt::{self, Debug, Formatter},
-};
+use std::fmt::{self, Debug, Formatter};
 
 use axum::{
     extract::{FromRequestParts, OriginalUri},
     http::Uri,
     response::{IntoResponse, Response},
 };
-use hypertext::{html_elements, maud, GlobalAttributes, Renderable};
+use hypertext::{html_elements, maud, Displayed, GlobalAttributes, Renderable};
 
 use crate::public;
 
@@ -65,20 +62,19 @@ impl<R: Renderable> Renderable for Document<R> {
     fn render_to(self, output: &mut String) {
         const DESCRIPTION: &str = "vidhan's home on the internet.";
 
-        let title = self.title.as_ref().map_or_else(
-            || Cow::Borrowed("vidhan.io"),
-            |title| Cow::Owned(format!("{title} | vidhan.io")),
-        );
+        let url = maud! {
+            "https://vidhan.io" @if let Some(path) = &self.path { (Displayed(path)) }
+        };
 
-        let url = self.path.as_ref().map_or_else(
-            || Cow::Borrowed("https://vidhan.io"),
-            |path| Cow::Owned(format!("https://vidhan.io{path}")),
-        );
+        let image_path = maud! {
+            @if let Some(image_path) = &self.image_path {
+                "https://vidhan.io" (Displayed(image_path))
+            } @else {
+                "https://vidhan.io/og.png"
+            }
+        };
 
-        let image_path = self.image_path.as_ref().map_or_else(
-            || Cow::Borrowed("https://vidhan.io/og.png"),
-            |image_path| Cow::Owned(format!("https://vidhan.io{image_path}")),
-        );
+        let meta_title = self.title.as_deref().unwrap_or("vidhan.io");
 
         maud! {
             !DOCTYPE
@@ -87,20 +83,20 @@ impl<R: Renderable> Renderable for Document<R> {
                     meta name="viewport" content="width=device-width, initial-scale=1.0";
                     meta charset="utf-8";
 
-                    title { (&*title) }
+                    title { "vidhan.io" @if let Some(title) = &self.title { " / " (title) } }
                     meta name="description" content=(DESCRIPTION);
                     meta name="theme-color" content="#00ff80";
 
-                    meta name="og:title" content=(self.title.as_deref().unwrap_or("vidhan.io"));
+                    meta name="og:title" content=(meta_title);
                     meta name="og:description" content=(DESCRIPTION);
                     meta name="og:url" content=(url);
                     meta name="og:type" content="website";
-                    meta name="og:image" content=(&*image_path);
+                    meta name="og:image" content=(image_path);
 
                     meta name="twitter:card" content="summary_large_image";
                     meta name="twitter:site" content="@vidhanio";
                     meta name="twitter:creator" content="@vidhanio";
-                    meta name="twitter:title" content=(title);
+                    meta name="twitter:title" content=(meta_title);
                     meta name="twitter:description" content=(DESCRIPTION);
                     meta name="twitter:image" content=(image_path);
 
