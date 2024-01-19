@@ -91,7 +91,7 @@ img {
 
 img,
 pre {
-  border: 0.25em solid var(--color);
+  border: 0.25em solid;
 }
 
 a:not(article a),
@@ -116,6 +116,10 @@ a.box {
   text-align: center;
   padding: 0.25rem 0.5rem;
   border: 0.25rem solid;
+}
+
+a.box:hover {
+  border-color: var(--color);
 }
 
 #ring {
