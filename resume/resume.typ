@@ -25,7 +25,7 @@
   name = if url == none {
     name
   } else {
-    [#link(url, name)]
+    [#underline(link(url, name))]
   }
 
   note = if note != none {
