@@ -15,12 +15,12 @@ use tracing::instrument;
 
 use crate::{post::Post, SiteError, SiteResult};
 
-#[derive(Debug, Clone, Deserialize)]
-struct CacheParams {
-    v: Option<IgnoredAny>,
-}
-
 pub fn router() -> Router {
+    #[derive(Deserialize)]
+    struct CacheParams {
+        v: Option<IgnoredAny>,
+    }
+
     Router::new()
         // .route("/favicon.ico", axum::routing::get(favicon))
         .route("/styles.css", axum::routing::get(styles))
