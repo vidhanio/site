@@ -3,9 +3,10 @@ use hypertext::{html_elements, maud, maud_move, GlobalAttributes, Renderable};
 use tracing::instrument;
 
 use crate::{
+    cached,
     document::{Document, DocumentParts},
     post::Post,
-    public, SiteError, SiteResult,
+    SiteError, SiteResult,
 };
 
 pub fn router() -> Router {
@@ -115,7 +116,7 @@ pub async fn home(doc: DocumentParts) -> Document<impl Renderable> {
                 my favourite player is lebron james and i'm a huge fan of the los angeles lakers."
             }
 
-            a.box href=(public!("/resume.pdf")) {
+            a.box href=(cached!("/resume.pdf")) {
                 b { "📄 resume.pdf" }
             }
         }
@@ -171,7 +172,7 @@ pub async fn post(
 
     Ok(doc.build(
         post.title,
-        format!(public!("/post/{}/og.png"), post.slug),
+        format!("/post/{}/og.png", post.slug),
         maud_move! {
             header {
                 h1 {

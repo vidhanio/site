@@ -1,4 +1,7 @@
-use std::fmt::{self, Debug, Formatter};
+use std::{
+    borrow::Cow,
+    fmt::{self, Debug, Formatter},
+};
 
 use axum::{
     extract::{FromRequestParts, OriginalUri},
@@ -7,7 +10,7 @@ use axum::{
 };
 use hypertext::{html_elements, maud, Displayed, GlobalAttributes, Renderable};
 
-use crate::public;
+use crate::cached;
 
 #[derive(Debug, FromRequestParts)]
 #[allow(clippy::module_name_repetitions)]
@@ -66,13 +69,10 @@ impl<R: Renderable> Renderable for Document<R> {
             "https://vidhan.io" @if let Some(path) = &self.path { (Displayed(path)) }
         };
 
-        let image_path = maud! {
-            @if let Some(image_path) = &self.image_path {
-                "https://vidhan.io" (Displayed(image_path))
-            } @else {
-                "https://vidhan.io/og.png"
-            }
-        };
+        let image_path = self.image_path.as_ref().map_or(
+            Cow::Borrowed(cached!("https://vidhan.io/og.png")),
+            |image_path| Cow::Owned(format!(cached!("https://vidhan.io{}"), image_path)),
+        );
 
         let meta_title = self.title.as_deref().unwrap_or("vidhan.io");
 
@@ -91,16 +91,16 @@ impl<R: Renderable> Renderable for Document<R> {
                     meta name="og:description" content=(DESCRIPTION);
                     meta name="og:url" content=(url);
                     meta name="og:type" content="website";
-                    meta name="og:image" content=(image_path);
+                    meta name="og:image" content=(&*image_path);
 
                     meta name="twitter:card" content="summary_large_image";
                     meta name="twitter:site" content="@vidhanio";
                     meta name="twitter:creator" content="@vidhanio";
                     meta name="twitter:title" content=(meta_title);
                     meta name="twitter:description" content=(DESCRIPTION);
-                    meta name="twitter:image" content=(image_path);
+                    meta name="twitter:image" content=(&*image_path);
 
-                    link rel="stylesheet" href=(public!("/styles.css"));
+                    link rel="stylesheet" href=(cached!("/styles.css"));
                 }
 
                 body {
@@ -116,7 +116,7 @@ impl<R: Renderable> Renderable for Document<R> {
                         br;
                         br;
 
-                        a href=(public!("/LICENSE.txt")) { "site licensed under agpl-3.0." }
+                        a href=(cached!("/LICENSE.txt")) { "site licensed under agpl-3.0." }
 
                         br;
                         br;

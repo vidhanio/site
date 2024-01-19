@@ -170,6 +170,6 @@ thank you for reading, i hope you enjoyed this blog post.
 
 you can find all the code related to this endeavour [on github](https://github.com/vidhanio/site/tree/main/build/open_graph.rs)!
 
-[^1]: i'm hosting this entire website on a google cloud run, which spins down the instance when there are no requests for a while. as such, fast startup time is of utmost importance, as i want to make cold starts as painless as possible. generating these at runtime on startup would take seconds of time until a user could load the page, when they could easily be generated at build time, as all the data is present then.
+[^1]: i'm hosting this entire website on google cloud run, which spins down the instance when there are no requests for a while. as such, fast startup time is of utmost importance, as i want to make cold starts as painless as possible. generating these at runtime on startup would take seconds of time until a user could load the page, when they could easily be generated at build time, as all the data is present then.
 
 [^2]: yes, my shenanigans have reached the point of splitting my build script into multiple files/modules. i handle all markdown -> html conversion at build time, as well as syntax highlighting!
