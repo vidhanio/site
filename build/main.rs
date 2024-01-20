@@ -64,7 +64,9 @@ fn set_git_commit_id(manifest_dir: &Path) -> Result<String, Box<dyn Error>> {
         fs::read_to_string(manifest_dir.join(".git/refs/heads/main"))?
     } else {
         head_contents
-    };
+    }
+    .trim()
+    .to_owned();
 
     println!("cargo:rustc-env=GIT_COMMIT_HASH={commit_id}");
 
