@@ -15,7 +15,7 @@ axum-extra = { version = "0.9", features = ["typed-header"] }
 color-eyre = "0.6"
 dotenvy = "0.15"
 envy = "0.4"
-hypertext = { version = "0.4", features = ["axum"] }
+hypertext = { version = "0.5", features = ["axum"] }
 mime = "0.3"
 serde = { version = "1", features = ["derive"] }
 thiserror = "1"
@@ -25,11 +25,11 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 
 [build-dependencies]
-base64 = "0.21"
+base64 = "0.22"
 headless_chrome = "1"
-heck = "0.4"
+heck = "0.5"
 html-escape = "0.2"
-hypertext = "0.4"
+hypertext = "0.5"
 prettyplease = "0.2"
 proc-macro2 = "1"
 pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }

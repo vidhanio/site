@@ -18,15 +18,15 @@ pub enum SiteError {
     Io(#[from] io::Error),
 
     /// Post not found.
-    #[error("post not found: `{0}`")]
+    #[error("post not found: {0}")]
     PostNotFound(String),
 
     /// Asset not found.
-    #[error("asset not found: `{0}`")]
+    #[error("asset not found: {0}")]
     AssetNotFound(String),
 
     /// Font not found.
-    #[error("font not found: `{0}`")]
+    #[error("font not found: {0}")]
     FontNotFound(String),
 }
 
@@ -51,7 +51,9 @@ impl Renderable for SiteError {
                     (Displayed(&self))
 
                     @for (i, e) in ErrorSourceIter::new(&self)
-                        .skip(1)
+                        // .skip(1)
+                        .cycle()
+                        .take(10)
                         .enumerate()
                     {
                         "\n" (" ".repeat(i * 2)) "└ " (Displayed(e))
