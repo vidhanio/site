@@ -37,7 +37,7 @@ quote = "1"
 serde = { version = "1", features = ["derive"] }
 serde_yaml = "0.9"
 syn = "2"
-tree-sitter = "0.20"
+tree-sitter = "0.22"
 tree-sitter-css = "0.20"
 tree-sitter-dockerfile = { git = "https://github.com/camdencheek/tree-sitter-dockerfile" }
 tree-sitter-highlight = "0.20"
