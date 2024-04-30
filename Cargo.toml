@@ -43,7 +43,7 @@ tree-sitter-dockerfile = { git = "https://github.com/camdencheek/tree-sitter-doc
 tree-sitter-highlight = "0.20"
 tree-sitter-html = "0.19"
 tree-sitter-java = "0.20"
-tree-sitter-rust = "0.20"
+tree-sitter-rust = "0.21"
 
 [lints]
     [lints.rust]
