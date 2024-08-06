@@ -1600,12 +1600,12 @@ dependencies = [
 
 [[package]]
 name = "tree-sitter-java"
-version = "0.20.2"
+version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2adc5696bf5abf761081d7457d2bb82d0e3b28964f4214f63fd7e720ef462653"
+checksum = "33bc21adf831a773c075d9d00107ab43965e6a6ea7607b47fd9ec6f3db4b481b"
 dependencies = [
  "cc",
- "tree-sitter 0.20.10",
+ "tree-sitter 0.22.5",
 ]
 
 [[package]]
