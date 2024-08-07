@@ -1550,9 +1550,9 @@ dependencies = [
 
 [[package]]
 name = "tree-sitter"
-version = "0.22.5"
+version = "0.22.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "688200d842c76dd88f9a7719ecb0483f79f5a766fb1c100756d5d8a059abc71b"
+checksum = "df7cc499ceadd4dcdf7ec6d4cbc34ece92c3fa07821e287aedecd4416c516dca"
 dependencies = [
  "cc",
  "regex",
@@ -1595,7 +1595,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "95b3492b08a786bf5cc79feb0ef2ff3b115d5174364e0ddfd7860e0b9b088b53"
 dependencies = [
  "cc",
- "tree-sitter 0.22.5",
+ "tree-sitter 0.22.6",
 ]
 
 [[package]]
@@ -1615,7 +1615,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "277690f420bf90741dea984f3da038ace46c4fe6047cba57a66822226cde1c93"
 dependencies = [
  "cc",
- "tree-sitter 0.22.5",
+ "tree-sitter 0.22.6",
 ]
 
 [[package]]
@@ -1771,7 +1771,7 @@ dependencies = [
  "tower-http",
  "tracing",
  "tracing-subscriber",
- "tree-sitter 0.22.5",
+ "tree-sitter 0.22.6",
  "tree-sitter-css",
  "tree-sitter-dockerfile",
  "tree-sitter-highlight",
