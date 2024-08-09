@@ -28,6 +28,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let browser = Browser::new(
         LaunchOptions::default_builder()
             .sandbox(false)
+            .devtools(false)
             .window_size(Some((1600, 900)))
             .build()?,
     )?;

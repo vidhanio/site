@@ -193,7 +193,7 @@ code.highlighted .constant {
 
 code.highlighted .function,
 code.highlighted .constructor {
-  color: var(--code-red);
+  color: var(--code-blue);
 }
 
 code.highlighted .keyword,
@@ -202,7 +202,7 @@ code.highlighted .builtin {
 }
 
 code.highlighted .module {
-  color: var(--code-blue);
+  color: var(--code-reds);
 }
 
 code.highlighted .operator {

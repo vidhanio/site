@@ -64,8 +64,6 @@
 
 ; Types
 
-(empty_type) @type.builtin
-
 (generic_function
   function: (identifier) @function)
 

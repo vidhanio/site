@@ -75,20 +75,20 @@ impl HighlighterConfigurations {
             (
                 "rust",
                 tree_sitter_rust::language(),
-                tree_sitter_query!("rust/highlights"),
+                tree_sitter_rust::HIGHLIGHTS_QUERY,
                 tree_sitter_rust::INJECTIONS_QUERY,
             ),
             (
                 "java",
                 tree_sitter_java::language(),
-                tree_sitter_java::HIGHLIGHT_QUERY,
+                tree_sitter_java::HIGHLIGHTS_QUERY,
                 "",
             ),
             (
                 "html",
                 tree_sitter_html::language(),
-                tree_sitter_html::HIGHLIGHT_QUERY,
-                tree_sitter_html::INJECTION_QUERY,
+                tree_sitter_html::HIGHLIGHTS_QUERY,
+                tree_sitter_html::INJECTIONS_QUERY,
             ),
             (
                 "css",
@@ -100,16 +100,10 @@ impl HighlighterConfigurations {
                 ),
                 "",
             ),
-            (
-                "dockerfile",
-                tree_sitter_dockerfile::language(),
-                tree_sitter_query!("dockerfile/highlights"),
-                "",
-            ),
         ]
         .into_iter()
         .map(|(name, lang, highlights, injections)| {
-            let mut config = HighlightConfiguration::new(lang, highlights, injections, "")?;
+            let mut config = HighlightConfiguration::new(lang, name, highlights, injections, "")?;
 
             config.configure(HIGHLIGHT_NAMES);
 
