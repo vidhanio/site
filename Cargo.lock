@@ -951,8 +951,8 @@ dependencies = [
 
 [[package]]
 name = "pulldown-cmark"
-version = "0.11.0"
-source = "git+https://github.com/raphlinus/pulldown-cmark#8b060d5befc253914199d73c301283654ae0ca85"
+version = "0.12.2"
+source = "git+https://github.com/raphlinus/pulldown-cmark#81b23e8d24de2ac5bbd193991881ac28cb671458"
 dependencies = [
  "bitflags",
  "getopts",
@@ -964,7 +964,7 @@ dependencies = [
 [[package]]
 name = "pulldown-cmark-escape"
 version = "0.11.0"
-source = "git+https://github.com/raphlinus/pulldown-cmark#8b060d5befc253914199d73c301283654ae0ca85"
+source = "git+https://github.com/raphlinus/pulldown-cmark#81b23e8d24de2ac5bbd193991881ac28cb671458"
 
 [[package]]
 name = "quote"
