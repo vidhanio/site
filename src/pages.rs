@@ -168,7 +168,7 @@ pub async fn post(
     doc: DocumentParts,
     Path(slug): Path<String>,
 ) -> SiteResult<Document<impl Renderable>> {
-    let post = Post::get(&slug).ok_or_else(|| SiteError::PostNotFound(slug))?;
+    let post = Post::get(&slug).ok_or(SiteError::PostNotFound(slug))?;
 
     Ok(doc.build(
         post.title,

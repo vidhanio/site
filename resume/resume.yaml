@@ -44,7 +44,7 @@ projects:
       - Typst
       - GitHub Actions
     highlights:
-      - Uses Typst to generate this very resume automaticaly and serve it as a static asset
+      - Uses Typst to generate this very resume automatically and serve it as a static asset
       - Parses markdown blog posts and renders them as HTML
       - Uses tree-sitter to provide powerful IDE-like syntax highlighting for blog posts
       - Implements industry-standard testing and continuous integration using GitHub Actions

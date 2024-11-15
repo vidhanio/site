@@ -68,7 +68,7 @@ async fn og_image() -> SiteResult<(TypedHeader<ContentType>, &'static [u8])> {
 async fn post_og_image(
     Path(slug): Path<String>,
 ) -> SiteResult<(TypedHeader<ContentType>, &'static [u8])> {
-    let post = Post::get(&slug).ok_or_else(|| SiteError::PostNotFound(slug))?;
+    let post = Post::get(&slug).ok_or(SiteError::PostNotFound(slug))?;
 
     Ok((TypedHeader(ContentType::from(mime::IMAGE_PNG)), post.image))
 }
@@ -79,14 +79,14 @@ include!(concat!(env!("OUT_DIR"), "/assets.rs"));
 async fn assets(
     Path(asset): Path<String>,
 ) -> SiteResult<(TypedHeader<ContentType>, &'static [u8])> {
-    assets::get(&asset).ok_or_else(|| SiteError::AssetNotFound(asset))
+    assets::get(&asset).ok_or(SiteError::AssetNotFound(asset))
 }
 
 include!(concat!(env!("OUT_DIR"), "/fonts.rs"));
 
 #[instrument(level = "trace")]
 async fn fonts(Path(font): Path<String>) -> SiteResult<(TypedHeader<ContentType>, &'static [u8])> {
-    fonts::get(&font).ok_or_else(|| SiteError::PostNotFound(font))
+    fonts::get(&font).ok_or(SiteError::PostNotFound(font))
 }
 
 #[instrument(level = "debug")]

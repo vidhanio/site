@@ -35,8 +35,8 @@
 /* general */
 
 :root {
-  --color: #101010;
-  --background-color: #f0f0f0;
+  --color: #402000;
+  --background-color: #fff0f8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -130,7 +130,7 @@ a.box:hover {
 
 :root {
   --code-color: #303030;
-  --code-background-color: #e8e8e8;
+  --code-background-color: #f8e8f0;
 
   --code-gray: #808080;
   --code-red: #d8031a;
