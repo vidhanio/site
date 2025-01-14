@@ -31,7 +31,7 @@ work:
       - Migrated database queries to PostgreSQL as well as updated the documentation for the Java backend
       - Led research on web notifications
       - Developed and iterated upon the front-end of the web notification POC
-      - Presented a demo of the web notification POC during the monthly team meeting
+      - Presented a live demo of the web notification POC to the team
 
 projects:
   - name: vidhan.io
