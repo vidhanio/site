@@ -36,7 +36,7 @@ impl Renderable for Link {
     fn render_to(self, output: &mut String) {
         maud! {
             a href=(self.href) {
-                b { (self.name) }
+                strong { (self.name) }
                 " - "
                 (self.description)
             }
@@ -167,17 +167,17 @@ pub async fn post(
         post.title,
         format!("/post/{}/og.png", post.slug),
         maud_move! {
-            header {
-                h1 {
-                    (post.title)
-                }
-                time datetime=(post.date_dashed()) {
-                    (post.date_slashed())
-                }
-                hr;
-            }
-
             article {
+                header {
+                    h1 {
+                        (post.title)
+                    }
+                    time datetime=(post.date_dashed()) {
+                        (post.date_slashed())
+                    }
+                    hr;
+                }
+
                 (post.content)
 
                 @if !post.footnotes.is_empty() {
@@ -185,13 +185,15 @@ pub async fn post(
                         a href="#footnotes" { "footnotes" }
                     }
 
-                    @for &(name, content) in post.footnotes {
-                        p id={ "footnote-" (name) } {
-                            a.footnote href={"#footnote-" (name)} {
-                                "[" (name) "]"
+                    ul {
+                        @for &(name, content) in post.footnotes {
+                            li #{ "footnote-" (name) } {
+                                a.footnote href={"#footnote-" (name)} {
+                                    strong { "[" (name) "]" }
+                                }
+                                " "
+                                (content)
                             }
-                            " "
-                            (content)
                         }
                     }
                 }

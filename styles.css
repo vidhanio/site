@@ -94,6 +94,11 @@ pre {
   border: 0.25em solid;
 }
 
+article h1 {
+  margin-block: 0.67em;
+  font-size: 2em;
+}
+
 a:not(article a),
 article h1 > a,
 article h2 > a,
