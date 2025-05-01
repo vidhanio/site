@@ -111,27 +111,38 @@ impl<R: Renderable> Renderable for Document<R> {
                     main { (self.content) }
 
                     footer {
-                        a href="https://github.com/vidhanio/site" { "made with with rust" } " and ❤️ by vidhan."
+                        a #repository href="https://github.com/vidhanio/site" {
+                            "made with with rust and ❤️ by vidhan."
+                        }
 
                         br;
                         br;
 
-                        a href=(cached!("/LICENSE.txt")) { "site licensed under agpl-3.0." }
+                        a #license href=(cached!("/LICENSE.txt")) {
+                            "site licensed under agpl-3.0."
+                        }
 
                         br;
                         br;
 
                         span #ring {
-                            a href="https://ring.simonwu.dev/prev/vidhan" { "←" }
+                            a href="https://ring.simonwu.dev/prev/vidhan" {
+                                "←"
+                            }
                             " "
-                            a href="https://ring.simonwu.dev/random/vidhan" { "🎲" }
+                            a href="https://ring.simonwu.dev/random/vidhan" {
+                                "🎲"
+                            }
                             " "
-                            a href="https://ring.simonwu.dev/next/vidhan" { "→" }
+                            a href="https://ring.simonwu.dev/next/vidhan" {
+                                "→"
+                            }
                         }
                     }
                 }
             }
-        }.render_to(output);
+        }
+        .render_to(output);
     }
 }
 

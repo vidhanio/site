@@ -95,8 +95,9 @@ pub async fn home(doc: DocumentParts) -> Document<impl Renderable> {
     doc.build_simple(maud! {
         header {
             h1 { "👋 hi, i'm vidhan!" }
-            hr;
         }
+
+        hr;
 
         section #about {
             p {
@@ -109,14 +110,14 @@ pub async fn home(doc: DocumentParts) -> Document<impl Renderable> {
                 my favourite player is lebron james and i'm a huge fan of the los angeles lakers."
             }
 
-            a.box href=(cached!("/resume.pdf")) {
-                b { "📄 resume.pdf" }
+            a #resume href=(cached!("/resume.pdf")) {
+                b { "📄 resume" }
             }
         }
 
         section #posts {
             h2 { "📝 posts" }
-            hr;
+
             ul {
                 @for post in Post::ALL {
                     li {
@@ -136,7 +137,7 @@ pub async fn home(doc: DocumentParts) -> Document<impl Renderable> {
 
         section #projects {
             h2 { "🛠️ projects" }
-            hr;
+
             ul {
                 @for &project in PROJECTS {
                     li { (project) }
@@ -146,7 +147,7 @@ pub async fn home(doc: DocumentParts) -> Document<impl Renderable> {
 
         section #contact {
             h2 { "💬 contact" }
-            hr;
+
             ul {
                 @for &contact in CONTACTS {
                     li { (contact) }
@@ -178,21 +179,28 @@ pub async fn post(
                     hr;
                 }
 
-                (post.content)
+                section #content {
+                    (post.content)
+                }
+
 
                 @if !post.footnotes.is_empty() {
-                    h2 #footnotes {
-                        a href="#footnotes" { "footnotes" }
-                    }
+                    hr;
 
-                    ul {
-                        @for &(name, content) in post.footnotes {
-                            li #{ "footnote-" (name) } {
-                                a.footnote href={"#footnote-" (name)} {
-                                    strong { "[" (name) "]" }
+                    section #footnotes {
+                        h2 #footnotes {
+                            a href="#footnotes" { "footnotes" }
+                        }
+
+                        ul {
+                            @for &(name, content) in post.footnotes {
+                                li #{ "footnote-" (name) } {
+                                    a.footnote href={"#footnote-" (name)} {
+                                        strong { "[" (name) "]" }
+                                    }
+                                    " "
+                                    (content)
                                 }
-                                " "
-                                (content)
                             }
                         }
                     }

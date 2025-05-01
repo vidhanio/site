@@ -691,9 +691,9 @@ dependencies = [
 
 [[package]]
 name = "hypertext"
-version = "0.6.4"
+version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f67f2852387707309118ef469496485d8c38f596267abe0f5a6d2c8e0ea675f8"
+checksum = "c232821301f9469fa1b677716b371b42ca7ef842bd5aeba0106cb42c54014998"
 dependencies = [
  "axum-core",
  "html-escape",
@@ -705,9 +705,9 @@ dependencies = [
 
 [[package]]
 name = "hypertext-macros"
-version = "0.6.4"
+version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08cc0d366c8203541cae9c3f0835a5852aa44f7abd9fba1f680b47a896c030bd"
+checksum = "3e3cc05f9d3af4a74f1eca604a6bda6521a14f2051dbcf3a0f9eed4dd697277e"
 dependencies = [
  "html-escape",
  "proc-macro2",

@@ -116,14 +116,14 @@ a:hover {
   color: var(--background-color);
 }
 
-a.box {
+a#resume {
   display: block;
   text-align: center;
   padding: 0.25rem 0.5rem;
   border: 0.25rem solid;
 }
 
-a.box:hover {
+a#resume:hover {
   border-color: var(--color);
 }
 
