@@ -12,7 +12,7 @@ use crate::{
 pub fn router() -> Router {
     Router::new()
         .route("/", axum::routing::get(home))
-        .route("/post/:slug", axum::routing::get(post))
+        .route("/post/{slug}", axum::routing::get(post))
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -20,6 +20,16 @@ struct Link {
     pub name: &'static str,
     pub description: &'static str,
     pub href: &'static str,
+}
+
+impl Link {
+    pub const fn new(name: &'static str, description: &'static str, href: &'static str) -> Self {
+        Self {
+            name,
+            description,
+            href,
+        }
+    }
 }
 
 impl Renderable for Link {
@@ -36,65 +46,48 @@ impl Renderable for Link {
 }
 
 const PROJECTS: &[Link] = &[
-    Link {
-        name: "site",
-        description: "this website!",
-        href: "https://github.com/vidhanio/site",
-    },
-    Link {
-        name: "hypertext",
-        description: "a blazing fast type-checked html macro.",
-        href: "https://github.com/vidhanio/hypertext",
-    },
-    Link {
-        name: "html-node",
-        description: "an html macro for rust.",
-        href: "https://github.com/vidhanio/html-node",
-    },
-    Link {
-        name: "fncli",
-        description: "an attribute macro to simplify writing simple clis in rust.",
-        href: "https://github.com/vidhanio/fncli",
-    },
-    Link {
-        name: "diswordle",
-        description: "a discord bot to play wordle right in your discord server.",
-        href: "https://github.com/vidhanio/diswordle",
-    },
-    Link {
-        name: "checkpoint",
-        description:
-            "a discord bot to provide easy verification for discord servers in my school board.",
-        href: "https://github.com/vidhanio/checkpoint",
-    },
-    Link {
-        name: "serenity-commands",
-        description: "a library for creating/parsing serenity slash commands.",
-        href: "https://github.com/vidhanio/serenity-commands",
-    },
+    Link::new("site", "this website!", "https://github.com/vidhanio/site"),
+    Link::new(
+        "hypertext",
+        "a blazing fast type-checked html macro.",
+        "https://github.com/vidhanio/hypertext",
+    ),
+    Link::new(
+        "html-node",
+        "an html macro for rust.",
+        "https://github.com/vidhanio/html-node",
+    ),
+    Link::new(
+        "fncli",
+        "an attribute macro to simplify writing simple clis in rust.",
+        "https://github.com/vidhanio/fncli",
+    ),
+    Link::new(
+        "diswordle",
+        "a discord bot to play wordle right in your discord server.",
+        "https://github.com/vidhanio/diswordle",
+    ),
+    Link::new(
+        "checkpoint",
+        "a discord bot to provide easy verification for discord servers in my school board.",
+        "https://github.com/vidhanio/checkpoint",
+    ),
+    Link::new(
+        "serenity-commands",
+        "a library for creating/parsing serenity slash commands.",
+        "https://github.com/vidhanio/serenity-commands",
+    ),
 ];
 
 const CONTACTS: &[Link] = &[
-    Link {
-        name: "email",
-        description: "me@vidhan.io",
-        href: "mailto:me@vidhan.io",
-    },
-    Link {
-        name: "github",
-        description: "vidhanio",
-        href: "https://github.com/vidhanio",
-    },
-    Link {
-        name: "twitter",
-        description: "@vidhanio",
-        href: "https://twitter.com/vidhanio",
-    },
-    Link {
-        name: "linkedin",
-        description: "/in/vidhanio",
-        href: "https://www.linkedin.com/in/vidhanio",
-    },
+    Link::new("email", "me@vidhan.io", "mailto:me@vidhan.io"),
+    Link::new("github", "vidhanio", "https://github.com/vidhanio"),
+    Link::new("twitter", "@vidhanio", "https://twitter.com/vidhanio"),
+    Link::new(
+        "linkedin",
+        "/in/vidhanio",
+        "https://www.linkedin.com/in/vidhanio",
+    ),
 ];
 
 #[instrument(level = "debug")]

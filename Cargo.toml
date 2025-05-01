@@ -10,17 +10,17 @@ version = "0.0.0"
 build = "build/main.rs"
 
 [dependencies]
-axum = { version = "0.7", features = ["macros", "tracing"] }
-axum-extra = { version = "0.9", features = ["typed-header"] }
+axum = { version = "0.8", features = ["macros", "tracing"] }
+axum-extra = { version = "0.10", features = ["typed-header"] }
 color-eyre = "0.6"
 dotenvy = "0.15"
 envy = "0.4"
-hypertext = { version = "0.5", features = ["axum"] }
+hypertext = { version = "0.6", features = ["axum"] }
 mime = "0.3"
 serde = { version = "1", features = ["derive"] }
-thiserror = "1"
+thiserror = "2"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-tower-http = { version = "0.5", features = ["trace"] }
+tower-http = { version = "0.6", features = ["trace"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 
@@ -29,7 +29,7 @@ base64 = "0.22"
 headless_chrome = "1"
 heck = "0.5"
 html-escape = "0.2"
-hypertext = "0.5"
+hypertext = "0.6"
 prettyplease = "0.2"
 proc-macro2 = "1"
 pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }
@@ -37,13 +37,13 @@ quote = "1"
 serde = { version = "1", features = ["derive"] }
 serde_yaml = "0.9"
 syn = "2"
-tree-sitter = "0.22"
-tree-sitter-css = "0.21"
+tree-sitter = "0.24"
+tree-sitter-css = "0.23"
 tree-sitter-dockerfile = { git = "https://github.com/camdencheek/tree-sitter-dockerfile" }
-tree-sitter-highlight = "0.22"
-tree-sitter-html = "0.20"
-tree-sitter-java = "0.21"
-tree-sitter-rust = "0.21"
+tree-sitter-highlight = "0.24"
+tree-sitter-html = "0.23"
+tree-sitter-java = "0.23"
+tree-sitter-rust = "0.23"
 
 [lints]
     [lints.rust]

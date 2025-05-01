@@ -137,7 +137,7 @@ and finally served it in an `axum` route!
 pub fn router() -> Router {
     Router::new()
         // ...
-        .route("/post/:slug/og.png", axum::routing::get(post_og_image))
+        .route("/post/{slug}/og.png", axum::routing::get(post_og_image))
         // ...
 }
 

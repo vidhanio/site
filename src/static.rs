@@ -25,9 +25,9 @@ pub fn router() -> Router {
         // .route("/favicon.ico", axum::routing::get(favicon))
         .route("/styles.css", axum::routing::get(styles))
         .route("/og.png", axum::routing::get(og_image))
-        .route("/post/:slug/og.png", axum::routing::get(post_og_image))
-        .route("/assets/:asset", axum::routing::get(assets))
-        .route("/fonts/:font", axum::routing::get(fonts))
+        .route("/post/{slug}/og.png", axum::routing::get(post_og_image))
+        .route("/assets/{asset}", axum::routing::get(assets))
+        .route("/fonts/{font}", axum::routing::get(fonts))
         .route("/resume.pdf", axum::routing::get(resume))
         .route("/LICENSE.txt", axum::routing::get(license))
         .layer(axum::middleware::map_response(

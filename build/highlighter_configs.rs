@@ -74,30 +74,36 @@ impl HighlighterConfigurations {
         [
             (
                 "rust",
-                tree_sitter_rust::language(),
+                tree_sitter_rust::LANGUAGE.into(),
                 tree_sitter_rust::HIGHLIGHTS_QUERY,
                 tree_sitter_rust::INJECTIONS_QUERY,
             ),
             (
                 "java",
-                tree_sitter_java::language(),
+                tree_sitter_java::LANGUAGE.into(),
                 tree_sitter_java::HIGHLIGHTS_QUERY,
                 "",
             ),
             (
                 "html",
-                tree_sitter_html::language(),
+                tree_sitter_html::LANGUAGE.into(),
                 tree_sitter_html::HIGHLIGHTS_QUERY,
                 tree_sitter_html::INJECTIONS_QUERY,
             ),
             (
                 "css",
-                tree_sitter_css::language(),
+                tree_sitter_css::LANGUAGE.into(),
                 &format!(
                     "{}\n{}",
                     tree_sitter_css::HIGHLIGHTS_QUERY,
                     tree_sitter_query!("css/highlights.ext")
                 ),
+                "",
+            ),
+            (
+                "dockerfile",
+                tree_sitter_dockerfile::language(),
+                tree_sitter_query!("dockerfile/highlights"),
                 "",
             ),
         ]
