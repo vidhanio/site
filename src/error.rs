@@ -1,7 +1,7 @@
 use std::{error::Error, io};
 
 use axum::{
-    http::StatusCode,
+    http::{Method, StatusCode, Uri},
     response::{IntoResponse, Response},
 };
 use hypertext::{Displayed, prelude::*};
@@ -18,16 +18,24 @@ pub enum SiteError {
     Io(#[from] io::Error),
 
     /// Post not found.
-    #[error("post not found: {0}")]
+    #[error("post not found: \"{0}\"")]
     PostNotFound(String),
 
     /// Content not found.
-    #[error("content not found: {0}")]
+    #[error("content not found: \"{0}\"")]
     ContentNotFound(String),
 
     /// Font not found.
-    #[error("font not found: {0}")]
+    #[error("font not found: \"{0}\"")]
     FontNotFound(String),
+
+    /// Page not found.
+    #[error("page not found: \"{0}\"")]
+    PageNotFound(Uri),
+
+    /// Method not allowed.
+    #[error("method not allowed for `{0}`: {1}")]
+    MethodNotAllowed(Uri, Method),
 }
 
 impl SiteError {
@@ -36,9 +44,11 @@ impl SiteError {
     pub const fn status_code(&self) -> StatusCode {
         match self {
             Self::Io(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            Self::PostNotFound(_) | Self::ContentNotFound(_) | Self::FontNotFound(_) => {
-                StatusCode::NOT_FOUND
-            }
+            Self::PostNotFound(_)
+            | Self::ContentNotFound(_)
+            | Self::FontNotFound(_)
+            | Self::PageNotFound(_) => StatusCode::NOT_FOUND,
+            Self::MethodNotAllowed(_, _) => StatusCode::METHOD_NOT_ALLOWED,
         }
     }
 }
