@@ -8,8 +8,8 @@ pub struct Post {
     pub title: &'static str,
     pub date: (u16, u8, u8),
     pub image: &'static [u8],
-    pub footnotes: &'static [(&'static str, Raw<&'static str>)],
     pub content: Raw<&'static str>,
+    pub footnotes: &'static [(&'static str, Raw<&'static str>)],
 }
 
 impl Post {

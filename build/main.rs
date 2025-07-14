@@ -1,84 +1,95 @@
 #![allow(missing_docs)]
 
 mod highlighter_configs;
-mod open_graph;
 mod post;
+mod world;
 
-use core::panic;
 use std::{
     cmp::Reverse,
     env,
     error::Error,
-    fs,
-    path::{Path, PathBuf},
-    process::Command,
+    fs::{self, File},
+    path::PathBuf,
+    sync::LazyLock,
 };
 
-use headless_chrome::{Browser, LaunchOptions};
-use hypertext::{html_elements, maud, Raw};
-use open_graph::generate_image;
+use hypertext::Raw;
+use ico::{IconDir, IconDirEntry, IconImage, ResourceType};
+use lightningcss::{
+    printer::PrinterOptions,
+    stylesheet::{MinifyOptions, ParserOptions, StyleSheet},
+};
 use quote::quote;
+use resvg::{
+    tiny_skia::Pixmap,
+    usvg::{Indent, Options, Transform, Tree, WriteOptions},
+};
+use typst::foundations::Dict;
+use typst_pdf::PdfOptions;
 
-use crate::{highlighter_configs::HighlighterConfigurations, post::Post};
+use self::{highlighter_configs::HighlighterConfigurations, post::Post, world::SiteWorld};
+use crate::{post::POST_OG_DIR, world::diagnostic_error};
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?);
-    let out_dir = PathBuf::from(env::var("OUT_DIR")?);
+static CARGO_MANIFEST_DIR: LazyLock<PathBuf> = LazyLock::new(|| {
+    env::var_os("CARGO_MANIFEST_DIR")
+        .map(PathBuf::from)
+        .expect("expected env var `CARGO_MANIFEST_DIR` to be set")
+});
 
-    let browser = Browser::new(
-        LaunchOptions::default_builder()
-            .sandbox(false)
-            .devtools(false)
-            .window_size(Some((1600, 900)))
-            .build()?,
-    )?;
+static OUT_DIR: LazyLock<PathBuf> = LazyLock::new(|| {
+    env::var_os("OUT_DIR")
+        .map(PathBuf::from)
+        .expect("expected env var `OUT_DIR` to be set")
+});
 
-    let commit_id = set_git_commit_id(&manifest_dir)?;
-    include_fonts(&manifest_dir, &out_dir)?;
-    include_posts(&browser, &manifest_dir, &out_dir, &commit_id)?;
-    include_assets(&manifest_dir, &out_dir)?;
-    compile_resume(&manifest_dir, &out_dir)?;
-    generate_image(
-        &browser,
-        &out_dir,
-        "og.png",
-        "vidhan.io",
-        None::<&'static str>,
-    )?;
+static STATIC_DIR: LazyLock<PathBuf> =
+    LazyLock::new(|| rerun_path(CARGO_MANIFEST_DIR.join("static")));
 
-    Ok(())
-}
+static FONTS_DIR: LazyLock<PathBuf> = LazyLock::new(|| STATIC_DIR.join("fonts"));
 
-fn set_git_commit_id(manifest_dir: &Path) -> Result<String, Box<dyn Error>> {
+static OPEN_GRAPH_DIR: LazyLock<PathBuf> =
+    LazyLock::new(|| rerun_path(CARGO_MANIFEST_DIR.join("open-graph")));
+
+static GIT_COMMIT_HASH: LazyLock<String> = LazyLock::new(|| {
     const DEFAULT_HEAD: &str = "ref: refs/heads/main";
 
-    let head = manifest_dir.join(".git/HEAD");
+    let head = rerun_path(CARGO_MANIFEST_DIR.join(".git/HEAD"));
 
-    println!(
-        "cargo:rerun-if-changed={}",
-        manifest_dir.join(".git/HEAD").display()
-    );
+    let head_contents = fs::read_to_string(head).expect("reading .git/HEAD should succeed");
 
-    let head_contents = fs::read_to_string(head)?;
-
-    let commit_id = if head_contents.trim() == DEFAULT_HEAD {
-        fs::read_to_string(manifest_dir.join(".git/refs/heads/main"))?
+    let hash = if head_contents.trim() == DEFAULT_HEAD {
+        fs::read_to_string(CARGO_MANIFEST_DIR.join(".git/refs/heads/main"))
+            .expect("reading .git/refs/heads/main should succeed")
     } else {
         head_contents
     }
     .trim()
     .to_owned();
 
-    println!("cargo:rustc-env=GIT_COMMIT_HASH={commit_id}");
+    println!("cargo:rustc-env=GIT_COMMIT_HASH={hash}");
 
-    Ok(commit_id)
+    hash
+});
+
+fn main() -> Result<(), Box<dyn Error>> {
+    include_fonts()?;
+    include_posts()?;
+    include_content()?;
+    include_opengraph()?;
+    include_resume()?;
+    include_icons()?;
+    include_css()?;
+
+    Ok(())
 }
 
-fn include_fonts(manifest_dir: &Path, out_dir: &Path) -> Result<(), Box<dyn Error>> {
-    let fonts_dir = manifest_dir.join("fonts/");
-    println!("cargo:rerun-if-changed={}", fonts_dir.display());
+fn rerun_path(dir: PathBuf) -> PathBuf {
+    println!("cargo:rerun-if-changed={}", dir.display());
+    dir
+}
 
-    let font_routes = fonts_dir.read_dir()?.map(|entry| {
+fn include_fonts() -> Result<(), Box<dyn Error>> {
+    let font_routes = FONTS_DIR.read_dir()?.map(|entry| {
         let path = entry.unwrap().path();
 
         assert!(path.is_file(), "fonts directory should only contain files");
@@ -94,8 +105,8 @@ fn include_fonts(manifest_dir: &Path, out_dir: &Path) -> Result<(), Box<dyn Erro
 
         quote! {
             #font_name => Some((
-                TypedHeader(ContentType::from(#mime)),
-                include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/fonts/", #font_name))
+                TypedHeader(#mime.into()),
+                include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/static/fonts/", #font_name))
             )),
         }
     });
@@ -116,23 +127,17 @@ fn include_fonts(manifest_dir: &Path, out_dir: &Path) -> Result<(), Box<dyn Erro
         }
     );
 
-    let fonts_path = out_dir.join("fonts.rs");
+    let fonts_path = OUT_DIR.join("fonts.rs");
 
     fs::write(fonts_path, prettyplease::unparse(&syn::parse2(tokens)?))?;
 
     Ok(())
 }
 
-fn include_posts(
-    browser: &Browser,
-    manifest_dir: &Path,
-    out_dir: &Path,
-    commit_id: &str,
-) -> Result<(), Box<dyn Error>> {
-    let posts_dir = manifest_dir.join("posts/");
-    println!("cargo:rerun-if-changed={}", posts_dir.display());
+fn include_posts() -> Result<(), Box<dyn Error>> {
+    let posts_dir = rerun_path(CARGO_MANIFEST_DIR.join("posts"));
 
-    fs::create_dir_all(out_dir.join("post-og"))?;
+    fs::create_dir_all(&*POST_OG_DIR)?;
 
     let highlighter_configs = HighlighterConfigurations::new()?;
 
@@ -141,24 +146,26 @@ fn include_posts(
         .map(|entry| {
             let path = entry?.path();
 
-            assert!(path.is_file(), "posts directory should only contain files");
+            if !path.is_file() {
+                return Err(format!(
+                    "posts directory should only contain files, found: {}",
+                    path.display()
+                )
+                .into());
+            }
 
             let post_name = path.file_stem().unwrap().to_str().unwrap();
             let ext = path.extension().unwrap();
 
-            assert_eq!(ext, "md", "post extension should be md");
+            if ext != "md" {
+                return Err(format!("unsupported post extension: {}", ext.display()).into());
+            }
 
             let contents = fs::read_to_string(&path)?;
 
-            let post = Post::new(&highlighter_configs, post_name, &contents, commit_id)?;
+            let post = Post::new(&highlighter_configs, post_name, &contents)?;
 
-            generate_image(
-                browser,
-                out_dir,
-                format!("post-og/{}.png", post.slug),
-                &post.title,
-                Some(maud!("post on " b { "vidhan.io" })),
-            )?;
+            post.generate_image()?;
 
             Ok(post)
         })
@@ -201,84 +208,164 @@ fn include_posts(
         }
     );
 
-    let posts_path = out_dir.join("posts.rs");
+    let posts_path = OUT_DIR.join("posts.rs");
 
     fs::write(posts_path, prettyplease::unparse(&syn::parse2(tokens)?))?;
 
     Ok(())
 }
 
-fn include_assets(manifest_dir: &Path, out_dir: &Path) -> Result<(), Box<dyn Error>> {
-    let assets_dir = manifest_dir.join("assets/");
-    println!("cargo:rerun-if-changed={}", assets_dir.display());
+fn include_content() -> Result<(), Box<dyn Error>> {
+    let content_dir = rerun_path(CARGO_MANIFEST_DIR.join("content"));
 
-    let asset_routes = assets_dir.read_dir()?.map(|entry| {
-        let path = entry.unwrap().path();
+    let content_routes = content_dir
+        .read_dir()?
+        .map(|entry| {
+            let path = entry.unwrap().path();
 
-        assert!(path.is_file(), "assets directory should only contain files");
+            if !path.is_file() {
+                return Err(format!(
+                    "content directory should only contain files, found: {}",
+                    path.display()
+                )
+                .into());
+            }
 
-        let asset_name = path.file_name().unwrap().to_str().unwrap();
-        let ext = path.extension().unwrap().to_str().unwrap();
+            let content_name = path.file_name().unwrap().to_str().unwrap();
+            let ext = path.extension().unwrap().to_str().unwrap();
 
-        let mime = match ext {
-            "png" => quote!(mime::IMAGE_PNG),
-            "jpg" => quote!(mime::IMAGE_JPEG),
-            _ => panic!("asset extension should be png or jpg"),
-        };
+            let mime = match ext {
+                "png" => quote!(mime::IMAGE_PNG),
+                "jpg" => quote!(mime::IMAGE_JPEG),
+                _ => return Err(format!("Unsupported content type: {ext}").into()),
+            };
 
-        quote! {
-            #asset_name => Some((
-                TypedHeader(ContentType::from(#mime)),
-                include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/assets/", #asset_name))
-            ))
-        }
-    });
+            Ok(quote! {
+                #content_name => Some((
+                    TypedHeader(ContentType::from(#mime)),
+                    include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/content/", #content_name))
+                ))
+            })
+        })
+        .collect::<Result<Vec<_>, Box<dyn Error>>>()?;
 
     let tokens = quote!(
-        mod assets {
+        mod content {
             use axum_extra::{
                 headers::ContentType,
                 TypedHeader
             };
 
-            pub fn get(asset: &str) -> Option<(TypedHeader<ContentType>, &'static [u8])> {
-                match asset {
-                    #(#asset_routes,)*
+            pub fn get(content: &str) -> Option<(TypedHeader<ContentType>, &'static [u8])> {
+                match content {
+                    #(#content_routes,)*
                     _ => None,
                 }
             }
         }
     );
 
-    let assets_path = out_dir.join("assets.rs");
+    let content_path = OUT_DIR.join("content.rs");
 
-    fs::write(assets_path, prettyplease::unparse(&syn::parse2(tokens)?))?;
+    fs::write(content_path, prettyplease::unparse(&syn::parse2(tokens)?))?;
 
     Ok(())
 }
 
-fn compile_resume(manifest_dir: &Path, out_dir: &Path) -> Result<(), Box<dyn Error>> {
-    let resume_dir = manifest_dir.join("resume/");
-    println!("cargo:rerun-if-changed={}", resume_dir.display());
+fn include_opengraph() -> Result<(), Box<dyn Error>> {
+    let og_file = OPEN_GRAPH_DIR.join("global.typ");
+
+    let document = SiteWorld::new(&og_file, Dict::new())?.compile_document()?;
+
+    let [page] = &*document.pages else {
+        return Err("expected exactly one page in open graph document".into());
+    };
+
+    let png = typst_render::render(page, 2.).encode_png()?;
+
+    let path = OUT_DIR.join("og.png");
+
+    fs::write(path, png)?;
+
+    Ok(())
+}
+
+fn include_resume() -> Result<(), Box<dyn Error>> {
+    let resume_dir = rerun_path(CARGO_MANIFEST_DIR.join("resume"));
 
     let resume_path = resume_dir.join("resume.typ");
 
-    let output = Command::new("typst")
-        .arg("compile")
-        .arg("--font-path")
-        .arg(manifest_dir.join("fonts/"))
-        .arg(resume_path)
-        .arg(out_dir.join("resume.pdf"))
-        .output()?;
+    let document = SiteWorld::new(&resume_path, Dict::new())?.compile_document()?;
 
-    if !output.status.success() {
-        return Err(format!(
-            "typst failed with status code {}\n {}",
-            output.status,
-            String::from_utf8_lossy(&output.stderr)
-        )
-        .into());
+    let pdf = typst_pdf::pdf(&document, &PdfOptions::default()).map_err(diagnostic_error)?;
+
+    fs::write(OUT_DIR.join("resume.pdf"), pdf)?;
+
+    Ok(())
+}
+
+fn include_icons() -> Result<(), Box<dyn Error>> {
+    let icon_svg_path = STATIC_DIR.join("icon.svg");
+
+    let svg_data = fs::read(&icon_svg_path)?;
+    let svg = Tree::from_data(&svg_data, &Options::default())?;
+    let svg_size = svg.size().width();
+
+    let mut ico = IconDir::new(ResourceType::Icon);
+
+    for size in [16, 32, 64, 128] {
+        let mut pixmap = Pixmap::new(size, size).expect("creating pixmap should succeed");
+        resvg::render(
+            &svg,
+            #[allow(clippy::cast_precision_loss)]
+            Transform::from_scale(size as f32 / svg_size, size as f32 / svg_size),
+            &mut pixmap.as_mut(),
+        );
+        let png_data = pixmap.encode_png()?;
+        let icon_image = IconImage::read_png(png_data.as_slice())?;
+        ico.add_entry(IconDirEntry::encode(&icon_image)?);
     }
+
+    let ico_path = OUT_DIR.join("favicon.ico");
+    ico.write(File::create(ico_path)?)?;
+
+    let svg_output = svg.to_string(&WriteOptions {
+        indent: Indent::None,
+        ..Default::default()
+    });
+
+    let svg_path = OUT_DIR.join("favicon.svg");
+    fs::write(svg_path, svg_output)?;
+
+    Ok(())
+}
+
+fn include_css() -> Result<(), Box<dyn Error>> {
+    let css_path = STATIC_DIR.join("style.css");
+
+    let css_data = fs::read_to_string(&css_path)?;
+
+    let mut stylesheet = StyleSheet::parse(
+        &css_data,
+        ParserOptions {
+            filename: css_path.to_string_lossy().into(),
+            ..Default::default()
+        },
+    )
+    .map_err(|e| e.to_string())?;
+
+    stylesheet.minify(MinifyOptions::default())?;
+
+    let css_output = stylesheet
+        .to_css(PrinterOptions {
+            minify: true,
+            ..Default::default()
+        })?
+        .code;
+
+    let css_path = OUT_DIR.join("style.css");
+
+    fs::write(css_path, css_output)?;
 
     Ok(())
 }

@@ -25,14 +25,6 @@ jobs:
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
 
-      - name: Install Chromium
-        uses: browser-actions/setup-chrome@v1
-
-      - name: Install Typst
-        run: >
-          curl -L https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz | tar -xJf -
-          && mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
-
       - name: Execute tests
         run: cargo test --all-features --all-targets
 
@@ -57,14 +49,6 @@ jobs:
 
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
-
-      - name: Install Chromium
-        uses: browser-actions/setup-chrome@v1
-
-      - name: Install Typst
-        run: >
-          curl -L https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz | tar -xJf -
-          && mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
 
       - name: Check code
         run: cargo clippy  --all-features --all-targets -- -D warnings

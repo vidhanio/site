@@ -131,16 +131,15 @@ impl HighlighterConfigurations {
 
         highlights.try_fold(String::new(), |mut buf, event| {
             match event? {
-                HighlightEvent::Source { start, end } => {
-                    html_escape::encode_text_minimal_to_string(&code[start..end], &mut buf);
-                }
                 HighlightEvent::HighlightStart(Highlight(idx)) => {
-                    write!(
+                    _ = write!(
                         buf,
                         "<span class=\"{}\">",
                         HIGHLIGHT_NAMES[idx].replace('.', " ")
-                    )
-                    .expect("writing to a string should be infallible");
+                    );
+                }
+                HighlightEvent::Source { start, end } => {
+                    html_escape::encode_text_minimal_to_string(&code[start..end], &mut buf);
                 }
                 HighlightEvent::HighlightEnd => {
                     buf.push_str("</span>");

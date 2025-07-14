@@ -1,14 +1,14 @@
 *
 
-!/src/
-!/build/
-!/Cargo.toml
-!/Cargo.lock
-!/fonts/
-!/styles.css
-!/resume/
-!/assets/
-!/posts/
-!/tree-sitter/
-!/LICENSE.txt
 !/.git/
+!/build/
+!/Cargo.lock
+!/Cargo.toml
+!/content/
+!/LICENSE.txt
+!/open-graph/
+!/posts/
+!/resume/
+!/src/
+!/static/
+!/tree-sitter/

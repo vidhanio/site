@@ -1,13 +1,11 @@
 [package]
 name = "vidhan-site"
-
-authors = ["Vidhan Bhatt <me@vidhan.io>"]
-edition = "2021"
-license = "AGPL-3.0"
-publish = false
 version = "0.0.0"
-
+authors = ["Vidhan Bhatt <me@vidhan.io>"]
+edition = "2024"
+license = "AGPL-3.0"
 build = "build/main.rs"
+publish = false
 
 [dependencies]
 axum = { version = "0.8", features = ["macros", "tracing"] }
@@ -15,7 +13,7 @@ axum-extra = { version = "0.10", features = ["typed-header"] }
 color-eyre = "0.6"
 dotenvy = "0.15"
 envy = "0.4"
-hypertext = { version = "0.6", features = ["axum"] }
+hypertext = { features = ["axum"], git = "https://github.com/vidhanio/hypertext" }
 mime = "0.3"
 serde = { version = "1", features = ["derive"] }
 thiserror = "2"
@@ -25,18 +23,20 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 
 [build-dependencies]
-base64 = "0.22"
-headless_chrome = "1"
 heck = "0.5"
 html-escape = "0.2"
-hypertext = "0.6"
+hypertext = { git = "https://github.com/vidhanio/hypertext" }
+ico = "0.4.0"
+lightningcss = { version = "1.0.0-alpha.67", default-features = false }
 prettyplease = "0.2"
 proc-macro2 = "1"
 pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }
 quote = "1"
+resvg = { version = "0.45.1", default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_yaml = "0.9"
-syn = "2"
+syn = { version = "2", default-features = false, features = ["parsing"] }
+time = "0.3"
 tree-sitter = "0.24"
 tree-sitter-css = "0.23"
 tree-sitter-dockerfile = { git = "https://github.com/camdencheek/tree-sitter-dockerfile" }
@@ -44,14 +44,19 @@ tree-sitter-highlight = "0.24"
 tree-sitter-html = "0.23"
 tree-sitter-java = "0.23"
 tree-sitter-rust = "0.23"
+typst = "0.13"
+typst-kit = { version = "0.13", default-features = false, features = ["fonts"] }
+typst-pdf = "0.13"
+typst-render = "0.13"
 
 [lints]
-    [lints.rust]
-    missing_copy_implementations = "warn"
-    missing_debug_implementations = "warn"
-    missing_docs = "warn"
-    unsafe_code = "forbid"
+[lints.clippy]
+nursery = "warn"
+pedantic = "warn"
 
-    [lints.clippy]
-    nursery = "warn"
-    pedantic = "warn"
+[lints.rust]
+missing_copy_implementations = "warn"
+missing_debug_implementations = "warn"
+missing_docs = "warn"
+unsafe_code = "forbid"
+

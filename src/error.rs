@@ -4,7 +4,7 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
-use hypertext::{html_elements, maud, Displayed, Renderable};
+use hypertext::{Displayed, prelude::*};
 use thiserror::Error;
 
 use crate::document::Document;
@@ -21,9 +21,9 @@ pub enum SiteError {
     #[error("post not found: {0}")]
     PostNotFound(String),
 
-    /// Asset not found.
-    #[error("asset not found: {0}")]
-    AssetNotFound(String),
+    /// Content not found.
+    #[error("content not found: {0}")]
+    ContentNotFound(String),
 
     /// Font not found.
     #[error("font not found: {0}")]
@@ -36,7 +36,7 @@ impl SiteError {
     pub const fn status_code(&self) -> StatusCode {
         match self {
             Self::Io(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            Self::PostNotFound(_) | Self::AssetNotFound(_) | Self::FontNotFound(_) => {
+            Self::PostNotFound(_) | Self::ContentNotFound(_) | Self::FontNotFound(_) => {
                 StatusCode::NOT_FOUND
             }
         }
@@ -44,16 +44,14 @@ impl SiteError {
 }
 
 impl Renderable for SiteError {
-    fn render_to(self, output: &mut String) {
+    fn render_to(&self, output: &mut String) {
         maud! {
             pre {
                 code {
                     (Displayed(&self))
 
-                    @for (i, e) in ErrorSourceIter::new(&self)
-                        // .skip(1)
-                        .cycle()
-                        .take(10)
+                    @for (i, e) in ErrorSourceIter::new(self)
+                        .skip(1)
                         .enumerate()
                     {
                         "\n" (" ".repeat(i * 2)) "└ " (Displayed(e))
@@ -91,7 +89,7 @@ impl IntoResponse for SiteError {
 
 #[derive(Clone, Debug)]
 #[allow(clippy::module_name_repetitions)]
-pub struct ErrorSourceIter<'a> {
+struct ErrorSourceIter<'a> {
     current: Option<&'a (dyn Error + 'static)>,
 }
 

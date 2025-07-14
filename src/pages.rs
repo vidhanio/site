@@ -1,12 +1,12 @@
-use axum::{extract::Path, Router};
-use hypertext::{html_elements, maud, maud_move, GlobalAttributes, Renderable};
+use axum::{Router, extract::Path};
+use hypertext::prelude::*;
 use tracing::instrument;
 
 use crate::{
-    cached,
+    SiteError, SiteResult,
     document::{Document, DocumentParts},
     post::Post,
-    SiteError, SiteResult,
+    r#static::Cached,
 };
 
 pub fn router() -> Router {
@@ -15,86 +15,11 @@ pub fn router() -> Router {
         .route("/post/{slug}", axum::routing::get(post))
 }
 
-#[derive(Debug, Clone, Copy)]
-struct Link {
-    pub name: &'static str,
-    pub description: &'static str,
-    pub href: &'static str,
-}
-
-impl Link {
-    pub const fn new(name: &'static str, description: &'static str, href: &'static str) -> Self {
-        Self {
-            name,
-            description,
-            href,
-        }
-    }
-}
-
-impl Renderable for Link {
-    fn render_to(self, output: &mut String) {
-        maud! {
-            a href=(self.href) {
-                strong { (self.name) }
-                " - "
-                (self.description)
-            }
-        }
-        .render_to(output);
-    }
-}
-
-const PROJECTS: &[Link] = &[
-    Link::new("site", "this website!", "https://github.com/vidhanio/site"),
-    Link::new(
-        "hypertext",
-        "a blazing fast type-checked html macro.",
-        "https://github.com/vidhanio/hypertext",
-    ),
-    Link::new(
-        "html-node",
-        "an html macro for rust.",
-        "https://github.com/vidhanio/html-node",
-    ),
-    Link::new(
-        "fncli",
-        "an attribute macro to simplify writing simple clis in rust.",
-        "https://github.com/vidhanio/fncli",
-    ),
-    Link::new(
-        "diswordle",
-        "a discord bot to play wordle right in your discord server.",
-        "https://github.com/vidhanio/diswordle",
-    ),
-    Link::new(
-        "checkpoint",
-        "a discord bot to provide easy verification for discord servers in my school board.",
-        "https://github.com/vidhanio/checkpoint",
-    ),
-    Link::new(
-        "serenity-commands",
-        "a library for creating/parsing serenity slash commands.",
-        "https://github.com/vidhanio/serenity-commands",
-    ),
-];
-
-const CONTACTS: &[Link] = &[
-    Link::new("email", "me@vidhan.io", "mailto:me@vidhan.io"),
-    Link::new("github", "vidhanio", "https://github.com/vidhanio"),
-    Link::new("twitter", "@vidhanio", "https://twitter.com/vidhanio"),
-    Link::new(
-        "linkedin",
-        "/in/vidhanio",
-        "https://www.linkedin.com/in/vidhanio",
-    ),
-];
-
 #[instrument(level = "debug")]
 pub async fn home(doc: DocumentParts) -> Document<impl Renderable> {
     doc.build_simple(maud! {
-        header {
-            h1 { "👋 hi, i'm vidhan!" }
+        header #greeting {
+            h1 { "👋🏽 hi, i'm vidhan!" }
         }
 
         hr;
@@ -104,13 +29,12 @@ pub async fn home(doc: DocumentParts) -> Document<impl Renderable> {
                 "welcome to my personal website!"
                 br;
                 br;
-                "i'm a software engineer and a computer science student at mcmaster university. \
-                my favourite programming language is rust, but i also enjoy writing python. \
-                i also love basketball! \
-                my favourite player is lebron james and i'm a huge fan of the los angeles lakers."
+                "i'm a software engineer and a computer science student at mcmaster university.
+                my favourite programming language is rust, but i also enjoy writing python.
+                i also love basketball! i'm a huge fan of the toronto raptors 🦖."
             }
 
-            a #resume href=(cached!("/resume.pdf")) {
+            a #resume href=(Cached("/resume.pdf")) {
                 b { "📄 resume" }
             }
         }
@@ -121,7 +45,7 @@ pub async fn home(doc: DocumentParts) -> Document<impl Renderable> {
             ul {
                 @for post in Post::ALL {
                     li {
-                        a href={"/post/" (post.slug)} {
+                        a href={ "/post/" (post.slug) } {
                             time datetime=(post.date_dashed()) {
                                 (post.date_slashed())
                             }
@@ -139,9 +63,27 @@ pub async fn home(doc: DocumentParts) -> Document<impl Renderable> {
             h2 { "🛠️ projects" }
 
             ul {
-                @for &project in PROJECTS {
-                    li { (project) }
-                }
+                Project
+                    name="site"
+                    description="this website!";
+                Project
+                    name="hypertext"
+                    description="a blazing fast type-checked html macro.";
+                Project
+                    name="html-node"
+                    description="an html macro for rust.";
+                Project
+                    name="fncli"
+                    description="an attribute macro to simplify writing simple clis in rust.";
+                Project
+                    name="diswordle"
+                    description="a discord bot to play wordle right in your discord server.";
+                Project
+                    name="checkpoint"
+                    description="a discord bot to provide easy verification for discord servers in my school board.";
+                Project
+                    name="serenity-commands"
+                    description="a library for creating/parsing serenity slash commands.";
             }
         }
 
@@ -149,12 +91,51 @@ pub async fn home(doc: DocumentParts) -> Document<impl Renderable> {
             h2 { "💬 contact" }
 
             ul {
-                @for &contact in CONTACTS {
-                    li { (contact) }
-                }
+                Contact
+                    kind="email" 
+                    name="me@vidhan.io"
+                    href="mailto:me@vidhan.io";
+                Contact
+                    kind="github"
+                    name="vidhanio"
+                    href="https://github.com/vidhanio";
+                Contact
+                    kind="twitter"
+                    name="@vidhanio"
+                    href="https://twitter.com/vidhanio";
+                Contact
+                    kind="linkedin"
+                    name="/in/vidhanio"
+                    href="https://www.linkedin.com/in/vidhanio";
             }
         }
     })
+}
+
+#[component]
+fn project<'a>(name: &'a str, description: &'a str) -> impl Renderable + 'a {
+    maud!(
+        li {
+            a href={ "https://github.com/vidhanio/" (name) } {
+                strong { (name) }
+                " - "
+                (description)
+            }
+        }
+    )
+}
+
+#[component]
+fn contact<'a>(kind: &'a str, name: &'a str, href: &'a str) -> impl Renderable + 'a {
+    maud! {
+        li {
+            a href=(href) {
+                strong { "[" (kind) "]" }
+                " "
+                (name)
+            }
+        }
+    }
 }
 
 #[instrument(level = "debug", err(Debug))]
@@ -165,9 +146,9 @@ pub async fn post(
     let post = Post::get(&slug).ok_or(SiteError::PostNotFound(slug))?;
 
     Ok(doc.build(
-        post.title,
+        format!("post / {}", post.title),
         format!("/post/{}/og.png", post.slug),
-        maud_move! {
+        maud! {
             article {
                 header {
                     h1 {
@@ -176,8 +157,9 @@ pub async fn post(
                     time datetime=(post.date_dashed()) {
                         (post.date_slashed())
                     }
-                    hr;
                 }
+
+                hr;
 
                 section #content {
                     (post.content)
@@ -195,7 +177,7 @@ pub async fn post(
                         ul {
                             @for &(name, content) in post.footnotes {
                                 li #{ "footnote-" (name) } {
-                                    a.footnote href={"#footnote-" (name)} {
+                                    a.footnote href={ "#footnote-" (name) } {
                                         strong { "[" (name) "]" }
                                     }
                                     " "

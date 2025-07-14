@@ -2,47 +2,20 @@
 
 @font-face {
   font-family: "Berkeley Mono";
-  font-weight: 400;
-  font-style: normal;
-  src: url("/fonts/BerkeleyMono-Regular.woff2") format("woff2"),
-    url("/fonts/BerkeleyMono-Regular.woff") format("woff");
-}
-
-@font-face {
-  font-family: "Berkeley Mono";
-  font-weight: 700;
-  font-style: normal;
-  src: url("/fonts/BerkeleyMono-Bold.woff2") format("woff2"),
-    url("/fonts/BerkeleyMono-Bold.woff") format("woff");
-}
-
-@font-face {
-  font-family: "Berkeley Mono";
-  font-weight: 400;
-  font-style: italic;
-  src: url("/fonts/BerkeleyMono-Italic.woff2") format("woff2"),
-    url("/fonts/BerkeleyMono-Italic.woff") format("woff");
-}
-
-@font-face {
-  font-family: "Berkeley Mono";
-  font-weight: 700;
-  font-style: italic;
-  src: url("/fonts/BerkeleyMono-BoldItalic.woff2") format("woff2"),
-    url("/fonts/BerkeleyMono-BoldItalic.woff") format("woff");
+  src: url("/fonts/Berkeley Mono Variable.woff2") format("woff2-variations");
 }
 
 /* general */
 
 :root {
-  --color: #402000;
-  --background-color: #fff0f8;
+  --color: #0f0f0f;
+  --background-color: #f0f0f0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color: #00ff80;
-    --background-color: #101010;
+    --color: #753bbd;
+    --background-color: #0f0f0f;
   }
 }
 
@@ -94,7 +67,7 @@ pre {
   border: 0.25em solid;
 }
 
-article h1 {
+h1 {
   margin-block: 0.67em;
   font-size: 2em;
 }
@@ -112,19 +85,15 @@ a.footnote {
 
 a:hover {
   text-decoration: inherit;
-  background-color: var(--color);
   color: var(--background-color);
+  background-color: var(--color);
 }
 
-a#resume {
+#resume {
   display: block;
   text-align: center;
   padding: 0.25rem 0.5rem;
-  border: 0.25rem solid;
-}
-
-a#resume:hover {
-  border-color: var(--color);
+  border: 0.25rem solid var(--color);
 }
 
 #ring {
@@ -134,32 +103,32 @@ a#resume:hover {
 /* code blocks */
 
 :root {
-  --code-color: #303030;
-  --code-background-color: #f8e8f0;
+  --code-color: #6e6e6e;
+  --code-background-color: #f4f4f4;
 
-  --code-gray: #808080;
-  --code-red: #d8031a;
-  --code-orange: #ff8041;
-  --code-yellow: #cfb015;
-  --code-green: #01c26d;
-  --code-blue: #156ebb;
-  --code-purple: #982fcd;
-  --code-pink: #ff4785;
+  --code-gray: #9e9e9e;
+  --code-red: #e35535;
+  --code-orange: #d4770c;
+  --code-yellow: #c7910c;
+  --code-green: #00a884;
+  --code-blue: #11b7d4;
+  --code-purple: #a85ff1;
+  --code-pink: #d46ec0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --code-color: #d0d0d0;
-    --code-background-color: #181818;
+    --code-background-color: #111418;
 
     --code-gray: #808080;
-    --code-red: #ec475a;
-    --code-orange: #ffaf00;
-    --code-yellow: #ffd300;
-    /* --code-green: #171916; */
-    --code-blue: #397bf6;
-    --code-purple: #a965ec;
-    /* --code-pink: #bdb2ff; */
+    --code-red: #e35535;
+    --code-orange: #d4770c;
+    --code-yellow: #c7910c;
+    --code-green: #00a884;
+    --code-blue: #11b7d4;
+    --code-purple: #a85ff1;
+    --code-pink: #d46ec0;
   }
 }
 

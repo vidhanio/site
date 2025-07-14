@@ -12,9 +12,9 @@ i've been working on a new feature for my website, being open graph images gener
 
 [open graph](https://ogp.me) is a protocol for specifying rich metadata for websites which can be rendered on supported platforms when you send a link to the site. you've probably seen this on twitter or discord.
 
-![Twitter user "dalmaer" posting a link to the GitHub repository "google/wireit" with an Open Graph image preview.](/assets/twitter-example-og.png)
+![Twitter user "dalmaer" posting a link to the GitHub repository "google/wireit" with an Open Graph image preview.](/content/twitter-example-og.png)
 
-![Discord user "vidhan" posting a link to a Reddit post with an Open Graph image preview.](/assets/discord-example-og.png)
+![Discord user "vidhan" posting a link to a Reddit post with an Open Graph image preview.](/content/discord-example-og.png)
 
 ## goals
 
@@ -152,7 +152,7 @@ async fn post_og_image(
 
 and i had a pretty nice looking open graph graphic!
 
-![An Open Graph graphic with the text "hello world - post on vidhan.io"](/assets/wrong-font-og.png)
+![An Open Graph graphic with the text "hello world - post on vidhan.io"](/content/wrong-font-og.png)
 
 just one problem though, it was missing the wonderful font i use for the rest of my website, [Berkeley Mono](https://berkeleygraphics.com/typefaces/berkeley-mono/). the reason for this was that when i built this website in the docker image, it obviously did not have the font installed, so it couldn't render it. the fix was pretty simple, i just installed the fonts in the dockerfile before the build process!
 
@@ -162,7 +162,7 @@ RUN mkdir -p $HOME/.local/share/fonts/ && cp ./fonts/*.ttf $HOME/.local/share/fo
 
 and there we go, perfect, build time generated custom open graph images for my site!
 
-![A Discord screenshot of an Open Graph graphic with the text "hello world - post on vidhan.io", but with the correct font (Berkeley Mono).](/assets/discord-og.png)
+![A Discord screenshot of an Open Graph graphic with the text "hello world - post on vidhan.io", but with the correct font (Berkeley Mono).](/content/discord-og.png)
 
 ## closing
 

@@ -1,0 +1,8 @@
+default_job = "run"
+
+[jobs.run]
+background = false
+command = ["cargo", "run"]
+need_stdout = true
+on_change_strategy = "kill_then_restart"
+watch = ["content", "posts", "build", "open-graph", "resume", "static"]

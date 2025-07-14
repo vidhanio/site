@@ -27,10 +27,3 @@ pub async fn serve(config: Config) -> SiteResult<()> {
 
     axum::serve(tcp_listener, router).await.map_err(Into::into)
 }
-
-macro_rules! cached {
-    ($path:literal) => {
-        concat!($path, "?v=", env!("GIT_COMMIT_HASH"))
-    };
-}
-use cached;
