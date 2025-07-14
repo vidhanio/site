@@ -27,7 +27,7 @@ heck = "0.5"
 html-escape = "0.2"
 hypertext = { git = "https://github.com/vidhanio/hypertext" }
 ico = "0.4.0"
-lightningcss = { version = "1.0.0-alpha.67", default-features = false }
+lightningcss = { version = "1.0.0-alpha.67", default-features = false, features = ["browserslist"] }
 prettyplease = "0.2"
 proc-macro2 = "1"
 pulldown-cmark = { git = "https://github.com/raphlinus/pulldown-cmark" }

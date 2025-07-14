@@ -5,17 +5,17 @@
   src: url("/fonts/Berkeley Mono Variable.woff2") format("woff2-variations");
 }
 
-/* general */
+/* the comments for --color/--background-color will be replaced by the build script */
 
 :root {
-  --color: #0f0f0f;
-  --background-color: #f0f0f0;
+  --color: /*{light.fg}*/ ;
+  --background-color: /*{light.bg}*/ ;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color: #753bbd;
-    --background-color: #0f0f0f;
+    --color: /*{dark.fg}*/ ;
+    --background-color: /*{dark.bg}*/ ;
   }
 }
 
@@ -103,7 +103,7 @@ a:hover {
 /* code blocks */
 
 :root {
-  --code-color: #6e6e6e;
+  --code-color: #5e5e5e;
   --code-background-color: #f4f4f4;
 
   --code-gray: #9e9e9e;

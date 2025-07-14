@@ -60,8 +60,6 @@ impl<R: Renderable> Document<R> {
 
 impl<R: Renderable> Renderable for Document<R> {
     fn render_to(&self, output: &mut String) {
-        const DESCRIPTION: &str = "vidhan's home on the internet.";
-
         maud! {
             !DOCTYPE
             html lang="en" id {
@@ -70,8 +68,8 @@ impl<R: Renderable> Renderable for Document<R> {
                     meta charset="utf-8";
 
                     title { "vidhan.io / " (self.title) }
-                    meta name="description" content=(DESCRIPTION);
-                    meta name="theme-color" content="#753bbd";
+                    meta name="description" content="vidhan's home on the internet.";
+                    meta name="theme-color" content=(env!("THEME_COLOR"));
 
                     meta name="og:title" content={
                         @if let Some(title) = &self.title {
@@ -80,7 +78,6 @@ impl<R: Renderable> Renderable for Document<R> {
                             "vidhan.io"
                         }
                     };
-                    meta name="og:description" content=(DESCRIPTION);
                     meta name="og:url" content={ "https://vidhan.io" (self.path) };
                     meta name="og:type" content="website";
                     meta name="og:image" content={

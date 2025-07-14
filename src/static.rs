@@ -61,17 +61,17 @@ impl<T: AttributeRenderable> Renderable for Cached<T> {
 
 impl<T: AttributeRenderable> AttributeRenderable for Cached<T> {
     fn render_attribute_to(&self, output: &mut String) {
-        if cfg!(debug_assertions) {
-            self.0.render_attribute_to(output);
-        } else {
+        if cfg!(cache_static) {
             attribute!((self.0) "?v=" (env!("GIT_COMMIT_HASH"))).render_attribute_to(output);
+        } else {
+            self.0.render_attribute_to(output);
         }
     }
 }
 
 #[instrument(level = "trace")]
 async fn favicon_svg() -> (TypedHeader<ContentType>, &'static str) {
-    const FAVICON_SVG: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/static/icon.svg"));
+    const FAVICON_SVG: &str = include_str!(concat!(env!("OUT_DIR"), "/favicon.svg"));
 
     (TypedHeader(ContentType::from(mime::IMAGE_SVG)), FAVICON_SVG)
 }

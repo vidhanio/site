@@ -7,11 +7,11 @@ use pulldown_cmark::{
     TagEnd,
 };
 use serde::{Deserialize, de};
-use typst::foundations::{Dict, IntoValue};
+use typst::foundations::IntoValue;
 
 use crate::{
-    GIT_COMMIT_HASH, OPEN_GRAPH_DIR, OUT_DIR, highlighter_configs::HighlighterConfigurations,
-    world::SiteWorld,
+    CACHE_STATIC, GIT_COMMIT_HASH, OPEN_GRAPH_DIR, OUT_DIR, colors::COLORS,
+    highlighter_configs::HighlighterConfigurations, typst_world::SiteWorld,
 };
 
 pub static POST_OG_DIR: LazyLock<PathBuf> = LazyLock::new(|| OUT_DIR.join("post-og"));
@@ -88,7 +88,11 @@ impl Post {
                 }) if dest_url.starts_with('/') => {
                     events.push(Event::Start(Tag::Image {
                         link_type,
-                        dest_url: format!("{dest_url}?v={}", &*GIT_COMMIT_HASH).into(),
+                        dest_url: if *CACHE_STATIC {
+                            format!("{dest_url}?v={}", &*GIT_COMMIT_HASH).into()
+                        } else {
+                            dest_url
+                        },
                         title,
                         id,
                     }));
@@ -140,7 +144,10 @@ impl Post {
     pub fn generate_image(&self) -> Result<(), Box<dyn Error>> {
         let document = SiteWorld::new(
             OPEN_GRAPH_DIR.join("post.typ"),
-            Dict::from_iter([("post-title".into(), self.title.as_str().into_value())]),
+            [
+                ("post-title", self.title.as_str().into_value()),
+                ("colors", COLORS.default_palette().typst_dict()),
+            ],
         )?
         .compile_document()?;
 

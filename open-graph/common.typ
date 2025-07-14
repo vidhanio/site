@@ -1,16 +1,26 @@
-#let COLORS = (
+#let COLORS = sys.inputs.at("colors", default: (
   fg: rgb("#753BBD"),
   bg: rgb("#0f0f0f"),
-);
+));
 
 #let MARGIN = 30pt
 
-#let logo = image("../static/icon.svg")
+#let logo(size) = {
+  let svg-data = read("../static/icon.svg")
+    .replace("/*{light.fg}*/", COLORS.fg.to-hex())
+    .replace("/*{dark.fg}*/", COLORS.fg.to-hex())
+
+  image(
+    bytes(svg-data),
+    width: size,
+    height: size,
+  )
+}
 
 #let wordmark = context {
   let vidhanio = [*vidhan.io*]
   let height = measure(vidhanio).height
-  let logo = image("../static/icon.svg", height: height)
+  let logo = logo(height)
 
   stack(spacing: height * 0.75, dir: ltr, vidhanio, logo)
 }

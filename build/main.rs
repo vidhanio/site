@@ -1,8 +1,9 @@
 #![allow(missing_docs)]
 
+mod colors;
 mod highlighter_configs;
 mod post;
-mod world;
+mod typst_world;
 
 use std::{
     cmp::Reverse,
@@ -18,17 +19,18 @@ use ico::{IconDir, IconDirEntry, IconImage, ResourceType};
 use lightningcss::{
     printer::PrinterOptions,
     stylesheet::{MinifyOptions, ParserOptions, StyleSheet},
+    targets::{Browsers, Targets},
 };
 use quote::quote;
 use resvg::{
     tiny_skia::Pixmap,
-    usvg::{Indent, Options, Transform, Tree, WriteOptions},
+    usvg::{Options, Transform, Tree},
 };
 use typst::foundations::Dict;
 use typst_pdf::PdfOptions;
 
-use self::{highlighter_configs::HighlighterConfigurations, post::Post, world::SiteWorld};
-use crate::{post::POST_OG_DIR, world::diagnostic_error};
+use self::{highlighter_configs::HighlighterConfigurations, post::Post, typst_world::SiteWorld};
+use crate::{colors::COLORS, post::POST_OG_DIR, typst_world::diagnostic_error};
 
 static CARGO_MANIFEST_DIR: LazyLock<PathBuf> = LazyLock::new(|| {
     env::var_os("CARGO_MANIFEST_DIR")
@@ -49,6 +51,19 @@ static FONTS_DIR: LazyLock<PathBuf> = LazyLock::new(|| STATIC_DIR.join("fonts"))
 
 static OPEN_GRAPH_DIR: LazyLock<PathBuf> =
     LazyLock::new(|| rerun_path(CARGO_MANIFEST_DIR.join("open-graph")));
+
+static CACHE_STATIC: LazyLock<bool> = LazyLock::new(|| {
+    let cache_static =
+        env::var("PROFILE").expect("expected env var `PROFILE` to be set") == "debug";
+    println!("cargo:rerun-if-env-changed=PROFILE");
+
+    println!("cargo:rustc-check-cfg=cfg(cache_static)");
+    if cache_static {
+        println!("cargo:rustc-cfg=cache_static");
+    }
+
+    cache_static
+});
 
 static GIT_COMMIT_HASH: LazyLock<String> = LazyLock::new(|| {
     const DEFAULT_HEAD: &str = "ref: refs/heads/main";
@@ -72,12 +87,14 @@ static GIT_COMMIT_HASH: LazyLock<String> = LazyLock::new(|| {
 });
 
 fn main() -> Result<(), Box<dyn Error>> {
+    LazyLock::force(&GIT_COMMIT_HASH);
+
     include_fonts()?;
     include_posts()?;
     include_content()?;
     include_opengraph()?;
     include_resume()?;
-    include_icons()?;
+    include_favicons()?;
     include_css()?;
 
     Ok(())
@@ -275,7 +292,11 @@ fn include_content() -> Result<(), Box<dyn Error>> {
 fn include_opengraph() -> Result<(), Box<dyn Error>> {
     let og_file = OPEN_GRAPH_DIR.join("global.typ");
 
-    let document = SiteWorld::new(&og_file, Dict::new())?.compile_document()?;
+    let document = SiteWorld::new(
+        &og_file,
+        [("colors", COLORS.default_palette().typst_dict())],
+    )?
+    .compile_document()?;
 
     let [page] = &*document.pages else {
         return Err("expected exactly one page in open graph document".into());
@@ -304,11 +325,12 @@ fn include_resume() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn include_icons() -> Result<(), Box<dyn Error>> {
+fn include_favicons() -> Result<(), Box<dyn Error>> {
     let icon_svg_path = STATIC_DIR.join("icon.svg");
 
-    let svg_data = fs::read(&icon_svg_path)?;
-    let svg = Tree::from_data(&svg_data, &Options::default())?;
+    let svg_data = fs::read_to_string(&icon_svg_path)?;
+    let single_color_data = COLORS.default_palette().apply_to_css(&svg_data);
+    let svg = Tree::from_str(&single_color_data, &Options::default())?;
     let svg_size = svg.size().width();
 
     let mut ico = IconDir::new(ResourceType::Icon);
@@ -329,21 +351,24 @@ fn include_icons() -> Result<(), Box<dyn Error>> {
     let ico_path = OUT_DIR.join("favicon.ico");
     ico.write(File::create(ico_path)?)?;
 
-    let svg_output = svg.to_string(&WriteOptions {
-        indent: Indent::None,
-        ..Default::default()
-    });
-
+    let multi_color_data = COLORS.apply_to_css(&svg_data);
     let svg_path = OUT_DIR.join("favicon.svg");
-    fs::write(svg_path, svg_output)?;
+    fs::write(svg_path, multi_color_data)?;
 
     Ok(())
 }
 
 fn include_css() -> Result<(), Box<dyn Error>> {
+    println!(
+        "cargo:rustc-env=THEME_COLOR={}",
+        COLORS.default_palette().fg
+    );
+
     let css_path = STATIC_DIR.join("style.css");
 
     let css_data = fs::read_to_string(&css_path)?;
+
+    let css_data = COLORS.apply_to_css(&css_data);
 
     let mut stylesheet = StyleSheet::parse(
         &css_data,
@@ -354,11 +379,19 @@ fn include_css() -> Result<(), Box<dyn Error>> {
     )
     .map_err(|e| e.to_string())?;
 
-    stylesheet.minify(MinifyOptions::default())?;
+    let targets = Targets::from(Browsers::from_browserslist(["defaults"])?);
+
+    stylesheet
+        .minify(MinifyOptions {
+            targets,
+            ..Default::default()
+        })
+        .map_err(|e| e.to_string())?;
 
     let css_output = stylesheet
         .to_css(PrinterOptions {
             minify: true,
+            targets,
             ..Default::default()
         })?
         .code;

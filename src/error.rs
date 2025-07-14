@@ -34,7 +34,7 @@ pub enum SiteError {
     PageNotFound(Uri),
 
     /// Method not allowed.
-    #[error("method not allowed for `{0}`: {1}")]
+    #[error("method not allowed for page \"{0}\": \"{1}\"")]
     MethodNotAllowed(Uri, Method),
 }
 

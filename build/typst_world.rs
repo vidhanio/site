@@ -11,7 +11,7 @@ use typst::{
     Library, World,
     diag::{FileError, FileResult, SourceDiagnostic},
     ecow::{EcoVec, eco_format},
-    foundations::{Bytes, Datetime, Dict},
+    foundations::{Bytes, Datetime, IntoValue, Str},
     layout::PagedDocument,
     syntax::{FileId, Source, VirtualPath},
     text::{Font, FontBook},
@@ -38,7 +38,10 @@ pub struct SiteWorld {
 }
 
 impl SiteWorld {
-    pub fn new(main_path: impl AsRef<Path>, inputs: Dict) -> FileResult<Self> {
+    pub fn new(
+        main_path: impl AsRef<Path>,
+        inputs: impl IntoIterator<Item = (impl Into<Str>, impl IntoValue)>,
+    ) -> FileResult<Self> {
         let main_path = main_path.as_ref();
         let main_file_id = FileId::new(
             None,
@@ -54,7 +57,16 @@ impl SiteWorld {
             fs::read_to_string(main_path).map_err(|e| FileError::from_io(e, main_path))?;
 
         Ok(Self {
-            library: LazyHash::new(Library::builder().with_inputs(inputs).build()),
+            library: LazyHash::new(
+                Library::builder()
+                    .with_inputs(
+                        inputs
+                            .into_iter()
+                            .map(|(k, v)| (k.into(), v.into_value()))
+                            .collect(),
+                    )
+                    .build(),
+            ),
             main: Source::new(main_file_id, main_file_contents),
             fs: FileSystem::new(),
             now: OffsetDateTime::now_utc(),

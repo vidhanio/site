@@ -1,3 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="128" height="128">
-    <circle cx="64" cy="64" r="64" fill="#753BBD"></circle>
+    <style>
+        * {
+            fill:
+            /*{light.fg}*/
+            ;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            * {
+                fill:
+                /*{dark.fg}*/
+                ;
+            }
+        }
+    </style>
+    <circle cx="64" cy="64" r="64"></circle>
 </svg>

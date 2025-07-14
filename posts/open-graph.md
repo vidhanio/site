@@ -4,6 +4,8 @@ date: 2024-01-01
 
 # how i added customized open graph image generation to my rust blog!
 
+**update (2025-07-14):** this post is now outdated, as i have switched to using [typst](https://typst.app) for open graph image generation.
+
 happy new year!
 
 i've been working on a new feature for my website, being open graph images generated **at build time**.
