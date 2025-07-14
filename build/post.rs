@@ -1,17 +1,17 @@
 use std::{error::Error, fs, path::PathBuf, sync::LazyLock};
 
 use heck::ToKebabCase;
-use hypertext::{prelude::*, Raw};
+use hypertext::{Raw, prelude::*};
 use pulldown_cmark::{
     CodeBlockKind, CowStr, Event, HeadingLevel, LinkType, MetadataBlockKind, Options, Parser, Tag,
     TagEnd,
 };
-use serde::{de, Deserialize};
+use serde::{Deserialize, de};
 use typst::foundations::{Dict, IntoValue};
 
 use crate::{
-    highlighter_configs::HighlighterConfigurations, world::SiteWorld, GIT_COMMIT_HASH,
-    OPEN_GRAPH_DIR, OUT_DIR,
+    GIT_COMMIT_HASH, OPEN_GRAPH_DIR, OUT_DIR, highlighter_configs::HighlighterConfigurations,
+    world::SiteWorld,
 };
 
 pub static POST_OG_DIR: LazyLock<PathBuf> = LazyLock::new(|| OUT_DIR.join("post-og"));
