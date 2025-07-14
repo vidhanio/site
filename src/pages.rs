@@ -146,7 +146,7 @@ pub async fn post(
     let post = Post::get(&slug).ok_or(SiteError::PostNotFound(slug))?;
 
     Ok(doc.build(
-        format!("post / {}", post.title),
+        post.title,
         format!("/post/{}/og.png", post.slug),
         maud! {
             article {
