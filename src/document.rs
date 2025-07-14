@@ -71,7 +71,7 @@ impl<R: Renderable> Renderable for Document<R> {
 
                     title { "vidhan.io / " (self.title) }
                     meta name="description" content=(DESCRIPTION);
-                    meta name="theme-color" content="#00ff80";
+                    meta name="theme-color" content="#753bbd";
 
                     meta name="og:title" content={
                         @if let Some(title) = &self.title {
