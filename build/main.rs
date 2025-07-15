@@ -54,7 +54,7 @@ static OPEN_GRAPH_DIR: LazyLock<PathBuf> =
 
 static CACHE_STATIC: LazyLock<bool> = LazyLock::new(|| {
     let cache_static =
-        env::var("PROFILE").expect("expected env var `PROFILE` to be set") == "debug";
+        env::var("PROFILE").expect("expected env var `PROFILE` to be set") != "debug";
     println!("cargo:rerun-if-env-changed=PROFILE");
 
     println!("cargo:rustc-check-cfg=cfg(cache_static)");
