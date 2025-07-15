@@ -27,7 +27,7 @@ pub async fn wozeify(
 
     let ac = AhoCorasick::builder()
         .match_kind(MatchKind::LeftmostFirst)
-        .build(["vidhanio", "vidhan"])
+        .build(["https://vidhan.io", "vidhanio", "vidhan"])
         .expect("aho corasick should be valid");
 
     if woze
@@ -45,7 +45,8 @@ pub async fn wozeify(
             .try_collect::<Vec<u8>>()
             .await?;
 
-        let replaced_html = ac.replace_all_bytes(&html, &["wozeparrot", "wozeparrot"]);
+        let replaced_html =
+            ac.replace_all_bytes(&html, &["https://vidhan.io", "wozeparrot", "wozeparrot"]);
 
         Ok(Response::from_parts(parts, Body::from(replaced_html)))
     } else {
