@@ -13,6 +13,10 @@ use crate::document::Document;
 #[allow(clippy::module_name_repetitions)]
 #[derive(Error, Debug)]
 pub enum SiteError {
+    /// An axum error occurred.
+    #[error("axum error")]
+    Axum(#[from] axum::Error),
+
     /// An IO error occurred.
     #[error("io error")]
     Io(#[from] io::Error),
@@ -43,7 +47,7 @@ impl SiteError {
     #[must_use]
     pub const fn status_code(&self) -> StatusCode {
         match self {
-            Self::Io(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::Axum(_) | Self::Io(_) => StatusCode::INTERNAL_SERVER_ERROR,
             Self::PostNotFound(_)
             | Self::ContentNotFound(_)
             | Self::FontNotFound(_)

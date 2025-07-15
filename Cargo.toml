@@ -8,11 +8,13 @@ build = "build/main.rs"
 publish = false
 
 [dependencies]
+aho-corasick = "1.1.3"
 axum = { version = "0.8", features = ["macros", "tracing"] }
 axum-extra = { version = "0.10", features = ["typed-header"] }
 color-eyre = "0.6"
 dotenvy = "0.15"
 envy = "0.4"
+futures-util = { version = "0.3.31", default-features = false }
 hypertext = { features = ["axum"], git = "https://github.com/vidhanio/hypertext" }
 mime = "0.3"
 serde = { version = "1", features = ["derive"] }

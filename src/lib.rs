@@ -6,8 +6,12 @@ mod error;
 mod pages;
 mod post;
 mod r#static;
+mod wozeify;
 
-use axum::http::{Method, Uri};
+use axum::{
+    http::{Method, Uri},
+    middleware,
+};
 use tokio::net::TcpListener;
 use tower_http::trace::TraceLayer;
 
@@ -28,7 +32,8 @@ pub async fn serve(config: Config) -> SiteResult<()> {
         .method_not_allowed_fallback(async |uri: Uri, method: Method| {
             SiteError::MethodNotAllowed(uri, method)
         })
-        .layer(TraceLayer::new_for_http());
+        .layer(TraceLayer::new_for_http())
+        .layer(middleware::from_fn(wozeify::wozeify));
 
     axum::serve(tcp_listener, router).await.map_err(Into::into)
 }
