@@ -29,7 +29,7 @@ use resvg::{
 use typst::foundations::Dict;
 use typst_pdf::PdfOptions;
 
-use self::{highlighter_configs::HighlighterConfigurations, post::Post, typst_world::SiteWorld};
+use self::{post::Post, typst_world::SiteWorld};
 use crate::{colors::COLORS, post::POST_OG_DIR, typst_world::diagnostic_error};
 
 static CARGO_MANIFEST_DIR: LazyLock<PathBuf> = LazyLock::new(|| {
@@ -156,8 +156,6 @@ fn include_posts() -> Result<(), Box<dyn Error>> {
 
     fs::create_dir_all(&*POST_OG_DIR)?;
 
-    let highlighter_configs = HighlighterConfigurations::new()?;
-
     let mut posts = posts_dir
         .read_dir()?
         .map(|entry| {
@@ -180,7 +178,7 @@ fn include_posts() -> Result<(), Box<dyn Error>> {
 
             let contents = fs::read_to_string(&path)?;
 
-            let post = Post::new(&highlighter_configs, post_name, &contents)?;
+            let post = Post::new(post_name, &contents)?;
 
             post.generate_image()?;
 
@@ -196,7 +194,7 @@ fn include_posts() -> Result<(), Box<dyn Error>> {
              title,
              date: (year, month, day),
              footnotes,
-             content,
+             content: Raw(content),
          }| {
             let footnotes = footnotes.iter().map(|(name, Raw(content))| {
                 quote! {
@@ -302,7 +300,7 @@ fn include_opengraph() -> Result<(), Box<dyn Error>> {
         return Err("expected exactly one page in open graph document".into());
     };
 
-    let png = typst_render::render(page, 2.).encode_png()?;
+    let png = typst_render::render(page, 4.).encode_png()?;
 
     let path = OUT_DIR.join("og.png");
 

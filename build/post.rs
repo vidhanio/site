@@ -11,7 +11,7 @@ use typst::foundations::IntoValue;
 
 use crate::{
     CACHE_STATIC, GIT_COMMIT_HASH, OPEN_GRAPH_DIR, OUT_DIR, colors::COLORS,
-    highlighter_configs::HighlighterConfigurations, typst_world::SiteWorld,
+    highlighter_configs::HIGHLIGHTER_CONFIGS, typst_world::SiteWorld,
 };
 
 pub static POST_OG_DIR: LazyLock<PathBuf> = LazyLock::new(|| OUT_DIR.join("post-og"));
@@ -21,17 +21,13 @@ pub struct Post {
     pub slug: String,
     pub title: String,
     pub date: (u16, u8, u8),
-    pub content: String,
+    pub content: Raw<String>,
     pub footnotes: Vec<(String, Raw<String>)>,
 }
 
 impl Post {
-    pub fn new(
-        highlighter_configs: &HighlighterConfigurations,
-        slug: &str,
-        markdown: &str,
-    ) -> Result<Self, Box<dyn Error>> {
-        let mut parser = Parser::new_ext(markdown, Options::all());
+    pub fn new(slug: &str, markdown: &str) -> Result<Self, Box<dyn Error>> {
+        let mut parser = ParserWrapper::new(slug, markdown);
 
         let mut footnotes = Vec::new();
 
@@ -42,7 +38,7 @@ impl Post {
             return Err(format!("missing metadata block for {slug}").into());
         };
 
-        let metadata = Metadata::parse(slug, &mut parser)?;
+        let metadata = parser.parse_metadata()?;
 
         let Some(Event::Start(Tag::Heading {
             level: HeadingLevel::H1,
@@ -52,7 +48,7 @@ impl Post {
             return Err(format!("missing title for {slug}").into());
         };
 
-        let title = collect_text_until(slug, &mut parser, TagEnd::Heading(HeadingLevel::H1))?;
+        let title = parser.collect_text_until(TagEnd::Heading(HeadingLevel::H1))?;
 
         while let Some(event) = parser.next() {
             match event {
@@ -71,14 +67,7 @@ impl Post {
                     classes,
                     attrs,
                 }) => {
-                    events.extend(linkify_heading(
-                        slug,
-                        &mut parser,
-                        level,
-                        id,
-                        classes,
-                        attrs,
-                    )?);
+                    events.extend(parser.linkify_heading(level, id.as_ref(), classes, attrs)?);
                 }
                 Event::Start(Tag::Image {
                     link_type,
@@ -99,7 +88,7 @@ impl Post {
                 }
                 Event::Start(Tag::CodeBlock(block_kind)) => {
                     events.push(Event::Html(
-                        highlight_code(highlighter_configs, slug, &mut parser, block_kind)?.into(),
+                        parser.highlight_code(&block_kind)?.into_inner().into(),
                     ));
                 }
                 Event::FootnoteReference(name) => {
@@ -117,11 +106,11 @@ impl Post {
                     ));
                 }
                 Event::Start(Tag::FootnoteDefinition(name)) => {
-                    eat(slug, &mut parser, Event::Start(Tag::Paragraph))?;
+                    parser.eat(&Event::Start(Tag::Paragraph))?;
 
-                    let text = collect_html_until(&mut parser, TagEnd::Paragraph);
+                    let text = parser.collect_html_until(TagEnd::Paragraph);
 
-                    eat(slug, &mut parser, Event::End(TagEnd::FootnoteDefinition))?;
+                    parser.eat(&Event::End(TagEnd::FootnoteDefinition))?;
 
                     footnotes.push((name.into_string(), text));
                 }
@@ -136,7 +125,7 @@ impl Post {
             slug: slug.into(),
             title,
             date: metadata.date,
-            content,
+            content: Raw(content),
             footnotes,
         })
     }
@@ -145,8 +134,8 @@ impl Post {
         let document = SiteWorld::new(
             OPEN_GRAPH_DIR.join("post.typ"),
             [
-                ("post-title", self.title.as_str().into_value()),
                 ("colors", COLORS.default_palette().typst_dict()),
+                ("post-title", self.title.as_str().into_value()),
             ],
         )?
         .compile_document()?;
@@ -155,7 +144,7 @@ impl Post {
             return Err("expected exactly one page in open graph document".into());
         };
 
-        let png = typst_render::render(page, 2.).encode_png()?;
+        let png = typst_render::render(page, 4.).encode_png()?;
 
         let path = POST_OG_DIR.join(&self.slug).with_extension("png");
 
@@ -171,22 +160,6 @@ impl Post {
 pub struct Metadata {
     #[serde(deserialize_with = "deserialize_date")]
     pub date: (u16, u8, u8),
-}
-
-impl Metadata {
-    fn parse<'a>(
-        slug: &str,
-        parser: &mut impl Iterator<Item = Event<'a>>,
-    ) -> Result<Self, Box<dyn Error>> {
-        let metadata_string = collect_text_until(
-            slug,
-            parser,
-            TagEnd::MetadataBlock(MetadataBlockKind::YamlStyle),
-        )?;
-
-        serde_yaml::from_str(&metadata_string)
-            .map_err(|e| format!("failed to parse metadata for {slug}: {e}").into())
-    }
 }
 
 fn deserialize_date<'de, D>(deserializer: D) -> Result<(u16, u8, u8), D::Error>
@@ -210,110 +183,132 @@ where
     Ok((year, month, day))
 }
 
-#[allow(clippy::needless_pass_by_value)]
-fn linkify_heading<'a>(
-    slug: &str,
-    parser: &mut impl Iterator<Item = Event<'a>>,
-    level: HeadingLevel,
-    id: Option<CowStr<'a>>,
-    classes: Vec<CowStr<'a>>,
-    attrs: Vec<(CowStr<'a>, Option<CowStr<'a>>)>,
-) -> Result<[Event<'a>; 5], Box<dyn Error>> {
-    let text = collect_text_until(slug, parser, TagEnd::Heading(level))?;
-
-    if id.is_some() {
-        return Err(format!("unexpected id for {slug} heading").into());
-    }
-
-    let id = text.to_kebab_case();
-
-    Ok([
-        Event::Start(Tag::Heading {
-            level,
-            id: Some(id.clone().into()),
-            classes,
-            attrs,
-        }),
-        Event::Start(Tag::Link {
-            link_type: LinkType::Reference,
-            dest_url: format!("#{id}").into(),
-            title: "".into(),
-            id: "".into(),
-        }),
-        Event::Text(text.into()),
-        Event::End(TagEnd::Link),
-        Event::End(TagEnd::Heading(level)),
-    ])
+struct ParserWrapper<'a, 'input> {
+    slug: &'a str,
+    parser: Parser<'input>,
 }
 
-#[allow(clippy::needless_pass_by_value)]
-fn highlight_code<'a>(
-    highlighter_configs: &HighlighterConfigurations,
-    slug: &str,
-    parser: &mut impl Iterator<Item = Event<'a>>,
-    block_kind: CodeBlockKind,
-) -> Result<String, Box<dyn Error>> {
-    let code = collect_text_until(slug, parser, TagEnd::CodeBlock)?;
-
-    let lang = match &block_kind {
-        CodeBlockKind::Fenced(lang) => lang,
-        CodeBlockKind::Indented => "",
-    };
-
-    let highlighted_code = highlighter_configs.highlight(lang, &code)?;
-
-    Ok(maud! {
-        pre {
-            code.highlighted { (Raw(&highlighted_code)) }
+impl<'a, 'input> ParserWrapper<'a, 'input> {
+    fn new(slug: &'a str, input: &'input str) -> Self {
+        Self {
+            slug,
+            parser: Parser::new_ext(input, Options::all()),
         }
     }
-    .render()
-    .into_inner())
-}
 
-fn collect_text_until<'a>(
-    slug: &str,
-    i: &mut impl Iterator<Item = Event<'a>>,
-    tag_end: TagEnd,
-) -> Result<String, Box<dyn Error>> {
-    i.map_while(|event| match event {
-        Event::Text(text) => Some(Ok(text.into_string())),
-        Event::End(end) if end == tag_end => None,
-        _ => Some(Err(format!(
-            "unexpected markdown tag for {slug}: expected text or {tag_end:?}, got {event:?}",
-        )
-        .into())),
-    })
-    .collect()
-}
+    fn parse_metadata(&mut self) -> Result<Metadata, Box<dyn Error>> {
+        let metadata_string =
+            self.collect_text_until(TagEnd::MetadataBlock(MetadataBlockKind::YamlStyle))?;
 
-fn collect_html_until<'a>(i: &mut impl Iterator<Item = Event<'a>>, tag_end: TagEnd) -> Raw<String> {
-    let mut buf = String::new();
+        serde_yaml::from_str(&metadata_string)
+            .map_err(|e| format!("failed to parse metadata for {}: {e}", self.slug).into())
+    }
 
-    pulldown_cmark::html::push_html(
-        &mut buf,
-        i.take_while(|event| event != &Event::End(tag_end)),
-    );
-
-    Raw(buf)
-}
-
-#[allow(clippy::needless_pass_by_value)]
-fn eat<'a>(
-    slug: &str,
-    i: &mut impl Iterator<Item = Event<'a>>,
-    event: Event<'_>,
-) -> Result<(), Box<dyn Error>> {
-    i.next()
-        .ok_or_else(|| format!("missing markdown event for {slug}").into())
-        .and_then(|e| {
-            if e == event {
-                Ok(())
-            } else {
-                Err(
-                    format!("unexpected markdown event for {slug}: expected {event:?}, got {e:?}",)
-                        .into(),
+    fn collect_text_until(&mut self, tag_end: TagEnd) -> Result<String, Box<dyn Error>> {
+        self.parser
+            .by_ref()
+            .map_while(|event| match event {
+                Event::Text(text) => Some(Ok(text.into_string())),
+                Event::End(end) if end == tag_end => None,
+                _ => Some(Err(format!(
+                    "unexpected markdown tag for {}: expected text or {tag_end:?}, got {event:?}",
+                    self.slug,
                 )
+                .into())),
+            })
+            .collect()
+    }
+
+    fn collect_html_until(&mut self, tag_end: TagEnd) -> Raw<String> {
+        let mut buf = String::new();
+
+        pulldown_cmark::html::push_html(
+            &mut buf,
+            self.parser
+                .by_ref()
+                .take_while(|event| event != &Event::End(tag_end)),
+        );
+
+        Raw(buf)
+    }
+
+    fn highlight_code(
+        &mut self,
+        block_kind: &CodeBlockKind,
+    ) -> Result<Rendered<String>, Box<dyn Error>> {
+        let code = self.collect_text_until(TagEnd::CodeBlock)?;
+
+        let lang = match &block_kind {
+            CodeBlockKind::Fenced(lang) => lang,
+            CodeBlockKind::Indented => "",
+        };
+
+        let highlighted_code = HIGHLIGHTER_CONFIGS.highlight(lang, &code)?;
+
+        Ok(maud! {
+            pre {
+                code.highlighted { (&highlighted_code) }
             }
-        })
+        }
+        .render())
+    }
+
+    fn linkify_heading(
+        &mut self,
+        level: HeadingLevel,
+        id: Option<&CowStr<'input>>,
+        classes: Vec<CowStr<'input>>,
+        attrs: Vec<(CowStr<'input>, Option<CowStr<'input>>)>,
+    ) -> Result<[Event<'input>; 5], Box<dyn Error>> {
+        let text = self.collect_text_until(TagEnd::Heading(level))?;
+
+        if id.is_some() {
+            return Err(format!("unexpected id for {} heading", self.slug).into());
+        }
+
+        let id = text.to_kebab_case();
+
+        Ok([
+            Event::Start(Tag::Heading {
+                level,
+                id: Some(id.clone().into()),
+                classes,
+                attrs,
+            }),
+            Event::Start(Tag::Link {
+                link_type: LinkType::Reference,
+                dest_url: format!("#{id}").into(),
+                title: "".into(),
+                id: "".into(),
+            }),
+            Event::Text(text.into()),
+            Event::End(TagEnd::Link),
+            Event::End(TagEnd::Heading(level)),
+        ])
+    }
+
+    fn eat(&mut self, event: &Event<'_>) -> Result<(), Box<dyn Error>> {
+        self.parser
+            .next()
+            .ok_or_else(|| format!("missing markdown event for {}", self.slug).into())
+            .and_then(|e| {
+                if &e == event {
+                    Ok(())
+                } else {
+                    Err(format!(
+                        "unexpected markdown event for {}: expected {event:?}, got {e:?}",
+                        self.slug,
+                    )
+                    .into())
+                }
+            })
+    }
+}
+
+impl<'input> Iterator for ParserWrapper<'_, 'input> {
+    type Item = Event<'input>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.parser.next()
+    }
 }

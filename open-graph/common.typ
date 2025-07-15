@@ -9,6 +9,8 @@
   let svg-data = read("../static/icon.svg")
     .replace("/*{light.fg}*/", COLORS.fg.to-hex())
     .replace("/*{dark.fg}*/", COLORS.fg.to-hex())
+    .replace("/*{light.bg}*/", COLORS.bg.to-hex())
+    .replace("/*{dark.bg}*/", COLORS.bg.to-hex())
 
   image(
     bytes(svg-data),
