@@ -20,7 +20,7 @@
 }
 
 #let wordmark = context {
-  let vidhanio = [*vidhan.io*]
+  let vidhanio = [*vidhan.io \/*]
   let height = measure(vidhanio).height
   let logo = logo(height)
 
