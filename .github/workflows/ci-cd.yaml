@@ -1,87 +1,139 @@
-name: CI/CD
+name: ci/cd
 
 on:
   - push
   - pull_request
 
+permissions:
+  actions: write
+  contents: read
+
 jobs:
   test:
-    name: Test
-
-    permissions:
-      contents: read
+    name: test
 
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v6
         with:
           lfs: true
 
-      - name: Install Rust
+      - name: install rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Cache dependencies
+      - name: cache dependencies
         uses: Swatinem/rust-cache@v2
 
-      - name: Execute tests
+      - name: run tests
         run: cargo test --all-features --all-targets
 
-  check:
-    name: Check
-
-    permissions:
-      contents: read
+  test-docs:
+    name: test docs
 
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v6
         with:
           lfs: true
 
-      - name: Install Rust
+      - name: install rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: cache dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: run doc tests
+        run: cargo test --doc --all-features
+
+  check:
+    name: check
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+        with:
+          lfs: true
+
+      - name: install rust
         uses: dtolnay/rust-toolchain@nightly
         with:
           components: clippy
 
-      - name: Cache dependencies
+      - name: cache dependencies
         uses: Swatinem/rust-cache@v2
 
-      - name: Check code
-        run: cargo clippy  --all-features --all-targets -- -D warnings
+      - name: check code
+        run: cargo clippy --all-targets --all-features -- -D warnings
 
-  format:
-    name: Format
+  check-docs:
+    name: check docs
 
-    permissions:
-      contents: read
+    runs-on: ubuntu-latest
+
+    env:
+      RUSTDOCFLAGS: -D warnings
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+        with:
+          lfs: true
+
+      - name: install rust
+        uses: dtolnay/rust-toolchain@nightly
+
+      - name: cache dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: check documentation
+        run: cargo doc --workspace --all-features --no-deps
+
+  check-nix:
+    name: check nix
 
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v6
         with:
           lfs: true
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@nightly
+      - name: setup nix
+        uses: ./.github/actions/setup-nix
+
+      - name: check flake
+        run: nix flake check
+
+  check-format:
+    name: check format
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
         with:
-          components: rustfmt
+          lfs: true
 
-      - name: Cache dependencies
-        uses: Swatinem/rust-cache@v2
+      - name: setup nix
+        uses: ./.github/actions/setup-nix
 
-      - name: Check formatting
-        run: cargo fmt --all -- --check
+      # treefmt owns the Rust, Nix, and TOML formatting configuration.
+      - name: check formatting
+        run: nix build .#checks.x86_64-linux.treefmt
 
   build:
-    name: Build
+    name: build
 
     permissions:
+      actions: write
       contents: read
       packages: write
       id-token: write
@@ -90,18 +142,21 @@ jobs:
 
     needs:
       - test
+      - test-docs
       - check
-      - format
+      - check-docs
+      - check-nix
+      - check-format
 
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v6
         with:
           lfs: true
 
-      - name: Generate Docker metadata
+      - name: generate Docker metadata
         id: docker-metadata
         uses: docker/metadata-action@v5
         with:
@@ -114,20 +169,20 @@ jobs:
           flavor: |
             latest=true
 
-      - name: Set up QEMU
+      - name: set up QEMU
         uses: docker/setup-qemu-action@v3
 
-      - name: Set up Docker Buildx
+      - name: set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to GitHub Container Registry
+      - name: login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Login to Google Cloud
+      - name: login to Google Cloud
         id: gcloud-auth
         uses: google-github-actions/auth@v2
         with:
@@ -135,15 +190,15 @@ jobs:
           workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.SERVICE_ACCOUNT }}
 
-      - name: Login to Google Artifact Registry
+      - name: login to Google Artifact Registry
         uses: docker/login-action@v3
         with:
           registry: us-east1-docker.pkg.dev
           username: oauth2accesstoken
           password: ${{ steps.gcloud-auth.outputs.access_token }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+      - name: build and push Docker image
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
@@ -153,14 +208,14 @@ jobs:
           cache-to: type=gha,mode=max
 
   deploy:
-    name: Deploy
+    name: deploy
 
     permissions:
       contents: read
       id-token: write
 
     environment:
-      name: Production
+      name: production
       url: https://vidhan.io
 
     runs-on: ubuntu-latest
@@ -169,18 +224,17 @@ jobs:
       - build
 
     steps:
-      - name: Login to Google Cloud
+      - name: login to Google Cloud
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.SERVICE_ACCOUNT }}
 
-      - name: Deploy to Cloud Run
-        id: cloud-run-deploy
+      - name: deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          service: "site"
-          image: "us-east1-docker.pkg.dev/vidhan-io/site/site:latest"
+          service: site
+          image: us-east1-docker.pkg.dev/vidhan-io/site/site:latest
           env_vars: |
             IP=0.0.0.0
             PRODUCTION=true

@@ -1,4 +1,4 @@
-name: Security Audit
+name: security audit
 
 on:
   schedule:
@@ -14,15 +14,15 @@ on:
 
 jobs:
   cargo-deny:
-    name: Security Audit
+    name: security audit
 
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v6
         with:
           lfs: true
 
-      - name: Run `cargo-deny`
-        uses: EmbarkStudios/cargo-deny-action@v1
+      - name: run cargo deny
+        uses: EmbarkStudios/cargo-deny-action@v2
