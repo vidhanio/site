@@ -13,7 +13,7 @@ macro_rules! tree_sitter_query {
     ($path:literal) => {
         include_str!(concat!(
             env!("CARGO_MANIFEST_DIR"),
-            "/tree-sitter/queries/",
+            "/assets/tree-sitter/queries/",
             $path,
             ".scm"
         ))
@@ -105,12 +105,6 @@ impl HighlighterConfigurations {
                 ),
                 "",
             ),
-            (
-                "dockerfile",
-                tree_sitter_dockerfile::language(),
-                tree_sitter_query!("dockerfile/highlights"),
-                "",
-            ),
         ]
         .into_iter()
         .map(|(name, lang, highlights, injections)| {
@@ -126,13 +120,15 @@ impl HighlighterConfigurations {
 
     pub fn highlight(&self, language: &str, code: &str) -> Result<Raw<String>, Box<dyn Error>> {
         let Some(config) = self.0.get(language) else {
-            return Ok(Raw(html_escape::encode_text_minimal(code).into()));
+            return Ok(Raw::dangerously_create(
+                html_escape::encode_text_minimal(code).into_owned(),
+            ));
         };
 
         let mut highlighter = Highlighter::new();
 
         let mut highlights =
-            highlighter.highlight(config, code.as_bytes(), None, |lang| self.0.get(lang))?;
+            highlighter.highlight(config, code.as_bytes(), None, None, |lang| self.0.get(lang))?;
 
         highlights
             .try_fold(String::new(), |mut buf, event| {
@@ -154,6 +150,6 @@ impl HighlighterConfigurations {
 
                 Ok(buf)
             })
-            .map(Raw)
+            .map(Raw::dangerously_create)
     }
 }

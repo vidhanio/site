@@ -1,0 +1,263 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Berkeley Mono";
+  src: url("/fonts/Berkeley Mono Variable.woff2") format("woff2-variations");
+}
+
+@theme {
+  --color-vidhan: #753bbd;
+  --color-vidhan-black: #0f0f0f;
+  --color-vidhan-white: #f0f0f0;
+
+  --font-berkeley-mono: "Berkeley Mono", monospace;
+
+  --spacing: 1rem;
+}
+
+@utility center-items {
+  @apply flex items-center justify-center;
+}
+
+@utility p-body {
+  @apply py-2;
+  padding-inline: max(--spacing(2), 50vw - --spacing(24));
+}
+
+@utility list-star {
+  list-style-type: "* ";
+}
+
+@layer base {
+  hr {
+    @apply border-2 my-2;
+  }
+
+  ul {
+    list-style-type: "* ";
+  }
+
+  article img {
+    @apply border-4;
+  }
+
+  a:hover {
+    @apply text-vidhan-white dark:text-vidhan-black bg-vidhan;
+  }
+}
+@layer components {
+  .prose {
+    p {
+      @apply my-1;
+    }
+
+    a {
+      @apply underline;
+
+      &:hover {
+        @apply no-underline;
+      }
+    }
+
+    ol {
+      @apply list-decimal;
+
+      &[type="A"] {
+        @apply list-[upper-alpha];
+      }
+
+      &[type="a"] {
+        @apply list-[lower-alpha];
+      }
+
+      &[type="I"] {
+        @apply list-[upper-roman];
+      }
+
+      &[type="i"] {
+        @apply list-[lower-roman];
+      }
+
+      &[type="1"] {
+        @apply list-decimal;
+      }
+
+      > li {
+        @apply ps-[0.375rem];
+      }
+    }
+
+    ul {
+      @apply list-star;
+    }
+
+    ul,
+    ol {
+      @apply my-1 ps-1;
+    }
+
+    li {
+      @apply my-0.5;
+    }
+
+    blockquote {
+      @apply border-s-[0.25rem] my-1 ps-1 italic;
+      quotes: '"' '"' "'" "'";
+
+      p {
+        &:first-of-type::before {
+          content: open-quote;
+        }
+
+        &:last-of-type::after {
+          content: close-quote;
+        }
+      }
+    }
+
+    h1 {
+      @apply text-4xl font-extrabold;
+
+      strong {
+        @apply font-black;
+      }
+    }
+
+    h2 {
+      @apply mt-1.5 text-2xl font-bold;
+
+      strong {
+        @apply font-extrabold;
+      }
+    }
+
+    h3 {
+      @apply mt-[1.25rem] text-xl font-semibold;
+
+      strong {
+        @apply font-bold;
+      }
+    }
+
+    h4 {
+      @apply mt-1 text-lg font-semibold;
+
+      strong {
+        @apply font-bold;
+      }
+    }
+
+    h2,
+    h3,
+    h4 {
+      @apply mb-1;
+    }
+
+    :is(h1, h2, h3, h4) a {
+      @apply no-underline;
+    }
+
+    img,
+    video,
+    figure,
+    picture {
+      @apply my-1;
+    }
+
+    figure > * {
+      @apply my-0;
+    }
+
+    picture {
+      @apply block;
+
+      > img {
+        @apply my-0;
+      }
+    }
+
+    figcaption {
+      @apply mt-0.5 text-sm;
+    }
+
+    > :is(ul, ol) > li {
+      > p {
+        &:first-child {
+          @apply mt-[1.25rem];
+        }
+        &:last-child {
+          @apply mb-[1.25rem];
+        }
+      }
+
+      p {
+        @apply my-[0.75rem];
+      }
+    }
+
+    :is(ul, ol) :is(ul, ol) {
+      @apply my-[0.75rem];
+    }
+
+    pre {
+      @apply bg-zinc-100 dark:bg-zinc-900 p-0.5 overflow-x-auto border-2;
+
+      code {
+        &::before,
+        &::after {
+          @apply content-none;
+        }
+      }
+    }
+
+    code {
+      @apply font-berkeley-mono text-zinc-700 dark:text-zinc-300;
+
+      &::before,
+      &::after {
+        @apply text-zinc-600 dark:text-zinc-400 content-["`"];
+      }
+
+      &.highlighted {
+        .module {
+          @apply text-red-600 dark:text-red-400;
+        }
+
+        .keyword,
+        .builtin,
+        .operator {
+          @apply text-orange-600 dark:text-orange-400;
+        }
+
+        .number {
+          @apply text-yellow-600 dark:text-yellow-400;
+        }
+
+        .string {
+          @apply text-green-600 dark:text-green-400;
+        }
+
+        .attribute,
+        .function,
+        .constructor,
+        .tag {
+          @apply text-blue-600 dark:text-blue-400;
+        }
+
+        .property {
+          @apply text-purple-600 dark:text-purple-400;
+        }
+
+        .constant,
+        .type {
+          @apply text-pink-600 dark:text-pink-400;
+        }
+
+        .comment,
+        .punctuation {
+          @apply text-zinc-400 dark:text-zinc-600;
+        }
+      }
+    }
+  }
+}

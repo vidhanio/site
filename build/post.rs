@@ -10,8 +10,8 @@ use serde::{Deserialize, de};
 use typst::foundations::IntoValue;
 
 use crate::{
-    CACHE_STATIC, GIT_COMMIT_HASH, OPEN_GRAPH_DIR, OUT_DIR, colors::COLORS,
-    highlighter_configs::HIGHLIGHTER_CONFIGS, typst_world::SiteWorld,
+    GIT_COMMIT_HASH, OUT_DIR, TYPST_DIR, colors::COLORS, highlighter_configs::HIGHLIGHTER_CONFIGS,
+    typst_world::SiteWorld,
 };
 
 pub static POST_OG_DIR: LazyLock<PathBuf> = LazyLock::new(|| OUT_DIR.join("post-og"));
@@ -77,11 +77,7 @@ impl Post {
                 }) if dest_url.starts_with('/') => {
                     events.push(Event::Start(Tag::Image {
                         link_type,
-                        dest_url: if *CACHE_STATIC {
-                            format!("{dest_url}?v={}", &*GIT_COMMIT_HASH).into()
-                        } else {
-                            dest_url
-                        },
+                        dest_url: format!("{dest_url}?v={}", *GIT_COMMIT_HASH).into(),
                         title,
                         id,
                     }));
@@ -125,14 +121,14 @@ impl Post {
             slug: slug.into(),
             title,
             date: metadata.date,
-            content: Raw(content),
+            content: Raw::dangerously_create(content),
             footnotes,
         })
     }
 
     pub fn generate_image(&self) -> Result<(), Box<dyn Error>> {
         let document = SiteWorld::new(
-            OPEN_GRAPH_DIR.join("post.typ"),
+            TYPST_DIR.join("og/post.typ"),
             [
                 ("colors", COLORS.default_palette().typst_dict()),
                 ("post-title", self.title.as_str().into_value()),
@@ -140,11 +136,15 @@ impl Post {
         )?
         .compile_document()?;
 
-        let [page] = &*document.pages else {
+        let [page] = document.pages() else {
             return Err("expected exactly one page in open graph document".into());
         };
 
-        let png = typst_render::render(page, 4.).encode_png()?;
+        let options = typst_render::RenderOptions {
+            pixel_per_pt: typst::utils::Scalar::new(4.),
+            ..Default::default()
+        };
+        let png = typst_render::render(page, &options).encode_png()?;
 
         let path = POST_OG_DIR.join(&self.slug).with_extension("png");
 
@@ -229,7 +229,7 @@ impl<'a, 'input> ParserWrapper<'a, 'input> {
                 .take_while(|event| event != &Event::End(tag_end)),
         );
 
-        Raw(buf)
+        Raw::dangerously_create(buf)
     }
 
     fn highlight_code(

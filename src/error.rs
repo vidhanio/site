@@ -1,54 +1,41 @@
-use std::{error::Error, io};
+use std::error::Error;
 
-use axum::{
-    http::{Method, StatusCode, Uri},
-    response::{IntoResponse, Response},
-};
-use hypertext::{DisplayExt, prelude::*};
+use axum::http::{Method, StatusCode, Uri};
+use hypertext::{Buffer, prelude::*};
 use thiserror::Error;
 
-use crate::document::Document;
+use crate::document::DocumentDetails;
 
-/// An enum encompassing all possible errors from this site.
-#[allow(clippy::module_name_repetitions)]
 #[derive(Error, Debug)]
 pub enum SiteError {
-    /// An axum error occurred.
     #[error("axum error")]
     Axum(#[from] axum::Error),
 
-    /// An IO error occurred.
-    #[error("io error")]
-    Io(#[from] io::Error),
+    #[error("spotify error")]
+    Spotify(#[from] rspotify::ClientError),
 
-    /// Post not found.
     #[error("post not found: \"{0}\"")]
     PostNotFound(String),
 
-    /// Content not found.
-    #[error("content not found: \"{0}\"")]
-    ContentNotFound(String),
+    #[error("media not found: \"{0}\"")]
+    MediaNotFound(String),
 
-    /// Font not found.
     #[error("font not found: \"{0}\"")]
     FontNotFound(String),
 
-    /// Page not found.
     #[error("page not found: \"{0}\"")]
     PageNotFound(Uri),
 
-    /// Method not allowed.
     #[error("method not allowed for page \"{0}\": \"{1}\"")]
     MethodNotAllowed(Uri, Method),
 }
 
 impl SiteError {
-    /// The status code of this error.
-    pub const fn status_code(&self) -> StatusCode {
+    const fn status_code(&self) -> StatusCode {
         match self {
-            Self::Axum(_) | Self::Io(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::Axum(_) | Self::Spotify(_) => StatusCode::INTERNAL_SERVER_ERROR,
             Self::PostNotFound(_)
-            | Self::ContentNotFound(_)
+            | Self::MediaNotFound(_)
             | Self::FontNotFound(_)
             | Self::PageNotFound(_) => StatusCode::NOT_FOUND,
             Self::MethodNotAllowed(_, _) => StatusCode::METHOD_NOT_ALLOWED,
@@ -57,11 +44,11 @@ impl SiteError {
 }
 
 impl Renderable for SiteError {
-    fn render_to(&self, output: &mut String) {
+    fn render_to(&self, output: &mut Buffer) {
         maud! {
             pre {
                 code {
-                    (self.renderable())
+                    %(self)
 
                     @for (i, e) in ErrorSourceIter::new(self)
                         .skip(1)
@@ -69,7 +56,7 @@ impl Renderable for SiteError {
                     {
                         '\n'
                         @for _ in 0..i { "    " }
-                        "└── " (e.renderable())
+                        "└── " %(e)
                     }
                 }
             }
@@ -78,38 +65,25 @@ impl Renderable for SiteError {
     }
 }
 
-impl IntoResponse for SiteError {
-    fn into_response(self) -> Response {
-        let status_code = self.status_code();
-
-        (
-            status_code,
-            Document::new(
-                "error",
-                maud! {
-                    header {
-                        h1 {
-                            (status_code.to_string().to_lowercase())
-                        }
-                        hr;
-                    }
-
-                    (self)
-                },
-            ),
-        )
-            .into_response()
+impl From<SiteError> for DocumentDetails<SiteError> {
+    fn from(error: SiteError) -> Self {
+        let status = error.status_code();
+        Self {
+            title: Some("error".into()),
+            og_image: None,
+            content: error,
+            status,
+        }
     }
 }
 
 #[derive(Clone, Debug)]
-#[allow(clippy::module_name_repetitions)]
 struct ErrorSourceIter<'a> {
     current: Option<&'a dyn Error>,
 }
 
 impl<'a> ErrorSourceIter<'a> {
-    pub fn new(error: &'a dyn Error) -> Self {
+    fn new(error: &'a dyn Error) -> Self {
         Self {
             current: Some(error),
         }

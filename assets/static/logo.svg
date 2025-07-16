@@ -26,9 +26,9 @@
             }
         }
     </style>
-    <circle class="fg" cx="50%" cy="50%" r="50%" />
-    <circle class="bg" cx="50%" cy="50%" r="40%" />
-    <circle class="fg" cx="50%" cy="50%" r="30%" />
-    <circle class="bg" cx="50%" cy="50%" r="20%" />
-    <circle class="fg" cx="50%" cy="50%" r="10%" />
+    <rect class="fg" x="0" y="0" width="100%" height="100%" />
+    <rect class="bg" x="10%" y="10%" width="80%" height="80%" />
+    <rect class="fg" x="20%" y="20%" width="60%" height="60%" />
+    <rect class="bg" x="30%" y="30%" width="40%" height="40%" />
+    <rect class="fg" x="40%" y="40%" width="20%" height="20%" />
 </svg>

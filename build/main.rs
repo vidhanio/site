@@ -1,8 +1,9 @@
-#![allow(missing_docs)]
+#![expect(missing_docs)]
 
 mod colors;
 mod highlighter_configs;
 mod post;
+mod tailwind;
 mod typst_world;
 
 use std::{
@@ -10,17 +11,14 @@ use std::{
     env,
     error::Error,
     fs::{self, File},
+    io::Write,
     path::PathBuf,
+    process::{Command, Stdio},
     sync::LazyLock,
+    thread,
 };
 
-use hypertext::Raw;
 use ico::{IconDir, IconDirEntry, IconImage, ResourceType};
-use lightningcss::{
-    printer::PrinterOptions,
-    stylesheet::{MinifyOptions, ParserOptions, StyleSheet},
-    targets::{Browsers, Targets},
-};
 use quote::quote;
 use resvg::{
     tiny_skia::Pixmap,
@@ -45,48 +43,29 @@ static OUT_DIR: LazyLock<PathBuf> = LazyLock::new(|| {
 });
 
 static STATIC_DIR: LazyLock<PathBuf> =
-    LazyLock::new(|| rerun_path(CARGO_MANIFEST_DIR.join("static")));
+    LazyLock::new(|| rerun_path(CARGO_MANIFEST_DIR.join("assets/static")));
 
 static FONTS_DIR: LazyLock<PathBuf> = LazyLock::new(|| STATIC_DIR.join("fonts"));
 
-static OPEN_GRAPH_DIR: LazyLock<PathBuf> =
-    LazyLock::new(|| rerun_path(CARGO_MANIFEST_DIR.join("open-graph")));
-
-static CACHE_STATIC: LazyLock<bool> = LazyLock::new(|| {
-    let cache_static =
-        env::var("PROFILE").expect("expected env var `PROFILE` to be set") != "debug";
-    println!("cargo:rerun-if-env-changed=PROFILE");
-
-    println!("cargo:rustc-check-cfg=cfg(cache_static)");
-    if cache_static {
-        println!("cargo:rustc-cfg=cache_static");
-    }
-
-    cache_static
-});
+static TYPST_DIR: LazyLock<PathBuf> =
+    LazyLock::new(|| rerun_path(CARGO_MANIFEST_DIR.join("typst")));
 
 static GIT_COMMIT_HASH: LazyLock<String> = LazyLock::new(|| {
-    const DEFAULT_HEAD: &str = "ref: refs/heads/main";
+    println!("cargo:rerun-if-env-changed=GIT_COMMIT_HASH");
 
-    let head = rerun_path(CARGO_MANIFEST_DIR.join(".git/HEAD"));
+    let hash = env::var("GIT_COMMIT_HASH").ok().or_else(|| {
+        let head_path = rerun_path(CARGO_MANIFEST_DIR.join(".git/HEAD"));
+        let head = fs::read_to_string(head_path).ok()?;
+        let head = head.trim();
+        head.strip_prefix("ref: ")
+            .and_then(|reference| {
+                fs::read_to_string(CARGO_MANIFEST_DIR.join(".git").join(reference)).ok()
+            })
+            .or_else(|| Some(head.to_owned()))
+    });
 
-    let head_contents = fs::read_to_string(head).expect("reading .git/HEAD should succeed");
-
-    let hash = if head_contents.trim() == DEFAULT_HEAD {
-        fs::read_to_string(CARGO_MANIFEST_DIR.join(".git/refs/heads/main"))
-            .expect("reading .git/refs/heads/main should succeed")
-    } else {
-        head_contents
-    }
-    .trim()
-    .to_owned();
-
-    #[expect(clippy::option_if_let_else)]
-    let hash = if let Some(hash) = hash.get(..7) {
-        hash.to_owned()
-    } else {
-        hash
-    };
+    let hash = hash.unwrap_or_else(|| "unknown".to_owned());
+    let hash = hash.get(..7).unwrap_or(&hash).to_owned();
 
     println!("cargo:rustc-env=GIT_COMMIT_HASH={hash}");
 
@@ -98,11 +77,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     include_fonts()?;
     include_posts()?;
-    include_content()?;
+    include_media()?;
     include_opengraph()?;
     include_resume()?;
     include_favicons()?;
-    include_css()?;
+    include_tailwind()?;
 
     Ok(())
 }
@@ -130,7 +109,7 @@ fn include_fonts() -> Result<(), Box<dyn Error>> {
         quote! {
             #font_name => Some((
                 TypedHeader(#mime.into()),
-                include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/static/fonts/", #font_name))
+                include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/assets/static/fonts/", #font_name))
             )),
         }
     });
@@ -159,7 +138,7 @@ fn include_fonts() -> Result<(), Box<dyn Error>> {
 }
 
 fn include_posts() -> Result<(), Box<dyn Error>> {
-    let posts_dir = rerun_path(CARGO_MANIFEST_DIR.join("posts"));
+    let posts_dir = rerun_path(CARGO_MANIFEST_DIR.join("assets/posts"));
 
     fs::create_dir_all(&*POST_OG_DIR)?;
 
@@ -201,11 +180,13 @@ fn include_posts() -> Result<(), Box<dyn Error>> {
              title,
              date: (year, month, day),
              footnotes,
-             content: Raw(content),
+             content,
          }| {
-            let footnotes = footnotes.iter().map(|(name, Raw(content))| {
+            let content = content.into_inner();
+            let footnotes = footnotes.into_iter().map(|(name, content)| {
+                let content = content.into_inner();
                 quote! {
-                    (#name, hypertext::Raw(#content))
+                    (#name, hypertext::Raw::dangerously_create(#content))
                 }
             });
 
@@ -216,7 +197,7 @@ fn include_posts() -> Result<(), Box<dyn Error>> {
                     date: (#year, #month, #day),
                     image: include_bytes!(concat!(env!("OUT_DIR"), "/post-og/", #slug, ".png")),
                     footnotes: &[#(#footnotes,)*],
-                    content: hypertext::Raw(#content),
+                    content: hypertext::Raw::dangerously_create(#content),
                 }
             }
         },
@@ -237,65 +218,65 @@ fn include_posts() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn include_content() -> Result<(), Box<dyn Error>> {
-    let content_dir = rerun_path(CARGO_MANIFEST_DIR.join("content"));
+fn include_media() -> Result<(), Box<dyn Error>> {
+    let media_dir = rerun_path(CARGO_MANIFEST_DIR.join("assets/media"));
 
-    let content_routes = content_dir
+    let media_names = media_dir
         .read_dir()?
         .map(|entry| {
             let path = entry.unwrap().path();
 
             if !path.is_file() {
                 return Err(format!(
-                    "content directory should only contain files, found: {}",
+                    "media directory should only contain files, found: {}",
                     path.display()
                 )
                 .into());
             }
 
-            let content_name = path.file_name().unwrap().to_str().unwrap();
+            let media_name = path.file_name().unwrap().to_str().unwrap();
             let ext = path.extension().unwrap().to_str().unwrap();
 
             let mime = match ext {
                 "png" => quote!(mime::IMAGE_PNG),
                 "jpg" => quote!(mime::IMAGE_JPEG),
-                _ => return Err(format!("Unsupported content type: {ext}").into()),
+                _ => return Err(format!("unsupported content type: {ext}").into()),
             };
 
             Ok(quote! {
-                #content_name => Some((
+                #media_name => Some((
                     TypedHeader(ContentType::from(#mime)),
-                    include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/content/", #content_name))
+                    include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/assets/media/", #media_name))
                 ))
             })
         })
         .collect::<Result<Vec<_>, Box<dyn Error>>>()?;
 
     let tokens = quote!(
-        mod content {
+        mod media {
             use axum_extra::{
                 headers::ContentType,
                 TypedHeader
             };
 
-            pub fn get(content: &str) -> Option<(TypedHeader<ContentType>, &'static [u8])> {
-                match content {
-                    #(#content_routes,)*
+            pub fn get(media: &str) -> Option<(TypedHeader<ContentType>, &'static [u8])> {
+                match media {
+                    #(#media_names,)*
                     _ => None,
                 }
             }
         }
     );
 
-    let content_path = OUT_DIR.join("content.rs");
+    let media_path = OUT_DIR.join("media.rs");
 
-    fs::write(content_path, prettyplease::unparse(&syn::parse2(tokens)?))?;
+    fs::write(media_path, prettyplease::unparse(&syn::parse2(tokens)?))?;
 
     Ok(())
 }
 
 fn include_opengraph() -> Result<(), Box<dyn Error>> {
-    let og_file = OPEN_GRAPH_DIR.join("global.typ");
+    let og_file = TYPST_DIR.join("og/global.typ");
 
     let document = SiteWorld::new(
         &og_file,
@@ -303,11 +284,15 @@ fn include_opengraph() -> Result<(), Box<dyn Error>> {
     )?
     .compile_document()?;
 
-    let [page] = &*document.pages else {
+    let [page] = document.pages() else {
         return Err("expected exactly one page in open graph document".into());
     };
 
-    let png = typst_render::render(page, 4.).encode_png()?;
+    let options = typst_render::RenderOptions {
+        pixel_per_pt: typst::utils::Scalar::new(4.),
+        ..Default::default()
+    };
+    let png = typst_render::render(page, &options).encode_png()?;
 
     let path = OUT_DIR.join("og.png");
 
@@ -331,9 +316,9 @@ fn include_resume() -> Result<(), Box<dyn Error>> {
 }
 
 fn include_favicons() -> Result<(), Box<dyn Error>> {
-    let icon_svg_path = STATIC_DIR.join("icon.svg");
+    let logo_svg_path = STATIC_DIR.join("logo.svg");
 
-    let svg_data = fs::read_to_string(&icon_svg_path)?;
+    let svg_data = fs::read_to_string(&logo_svg_path)?;
     let single_color_data = COLORS.default_palette().apply_to_css(&svg_data);
     let svg = Tree::from_str(&single_color_data, &Options::default())?;
     let svg_size = svg.size().width();
@@ -344,7 +329,7 @@ fn include_favicons() -> Result<(), Box<dyn Error>> {
         let mut pixmap = Pixmap::new(size, size).expect("creating pixmap should succeed");
         resvg::render(
             &svg,
-            #[allow(clippy::cast_precision_loss)]
+            #[expect(clippy::cast_precision_loss)]
             Transform::from_scale(size as f32 / svg_size, size as f32 / svg_size),
             &mut pixmap.as_mut(),
         );
@@ -357,13 +342,15 @@ fn include_favicons() -> Result<(), Box<dyn Error>> {
     ico.write(File::create(ico_path)?)?;
 
     let multi_color_data = COLORS.apply_to_css(&svg_data);
-    let svg_path = OUT_DIR.join("favicon.svg");
+    let svg_path = OUT_DIR.join("logo.svg");
     fs::write(svg_path, multi_color_data)?;
 
     Ok(())
 }
 
-fn include_css() -> Result<(), Box<dyn Error>> {
+fn include_tailwind() -> Result<(), Box<dyn std::error::Error>> {
+    let tailwind_path = tailwind::download()?;
+
     println!(
         "cargo:rustc-env=THEME_COLOR={}",
         COLORS.default_palette().fg
@@ -375,35 +362,32 @@ fn include_css() -> Result<(), Box<dyn Error>> {
 
     let css_data = COLORS.apply_to_css(&css_data);
 
-    let mut stylesheet = StyleSheet::parse(
-        &css_data,
-        ParserOptions {
-            filename: css_path.to_string_lossy().into(),
-            ..Default::default()
-        },
-    )
-    .map_err(|e| e.to_string())?;
+    let mut child = Command::new(tailwind_path)
+        .args([
+            "-i",
+            "-",
+            "-o",
+            &OUT_DIR.join("style.css").to_string_lossy(),
+            "-m",
+        ])
+        .stdin(Stdio::piped())
+        .spawn()?;
 
-    let targets = Targets::from(Browsers::from_browserslist(["defaults"])?);
+    let mut stdin = child.stdin.take().expect("failed to open stdin");
+    thread::spawn(move || {
+        stdin
+            .write_all(css_data.as_bytes())
+            .expect("writing to stdin should succeed");
+    });
+    let output = child.wait_with_output()?;
 
-    stylesheet
-        .minify(MinifyOptions {
-            targets,
-            ..Default::default()
-        })
-        .map_err(|e| e.to_string())?;
-
-    let css_output = stylesheet
-        .to_css(PrinterOptions {
-            minify: true,
-            targets,
-            ..Default::default()
-        })?
-        .code;
-
-    let css_path = OUT_DIR.join("style.css");
-
-    fs::write(css_path, css_output)?;
+    if !output.status.success() {
+        return Err(format!(
+            "failed to execute `tailwindcss`:\n{}",
+            String::from_utf8_lossy(&output.stderr)
+        )
+        .into());
+    }
 
     Ok(())
 }
