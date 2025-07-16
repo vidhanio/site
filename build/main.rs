@@ -81,6 +81,13 @@ static GIT_COMMIT_HASH: LazyLock<String> = LazyLock::new(|| {
     .trim()
     .to_owned();
 
+    #[expect(clippy::option_if_let_else)]
+    let hash = if let Some(hash) = hash.get(..7) {
+        hash.to_owned()
+    } else {
+        hash
+    };
+
     println!("cargo:rustc-env=GIT_COMMIT_HASH={hash}");
 
     hash

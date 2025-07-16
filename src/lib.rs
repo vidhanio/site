@@ -17,7 +17,8 @@ use tower_http::trace::TraceLayer;
 
 pub use self::{config::Config, error::SiteError};
 
-type SiteResult<T> = std::result::Result<T, SiteError>;
+/// A convenience type for [`Result`]s returned by the site.
+pub type SiteResult<T> = std::result::Result<T, SiteError>;
 
 /// Serve the application.
 ///
@@ -32,8 +33,8 @@ pub async fn serve(config: Config) -> SiteResult<()> {
         .method_not_allowed_fallback(async |uri: Uri, method: Method| {
             SiteError::MethodNotAllowed(uri, method)
         })
-        .layer(TraceLayer::new_for_http())
-        .layer(middleware::from_fn(wozeify::wozeify));
+        .layer(middleware::from_fn(wozeify::wozeify))
+        .layer(TraceLayer::new_for_http());
 
     axum::serve(tcp_listener, router).await.map_err(Into::into)
 }

@@ -4,7 +4,7 @@ use axum::{
     http::{Method, StatusCode, Uri},
     response::{IntoResponse, Response},
 };
-use hypertext::{Displayed, prelude::*};
+use hypertext::{DisplayExt, prelude::*};
 use thiserror::Error;
 
 use crate::document::Document;
@@ -44,7 +44,6 @@ pub enum SiteError {
 
 impl SiteError {
     /// The status code of this error.
-    #[must_use]
     pub const fn status_code(&self) -> StatusCode {
         match self {
             Self::Axum(_) | Self::Io(_) => StatusCode::INTERNAL_SERVER_ERROR,
@@ -62,13 +61,15 @@ impl Renderable for SiteError {
         maud! {
             pre {
                 code {
-                    (Displayed(&self))
+                    (self.renderable())
 
                     @for (i, e) in ErrorSourceIter::new(self)
                         .skip(1)
                         .enumerate()
                     {
-                        "\n" (" ".repeat(i * 2)) "└ " (Displayed(e))
+                        '\n'
+                        @for _ in 0..i { "    " }
+                        "└── " (e.renderable())
                     }
                 }
             }
@@ -104,11 +105,11 @@ impl IntoResponse for SiteError {
 #[derive(Clone, Debug)]
 #[allow(clippy::module_name_repetitions)]
 struct ErrorSourceIter<'a> {
-    current: Option<&'a (dyn Error + 'static)>,
+    current: Option<&'a dyn Error>,
 }
 
 impl<'a> ErrorSourceIter<'a> {
-    pub fn new(error: &'a (dyn Error + 'static)) -> Self {
+    pub fn new(error: &'a dyn Error) -> Self {
         Self {
             current: Some(error),
         }
@@ -116,11 +117,24 @@ impl<'a> ErrorSourceIter<'a> {
 }
 
 impl<'a> Iterator for ErrorSourceIter<'a> {
-    type Item = &'a (dyn Error + 'static);
+    type Item = &'a dyn Error;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let current = self.current;
-        self.current = self.current.and_then(Error::source);
-        current
+        if let Some(current) = self.current {
+            self.current = current.source();
+
+            // skip error if it just prints its source
+            if let Some(source) = self.current
+                && current.to_string() == source.to_string()
+            {
+                self.next()
+            } else {
+                Some(current)
+            }
+        } else {
+            self.current = None;
+
+            None
+        }
     }
 }

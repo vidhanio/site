@@ -15,9 +15,12 @@ async fn main() -> color_eyre::Result<()> {
     let config = Config::from_env()?;
 
     let fmt = tracing_subscriber::fmt().with_env_filter(
-        env::var(EnvFilter::DEFAULT_ENV)
-            .as_deref()
-            .unwrap_or("info,tower_http=debug,vidhan_site=debug"),
+        EnvFilter::try_from_default_env().unwrap_or_else(|_| {
+            EnvFilter::new(format!(
+                "info,tower_http=debug,{}=debug",
+                env!("CARGO_CRATE_NAME")
+            ))
+        }),
     );
 
     if config.production {

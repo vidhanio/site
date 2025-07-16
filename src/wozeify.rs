@@ -14,8 +14,7 @@ use crate::{SiteError, SiteResult};
 
 #[derive(Debug, Deserialize)]
 pub struct WozeParams {
-    #[serde(default)]
-    woze: bool,
+    woze: Option<String>,
 }
 
 pub async fn wozeify(
@@ -30,7 +29,7 @@ pub async fn wozeify(
         .build(["https://vidhan.io", "vidhanio", "vidhan"])
         .expect("aho corasick should be valid");
 
-    if woze
+    if woze.as_deref() == Some("true")
         && response
             .headers()
             .typed_get::<ContentType>()
