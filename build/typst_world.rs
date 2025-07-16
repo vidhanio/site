@@ -8,25 +8,23 @@ use std::{
 
 use time::{OffsetDateTime, UtcOffset};
 use typst::{
-    Library, World,
+    Library, LibraryExt, World,
     diag::{FileError, FileResult, SourceDiagnostic},
     ecow::{EcoVec, eco_format},
-    foundations::{Bytes, Datetime, IntoValue, Str},
-    layout::PagedDocument,
-    syntax::{FileId, Source, VirtualPath},
+    foundations::{Bytes, Datetime, Duration, IntoValue, Str},
+    syntax::{FileId, RootedPath, Source, VirtualPath, VirtualRoot},
     text::{Font, FontBook},
     utils::LazyHash,
 };
-use typst_kit::fonts::{FontSearcher, FontSlot};
+use typst_kit::fonts::FontStore;
+use typst_layout::PagedDocument;
 
 use crate::{CARGO_MANIFEST_DIR, FONTS_DIR};
 
-static FONTS: LazyLock<(LazyHash<FontBook>, Vec<FontSlot>)> = LazyLock::new(|| {
-    let fonts = FontSearcher::new()
-        .include_system_fonts(false)
-        .search_with([&*FONTS_DIR]);
-
-    (LazyHash::new(fonts.book), fonts.fonts)
+static FONTS: LazyLock<FontStore> = LazyLock::new(|| {
+    let mut fonts = FontStore::new();
+    fonts.extend(typst_kit::fonts::scan(&FONTS_DIR));
+    fonts
 });
 
 #[derive(Debug)]
@@ -43,16 +41,15 @@ impl SiteWorld {
         inputs: impl IntoIterator<Item = (impl Into<Str>, impl IntoValue)>,
     ) -> FileResult<Self> {
         let main_path = main_path.as_ref();
-        let main_file_id = FileId::new(
-            None,
-            VirtualPath::within_root(main_path, &CARGO_MANIFEST_DIR).ok_or_else(|| {
+        let virtual_path =
+            VirtualPath::virtualize(&CARGO_MANIFEST_DIR, main_path).map_err(|_| {
                 FileError::Other(Some(eco_format!(
                     "main file path `{}` is not within the project root `{}`",
                     main_path.display(),
                     CARGO_MANIFEST_DIR.display()
                 )))
-            })?,
-        );
+            })?;
+        let main_file_id = FileId::new(RootedPath::new(VirtualRoot::Project, virtual_path));
         let main_file_contents =
             fs::read_to_string(main_path).map_err(|e| FileError::from_io(e, main_path))?;
 
@@ -90,7 +87,7 @@ impl World for SiteWorld {
     }
 
     fn book(&self) -> &LazyHash<FontBook> {
-        &FONTS.0
+        FONTS.book()
     }
 
     fn main(&self) -> FileId {
@@ -110,11 +107,17 @@ impl World for SiteWorld {
     }
 
     fn font(&self, index: usize) -> Option<Font> {
-        FONTS.1.get(index)?.get()
+        FONTS.font(index)
     }
 
-    fn today(&self, offset: Option<i64>) -> Option<Datetime> {
-        let offset = UtcOffset::from_hms(offset.unwrap_or(0).try_into().ok()?, 0, 0).ok()?;
+    fn today(&self, offset: Option<Duration>) -> Option<Datetime> {
+        let offset = match offset {
+            None => UtcOffset::UTC,
+            Some(offset) => {
+                let seconds = i32::try_from(time::Duration::from(offset).whole_seconds()).ok()?;
+                UtcOffset::from_whole_seconds(seconds).ok()?
+            }
+        };
         let datetime = self.now.checked_to_offset(offset)?;
         Some(Datetime::Date(datetime.date()))
     }
@@ -144,8 +147,8 @@ impl FileSystem {
             Entry::Vacant(entry) => {
                 let path = id
                     .vpath()
-                    .resolve(&CARGO_MANIFEST_DIR)
-                    .ok_or_else(|| FileError::NotFound(id.vpath().as_rootless_path().into()))?;
+                    .realize(&CARGO_MANIFEST_DIR)
+                    .map_err(FileError::Realize)?;
 
                 let bytes = fs::read(&path).map_err(|e| FileError::from_io(e, &path))?;
 

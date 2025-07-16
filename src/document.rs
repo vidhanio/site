@@ -1,87 +1,172 @@
-use std::fmt::Debug;
+use std::{
+    borrow::Cow,
+    convert::Infallible,
+    fmt::Debug,
+    sync::{Arc, LazyLock},
+    time::Duration,
+};
 
 use axum::{
+    RequestPartsExt,
     extract::{FromRequestParts, OriginalUri},
-    http::Uri,
+    http::{StatusCode, Uri, request::Parts},
     response::{IntoResponse, Response},
 };
-use hypertext::prelude::*;
+use hypertext::{Buffer, prelude::*};
+use moka::future::Cache;
+use rspotify::{
+    model::{FullTrack, PlayableItem},
+    prelude::OAuthClient,
+};
+use tracing::{error, trace};
 
-use crate::r#static::Cached;
+use crate::{ResponseResult, SiteResult, SiteState, r#static::Cached};
 
-#[derive(Debug, FromRequestParts)]
-#[allow(clippy::module_name_repetitions)]
-pub struct DocumentParts {
-    path: OriginalUri,
+#[derive(Debug, Clone)]
+pub struct DocumentRequest {
+    path: Uri,
+    now_playing: Option<Arc<FullTrack>>,
 }
 
-impl DocumentParts {
-    pub fn build<R: Renderable>(
-        self,
-        title: impl Into<String>,
-        og_image: impl Into<String>,
-        content: R,
-    ) -> Document<R> {
+impl DocumentRequest {
+    pub const fn build<T>(self, details: DocumentDetails<T>) -> Document<T> {
         Document {
-            path: Some(self.path.0),
+            request: self,
+            details,
+        }
+    }
+
+    pub fn try_build<T>(
+        self,
+        f: impl FnOnce() -> SiteResult<DocumentDetails<T>>,
+    ) -> ResponseResult<Document<T>> {
+        match f() {
+            Ok(details) => Ok(self.build(details)),
+            Err(error) => Err(self.build(error.into()).into()),
+        }
+    }
+
+    pub fn try_respond<T>(self, f: impl FnOnce() -> SiteResult<T>) -> ResponseResult<T> {
+        match f() {
+            Ok(value) => Ok(value),
+            Err(error) => Err(self.build(error.into()).into()),
+        }
+    }
+
+    pub async fn try_respond_async<T>(
+        self,
+        f: impl AsyncFnOnce() -> SiteResult<T>,
+    ) -> ResponseResult<T> {
+        match f().await {
+            Ok(value) => Ok(value),
+            Err(error) => Err(self.build(error.into()).into()),
+        }
+    }
+}
+
+impl FromRequestParts<SiteState> for DocumentRequest {
+    type Rejection = Infallible;
+
+    async fn from_request_parts(
+        parts: &mut Parts,
+        state: &SiteState,
+    ) -> Result<Self, Self::Rejection> {
+        static NOW_PLAYING_CACHE: LazyLock<Cache<(), Option<Arc<FullTrack>>>> =
+            LazyLock::new(|| {
+                Cache::builder()
+                    .time_to_live(Duration::from_secs(5))
+                    .build()
+            });
+
+        let OriginalUri(path) = parts.extract().await?;
+        let now_playing = NOW_PLAYING_CACHE
+            .get_with((), async {
+                trace!("fetching now playing track from spotify");
+
+                state
+                    .spotify
+                    .current_user_playing_item()
+                    .await
+                    .inspect_err(|error| {
+                        error!(?error, "failed to get now playing track");
+                    })
+                    .ok()
+                    .and_then(|item| {
+                        if let PlayableItem::Track(track) = item?.item? {
+                            Some(Arc::new(track))
+                        } else {
+                            None
+                        }
+                    })
+            })
+            .await;
+
+        Ok(Self { path, now_playing })
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct DocumentDetails<T> {
+    pub title: Option<Cow<'static, str>>,
+    pub og_image: Option<Cow<'static, str>>,
+    pub content: T,
+    pub status: StatusCode,
+}
+
+impl<T> DocumentDetails<T> {
+    pub fn new(
+        title: impl Into<Cow<'static, str>>,
+        og_image: impl Into<Cow<'static, str>>,
+        content: T,
+    ) -> Self {
+        Self {
             title: Some(title.into()),
             og_image: Some(og_image.into()),
             content,
+            status: StatusCode::OK,
         }
     }
 
-    pub fn build_simple<R: Renderable>(self, content: R) -> Document<R> {
-        Document {
-            path: Some(self.path.0),
+    pub const fn from_content(content: T) -> Self {
+        Self {
             title: None,
             og_image: None,
             content,
+            status: StatusCode::OK,
         }
     }
 }
 
-pub struct Document<R> {
-    path: Option<Uri>,
-    title: Option<String>,
-    og_image: Option<String>,
-    content: R,
+#[derive(Debug, Clone)]
+pub struct Document<T> {
+    request: DocumentRequest,
+    details: DocumentDetails<T>,
 }
 
-impl<R: Renderable> Document<R> {
-    pub fn new(title: impl Into<String>, content: R) -> Self {
-        Self {
-            path: None,
-            title: Some(title.into()),
-            og_image: None,
-            content,
-        }
-    }
-}
-
-impl<R: Renderable> Renderable for Document<R> {
-    fn render_to(&self, output: &mut String) {
+impl<T: Renderable> Renderable for Document<T> {
+    fn render_to(&self, output: &mut Buffer) {
         maud! {
             !DOCTYPE
-            html lang="en" id {
+            html lang="en" {
                 head {
                     meta name="viewport" content="width=device-width, initial-scale=1.0";
                     meta charset="utf-8";
 
-                    title { "vidhan.io / " (self.title) }
+                    title { "vidhan.io / " (self.details.title) }
                     meta name="description" content="vidhan's home on the internet.";
                     meta name="theme-color" content=(env!("THEME_COLOR"));
 
                     meta name="og:title" content={
-                        @if let Some(title) = &self.title {
+                        @if let Some(title) = &self.details.title {
                             title
                         } @else {
                             "vidhan.io"
                         }
                     };
-                    meta name="og:url" content={ "https://vidhan.io" (self.path) };
+                    meta name="og:url" content={ "https://vidhan.io" %(self.request.path) };
                     meta name="og:type" content="website";
                     meta name="og:image" content={
-                        @if let Some(path) = &self.og_image {
+                        @if let Some(path) = &self.details.og_image {
                             "https://vidhan.io" (Cached(path))
                         } @else {
                             (Cached("https://vidhan.io/og.png"))
@@ -93,32 +178,52 @@ impl<R: Renderable> Renderable for Document<R> {
 
                     link rel="stylesheet" href=(Cached("/style.css"));
 
-                    link rel="icon" type="image/svg+xml" href=(Cached("/favicon.svg"));
+                    link rel="icon" type="image/svg+xml" href=(Cached("/logo.svg"));
                     link rel="icon" type="image/x-icon" href=(Cached("/favicon.ico"));
                 }
 
-                body {
-                    nav {
-                        a href="/" { "🏠" }
+                body ."
+                    text-vidhan bg-vidhan-white dark:bg-vidhan-black
+                    font-berkeley-mono p-body
+                " {
+                    nav ."flex items-center justify-between" {
+                        a #logo href="/" {
+                            object ."w-4 pointer-events-none" type="image/svg+xml" data=(Cached("/logo.svg")) {}
+                        }
+
+                        @if let Some(now_playing) = &self.request.now_playing {
+                            div #now-playing {
+                                a href=[now_playing.external_urls.get("spotify")] {
+                                    (now_playing.name)
+                                }
+                                " - "
+                                @for (i, artist) in now_playing.artists.iter().enumerate() {
+                                    a href=[artist.external_urls.get("spotify")] {
+                                        (artist.name)
+                                    }
+                                    @if i < now_playing.artists.len() - 1 {
+                                        ", "
+                                    }
+                                }
+                            }
+                        }
                     }
 
-                    main { (self.content) }
+                    hr;
 
-                    footer {
+                    main { (self.details.content) }
+
+                    hr;
+
+                    footer ."text-center" {
                         a #repository href="https://github.com/vidhanio/site" {
                             "made with with rust and ❤️ by vidhan."
                         }
-
                         br;
-                        br;
-
                         a #license href=(Cached("/LICENSE.txt")) {
                             "site licensed under agpl-3.0."
                         }
-
                         br;
-                        br;
-
                         span #ring {
                             a href="https://ring.simonwu.dev/prev/vidhan" {
                                 "←"
@@ -140,8 +245,8 @@ impl<R: Renderable> Renderable for Document<R> {
     }
 }
 
-impl<R: Renderable> IntoResponse for Document<R> {
+impl<T: Renderable> IntoResponse for Document<T> {
     fn into_response(self) -> Response {
-        self.render().into_response()
+        (self.details.status, self.render()).into_response()
     }
 }

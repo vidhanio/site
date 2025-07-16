@@ -1,16 +1,11 @@
 use aho_corasick::{AhoCorasick, MatchKind};
-use axum::{
-    body::Body,
-    extract::{Query, Request},
-    middleware::Next,
-    response::Response,
-};
+use axum::{body::Body, extract::Query, response::Response};
 use axum_extra::headers::{ContentType, HeaderMapExt};
 use futures_util::{StreamExt, TryStreamExt, stream};
 use mime::Mime;
 use serde::Deserialize;
 
-use crate::{SiteError, SiteResult};
+use crate::{ResponseResult, SiteError, document::DocumentRequest};
 
 #[derive(Debug, Deserialize)]
 pub struct WozeParams {
@@ -18,12 +13,10 @@ pub struct WozeParams {
 }
 
 pub async fn wozeify(
+    doc: DocumentRequest,
     Query(WozeParams { woze }): Query<WozeParams>,
-    request: Request,
-    next: Next,
-) -> SiteResult<Response> {
-    let response = next.run(request).await;
-
+    response: Response,
+) -> ResponseResult<Response> {
     let ac = AhoCorasick::builder()
         .match_kind(MatchKind::LeftmostFirst)
         .build(["https://vidhan.io", "vidhanio", "vidhan"])
@@ -37,11 +30,14 @@ pub async fn wozeify(
     {
         let (parts, body) = response.into_parts();
 
-        let html = body
-            .into_data_stream()
-            .and_then(async |bytes| Ok(stream::iter(bytes).map(Ok::<_, SiteError>)))
-            .try_flatten()
-            .try_collect::<Vec<u8>>()
+        let html = doc
+            .try_respond_async(async || {
+                body.into_data_stream()
+                    .and_then(async |bytes| Ok(stream::iter(bytes).map(Ok::<_, SiteError>)))
+                    .try_flatten()
+                    .try_collect::<Vec<u8>>()
+                    .await
+            })
             .await?;
 
         let replaced_html =

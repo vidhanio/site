@@ -3,6 +3,7 @@ use std::{sync::LazyLock, time::Duration};
 use axum::{
     Router,
     extract::{Path, Query},
+    middleware,
     response::{IntoResponse, Response},
     routing,
 };
@@ -11,36 +12,36 @@ use axum_extra::{
     headers::{CacheControl, ContentDisposition, ContentType},
     response::Css,
 };
-use hypertext::{AttributeRenderable, Renderable, attribute};
+use hypertext::Renderable;
 use mime::Mime;
 use serde::{Deserialize, de::IgnoredAny};
 use tracing::instrument;
 
-use crate::{SiteError, SiteResult, post::Post};
+use crate::{ResponseResult, SiteError, SiteState, document::DocumentRequest, post::Post};
 
-pub fn router() -> Router {
+pub fn router() -> Router<SiteState> {
     #[derive(Deserialize)]
     struct CacheParams {
         v: Option<IgnoredAny>,
     }
 
     Router::new()
-        .route("/favicon.svg", routing::get(favicon_svg))
+        .route("/logo.svg", routing::get(logo_svg))
         .route("/favicon.ico", routing::get(favicon_ico))
         .route("/style.css", routing::get(style))
         .route("/og.png", routing::get(og_image))
         .route("/post/{slug}/og.png", routing::get(post_og_image))
-        .route("/content/{content}", routing::get(content))
+        .route("/media/{media}", routing::get(media))
         .route("/fonts/{font}", routing::get(fonts))
         .route("/resume.pdf", routing::get(resume))
         .route("/LICENSE.txt", routing::get(license))
-        .layer(axum::middleware::map_response(
-            |Query(params): Query<CacheParams>, res: Response| async move {
+        .layer(middleware::map_response(
+            async |Query(params): Query<CacheParams>, res: Response| {
                 if params.v.is_some() {
                     let cc = CacheControl::new()
                         .with_public()
                         .with_immutable()
-                        .with_max_age(Duration::from_secs(60 * 60 * 24 * 365));
+                        .with_max_age(Duration::from_hours(8760));
 
                     (TypedHeader(cc), res).into_response()
                 } else {
@@ -50,30 +51,18 @@ pub fn router() -> Router {
         ))
 }
 
-#[derive(Debug, Clone, Copy)]
-pub struct Cached<T>(pub T);
-
-impl<T: AttributeRenderable> Renderable for Cached<T> {
-    fn render_to(&self, output: &mut String) {
-        self.render_attribute_to(output);
-    }
-}
-
-impl<T: AttributeRenderable> AttributeRenderable for Cached<T> {
-    fn render_attribute_to(&self, output: &mut String) {
-        if cfg!(cache_static) {
-            attribute!((self.0) "?v=" (env!("GIT_COMMIT_HASH"))).render_attribute_to(output);
-        } else {
-            self.0.render_attribute_to(output);
-        }
-    }
-}
+#[derive(Debug, Clone, Copy, Renderable)]
+#[attribute(
+    (self.0)
+    "?v=" (env!("GIT_COMMIT_HASH"))
+)]
+pub struct Cached<'a>(pub &'a str);
 
 #[instrument(level = "trace")]
-async fn favicon_svg() -> (TypedHeader<ContentType>, &'static str) {
-    const FAVICON_SVG: &str = include_str!(concat!(env!("OUT_DIR"), "/favicon.svg"));
+async fn logo_svg() -> (TypedHeader<ContentType>, &'static str) {
+    const LOGO_SVG: &str = include_str!(concat!(env!("OUT_DIR"), "/logo.svg"));
 
-    (TypedHeader(ContentType::from(mime::IMAGE_SVG)), FAVICON_SVG)
+    (TypedHeader(ContentType::from(mime::IMAGE_SVG)), LOGO_SVG)
 }
 
 #[instrument(level = "trace")]
@@ -97,7 +86,7 @@ async fn style() -> Css<&'static str> {
 }
 
 #[instrument(level = "trace")]
-async fn og_image() -> SiteResult<(TypedHeader<ContentType>, &'static [u8])> {
+async fn og_image() -> ResponseResult<(TypedHeader<ContentType>, &'static [u8])> {
     const OG_IMAGE: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/og.png"));
 
     Ok((TypedHeader(mime::IMAGE_PNG.into()), OG_IMAGE))
@@ -105,27 +94,34 @@ async fn og_image() -> SiteResult<(TypedHeader<ContentType>, &'static [u8])> {
 
 #[instrument(level = "trace")]
 async fn post_og_image(
+    doc: DocumentRequest,
     Path(slug): Path<String>,
-) -> SiteResult<(TypedHeader<ContentType>, &'static [u8])> {
-    let post = Post::get(&slug).ok_or(SiteError::PostNotFound(slug))?;
+) -> ResponseResult<(TypedHeader<ContentType>, &'static [u8])> {
+    doc.try_respond(|| {
+        let post = Post::get(slug)?;
 
-    Ok((TypedHeader(mime::IMAGE_PNG.into()), post.image))
+        Ok((TypedHeader(mime::IMAGE_PNG.into()), post.image))
+    })
 }
 
-include!(concat!(env!("OUT_DIR"), "/content.rs"));
+include!(concat!(env!("OUT_DIR"), "/media.rs"));
 
 #[instrument(level = "trace")]
-async fn content(
-    Path(content): Path<String>,
-) -> SiteResult<(TypedHeader<ContentType>, &'static [u8])> {
-    content::get(&content).ok_or(SiteError::ContentNotFound(content))
+async fn media(
+    doc: DocumentRequest,
+    Path(media): Path<String>,
+) -> ResponseResult<(TypedHeader<ContentType>, &'static [u8])> {
+    doc.try_respond(|| media::get(&media).ok_or(SiteError::MediaNotFound(media)))
 }
 
 include!(concat!(env!("OUT_DIR"), "/fonts.rs"));
 
 #[instrument(level = "trace")]
-async fn fonts(Path(font): Path<String>) -> SiteResult<(TypedHeader<ContentType>, &'static [u8])> {
-    fonts::get(&font).ok_or(SiteError::PostNotFound(font))
+async fn fonts(
+    doc: DocumentRequest,
+    Path(font): Path<String>,
+) -> ResponseResult<(TypedHeader<ContentType>, &'static [u8])> {
+    doc.try_respond(|| fonts::get(&font).ok_or(SiteError::FontNotFound(font)))
 }
 
 #[instrument(level = "debug")]

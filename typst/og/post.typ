@@ -1,4 +1,4 @@
-#import "common.typ": *
+#import "../common.typ": *
 
 #show: open-graph
 
@@ -8,7 +8,6 @@
   pad(y: MARGIN, line(length: 100%, stroke: (paint: COLORS.fg, thickness: 2pt)))
   align(right, wordmark)
 }
-
 
 #let truncate(text, f) = {
   layout(size => {

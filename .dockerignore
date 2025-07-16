@@ -4,11 +4,8 @@
 !/build/
 !/Cargo.lock
 !/Cargo.toml
-!/content/
+!/assets/
 !/LICENSE.txt
-!/open-graph/
-!/posts/
+!/typst/
 !/resume/
 !/src/
-!/static/
-!/tree-sitter/

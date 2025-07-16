@@ -1,4 +1,4 @@
-#![allow(missing_docs)]
+#![expect(missing_docs)]
 
 use std::env;
 
@@ -16,9 +16,10 @@ async fn main() -> color_eyre::Result<()> {
 
     let fmt = tracing_subscriber::fmt().with_env_filter(
         EnvFilter::try_from_default_env().unwrap_or_else(|_| {
-            EnvFilter::new(format!(
-                "info,tower_http=debug,{}=debug",
-                env!("CARGO_CRATE_NAME")
+            EnvFilter::new(concat!(
+                "info,tower_http=debug,",
+                env!("CARGO_CRATE_NAME"),
+                "=trace"
             ))
         }),
     );
