@@ -28,10 +28,19 @@ work:
     startDate: 2024-05-06
     endDate: 2024-08-30
     highlights:
-      - Migrated database queries to PostgreSQL as well as updated the documentation for the Java backend
-      - Led research on web notifications
-      - Developed and iterated upon the front-end of the web notification POC
-      - Presented a live demo of the web notification POC to the team
+      - Migrated database queries to PostgreSQL and updated documentation for the Java backend
+      - Researched web notification technologies and evaluated potential implementation approaches
+      - Developed and iterated on a complete front end of a proof of concept, presenting it to stakeholders
+
+  - name: Flipp
+    position: Associate Software Engineer
+    startDate: 2026-05-01
+    endDate: 2027-04-30
+    highlights:
+      - Led a comprehensive refactor of a critical advertising component and implemented the majority of the changes
+      - Refactored backend request handling and introduced caching, reducing requests to some internal endpoints by up to 98%
+      - Co-led the research and implementation of video advertising capabilities
+      - Supported teammates and encouraged the adoption of agentic development practices
 
 projects:
   - name: vidhan.io
@@ -62,25 +71,6 @@ projects:
       - Uses Rust's type system to ensure that HTML tags and attributes are valid
       - Uses GitHub Actions for continuous integration
       - Published as an open-source project/library, and has accumulated 100+ stars on GitHub and is used in 10+ other websites
-
-  - name: MacEats
-    url: https://github.com/vidhanio/maceats
-    description: A full-stack modern reimplementation of MacEats, the McMaster University campus dining site.
-    startDate: 2022-10-17
-    endDate: 2022-10-31
-    keywords:
-      - Rust
-      - React
-      - Next.js
-      - Docker
-      - Fly.io
-      - Vercel
-    highlights:
-      - Created for the 2022 McMaster CSS Hacktober event
-      - Made a Rust library to scrape the original website and provide a programmatic interface to the data
-      - Made a Rust backend to serve the data for general use by anyone
-      - Made a React and Next.js frontend to access the modern site
-      - Received 100% in judge voting, placing second overall in the competition
 
 skills:
   - name: Programming Languages
