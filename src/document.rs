@@ -144,7 +144,7 @@ impl<T: Renderable> Renderable for Document<T> {
 
                 body {
                     nav aria-label="site" {
-                        a href="/" { strong { "[v]" } }
+                        a href="/" { strong { "[v]" } "idhan.io" }
                     }
 
                     main { (self.details.content) }
