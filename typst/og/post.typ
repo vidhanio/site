@@ -2,15 +2,15 @@
 
 #show: open-graph
 
-#let footer = {
-  set text(size: 25pt)
-  strong[\[v\]vidhan.io]
-}
+#let footer = wordmark(25pt)
 
 #let truncate(text, f) = {
   layout(size => {
     let text = text
-    let fits(text) = measure(width: size.width, f(text)).height <= size.height - measure(footer).height
+    let fits(text) = (
+      measure(width: size.width, f(text)).height
+        <= size.height - measure(footer).height
+    )
 
     if fits(text) {
       return f(text)

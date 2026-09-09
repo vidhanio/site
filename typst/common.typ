@@ -12,8 +12,18 @@
   fill: COLORS.fg,
 )[\[v\]]
 
+#let wordmark(size) = {
+  text(size: size)[*[v]*idhan.io]
+}
+
 #let open-graph(body) = {
-  set text(font: "Berkeley Mono", size: 30pt, fill: COLORS.fg, top-edge: "bounds", bottom-edge: "bounds")
+  set text(
+    font: "Berkeley Mono",
+    size: 30pt,
+    fill: COLORS.fg,
+    top-edge: "bounds",
+    bottom-edge: "bounds",
+  )
   set page(width: 600pt, height: 315pt, margin: MARGIN, fill: COLORS.bg)
   set par(spacing: 0pt)
 

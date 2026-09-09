@@ -151,6 +151,7 @@
                 nixfmt.enable = true;
                 statix.enable = true;
                 deadnix.enable = true;
+                typstyle.enable = true;
                 rustfmt = {
                   enable = true;
                   package = pkgs.rust-bin.nightly.latest.rustfmt;
