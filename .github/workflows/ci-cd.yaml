@@ -140,9 +140,9 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           docker load < result
-          docker tag "site:latest" "$IMAGE:latest"
-          docker tag "site:latest" "$IMAGE:main"
-          docker tag "site:latest" "$IMAGE:sha-${GITHUB_SHA::7}"
+          docker tag "vidhan-site:latest" "$IMAGE:latest"
+          docker tag "vidhan-site:latest" "$IMAGE:main"
+          docker tag "vidhan-site:latest" "$IMAGE:sha-${GITHUB_SHA::7}"
           docker push --all-tags "$IMAGE"
 
   check-format:
