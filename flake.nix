@@ -83,7 +83,7 @@
               default = sitePackage;
 
               docker = pkgs.dockerTools.buildLayeredImage {
-                name = "us-east1-docker.pkg.dev/vidhan-io/site/site";
+                name = "site";
                 tag = "latest";
 
                 config = {
