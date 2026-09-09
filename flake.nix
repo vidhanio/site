@@ -62,7 +62,6 @@
             };
             commonArgs = {
               inherit src;
-              GIT_COMMIT_HASH = self.rev or self.dirtyRev or "unknown";
               strictDeps = true;
               cargoExtraArgs = "--locked";
             };
@@ -71,6 +70,7 @@
               commonArgs
               // {
                 inherit cargoArtifacts;
+                GIT_COMMIT_HASH = self.rev or self.dirtyRev or "unknown";
                 meta.mainProgram = "vidhan-site";
               }
             );
