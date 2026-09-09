@@ -60,7 +60,6 @@ footer {
 }
 
 footer a {
-  color: var(--muted);
   font-weight: 300;
   text-decoration: none;
 }

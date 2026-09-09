@@ -15,10 +15,6 @@ pub async fn get(doc: DocumentRequest) -> Document<Home> {
 #[renderable(pub)]
 fn home() -> impl Renderable {
     maud! {
-        header #greeting {
-            h1 { "vidhan bhatt" }
-        }
-
         section #about {
             p {
                 "hi, i'm vidhan. welcome to my personal website."
