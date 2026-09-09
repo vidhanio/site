@@ -13,7 +13,7 @@ pub const COLORS: Colors = Colors {
     },
     dark: Palette {
         fg: "#d5d5d5",
-        bg: "#151515",
+        bg: "#000000",
     },
 };
 

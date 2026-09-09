@@ -2,9 +2,4 @@
 
 #show: open-graph
 
-#grid(
-  rows: (auto, 1fr, auto),
-  logo(50pt),
-  [],
-  [vidhan.io],
-)
+#text(size: 50pt)[#strong[\[v\]]vidhan.io]

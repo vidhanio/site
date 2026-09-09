@@ -4,7 +4,7 @@
 
 #let footer = {
   set text(size: 25pt)
-  logo(25pt)
+  strong[\[v\]vidhan.io]
 }
 
 #let truncate(text, f) = {
@@ -27,7 +27,7 @@
 #[
   #let post-title = sys.inputs.at("post-title", default: "hello, world!")
 
-  #truncate(post-title, post-title => [post / #post-title])
+  #truncate(post-title, post-title => [#strong[post /] #post-title])
 ]
 
 #align(bottom + left, footer)

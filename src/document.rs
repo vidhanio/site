@@ -113,7 +113,7 @@ impl<T: Renderable> Renderable for Document<T> {
                     title { "vidhan.io / " (self.details.title) }
                     meta name="description" content="vidhan's home on the internet.";
                     meta name="theme-color" content="#eaeaea" media="(prefers-color-scheme: light)";
-                    meta name="theme-color" content="#151515" media="(prefers-color-scheme: dark)";
+                    meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)";
 
                     meta name="og:title" content={
                         @if let Some(title) = &self.details.title {
