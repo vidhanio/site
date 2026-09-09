@@ -50,7 +50,7 @@
 body {
   width: min(100%, 48rem);
   margin: 0;
-  padding: 3.5rem;
+  padding: 5rem;
 }
 
 footer {
@@ -272,7 +272,7 @@ figcaption {
 
 @media (max-width: 36rem) {
   body {
-    padding: 2rem;
+    padding: 3rem;
   }
 
   main {
