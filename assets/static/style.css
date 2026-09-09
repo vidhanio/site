@@ -65,7 +65,7 @@ footer a {
 }
 
 main {
-  margin-block: 5rem;
+  margin-block: 3rem;
 }
 
 section + section {
@@ -166,6 +166,11 @@ article header {
 
 article header h1 {
   margin-bottom: 0.25rem;
+}
+
+article :is(h2, h3, h4, h5, h6) a,
+article a.footnote {
+  text-decoration: none;
 }
 
 time,
@@ -271,6 +276,6 @@ figcaption {
   }
 
   main {
-    margin-block: 3rem;
+    margin-block: 2rem;
   }
 }

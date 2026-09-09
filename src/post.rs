@@ -132,7 +132,7 @@ impl Post {
         let (year, month, day) = self.date();
         maud! {
             time datetime={ (format_args!("{year:04}-{month:02}-{day:02}")) } {
-                (format_args!("{year:04}/{month:02}/{day:02}"))
+                (format_args!("{year:04}-{month:02}-{day:02}"))
             }
         }
     }
@@ -147,7 +147,6 @@ impl Renderable for Post {
                     (self.time_element())
                 }
 
-                hr;
                 section #content { (self.content()) }
 
                 @if self.has_footnotes() {
