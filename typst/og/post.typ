@@ -4,9 +4,7 @@
 
 #let footer = {
   set text(size: 25pt)
-
-  pad(y: MARGIN, line(length: 100%, stroke: (paint: COLORS.fg, thickness: 2pt)))
-  align(right, wordmark)
+  logo(25pt)
 }
 
 #let truncate(text, f) = {
@@ -29,7 +27,7 @@
 #[
   #let post-title = sys.inputs.at("post-title", default: "hello, world!")
 
-  #truncate(post-title, post-title => [*post / * #post-title])
+  #truncate(post-title, post-title => [post / #post-title])
 ]
 
-#align(bottom, footer)
+#align(bottom + left, footer)

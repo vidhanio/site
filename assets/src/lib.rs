@@ -40,8 +40,10 @@ pub struct BinaryAsset {
 pub struct LoadedAssets {
     /// Processed stylesheet.
     pub style: String,
-    /// Processed SVG logo.
-    pub logo_svg: String,
+    /// Typst-rendered SVG logo for light mode.
+    pub logo_light_svg: String,
+    /// Typst-rendered SVG logo for dark mode.
+    pub logo_dark_svg: String,
     /// Generated favicon bytes.
     pub favicon: Vec<u8>,
     /// Generated site Open Graph image.
@@ -82,9 +84,9 @@ impl LoadedAssets {
         let style = COLORS.apply_to_css(&fs::read_to_string(
             project_root.join("assets/static/style.css"),
         )?);
-        let logo_source = fs::read_to_string(project_root.join("assets/static/logo.svg"))?;
-        let logo_svg = COLORS.apply_to_css(&logo_source);
-        let favicon = favicon_bytes(&logo_svg)?;
+        let logo_light_svg = logo_svg(project_root, COLORS.light_palette())?;
+        let logo_dark_svg = logo_svg(project_root, COLORS.default_palette())?;
+        let favicon = favicon_bytes(&logo_dark_svg)?;
         let og_image = open_graph_image(project_root)?;
         let resume = resume_bytes(project_root)?;
         let media = read_media(project_root)?;
@@ -93,7 +95,8 @@ impl LoadedAssets {
 
         Ok(Self {
             style,
-            logo_svg,
+            logo_light_svg,
+            logo_dark_svg,
             favicon,
             og_image,
             resume,
@@ -232,6 +235,19 @@ fn open_graph_image(project_root: &Path) -> Result<Vec<u8>, Box<dyn std::error::
         },
     )
     .encode_png()?)
+}
+
+fn logo_svg(project_root: &Path, palette: Palette) -> Result<String, Box<dyn std::error::Error>> {
+    let document = SiteWorld::new(
+        project_root,
+        project_root.join("typst/logo.typ"),
+        [("colors", palette.typst_dict())],
+    )?
+    .compile_document()?;
+    let [page] = document.pages() else {
+        return Err("expected exactly one page in logo document".into());
+    };
+    Ok(typst_svg::svg(page, &typst_svg::SvgOptions::default()))
 }
 
 fn resume_bytes(project_root: &Path) -> Result<Vec<u8>, Box<dyn std::error::Error>> {

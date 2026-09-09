@@ -4,4 +4,4 @@
 
 #set page(width: SIZE, height: SIZE, margin: 0pt, fill: none)
 
-#logo(SIZE)
+#align(center + horizon, logo(16pt))

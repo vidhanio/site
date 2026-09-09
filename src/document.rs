@@ -137,7 +137,8 @@ impl<T: Renderable> Renderable for Document<T> {
 
                     link rel="stylesheet" href=(Cached("/style.css"));
 
-                    link rel="icon" type="image/svg+xml" href=(Cached("/logo.svg"));
+                    link rel="icon" type="image/svg+xml" href=(Cached("/logo-light.svg")) media="(prefers-color-scheme: light)";
+                    link rel="icon" type="image/svg+xml" href=(Cached("/logo-dark.svg")) media="(prefers-color-scheme: dark)";
                     link rel="icon" type="image/x-icon" href=(Cached("/favicon.ico"));
                 }
 

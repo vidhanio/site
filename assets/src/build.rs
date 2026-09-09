@@ -42,7 +42,8 @@ pub fn build() -> Result<(), Box<dyn Error>> {
     fs::create_dir_all(out_dir.join("post-og"))?;
 
     fs::write(out_dir.join("style.css"), &assets.style)?;
-    fs::write(out_dir.join("logo.svg"), &assets.logo_svg)?;
+    fs::write(out_dir.join("logo-light.svg"), &assets.logo_light_svg)?;
+    fs::write(out_dir.join("logo-dark.svg"), &assets.logo_dark_svg)?;
     fs::write(out_dir.join("favicon.ico"), &assets.favicon)?;
     fs::write(out_dir.join("og.png"), &assets.og_image)?;
     fs::write(out_dir.join("resume.pdf"), &assets.resume)?;

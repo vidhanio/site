@@ -32,6 +32,7 @@ typst-kit = { version = "0.15", default-features = false, features = [
 typst-layout = "0.15"
 typst-pdf = "0.15"
 typst-render = "0.15"
+typst-svg = "0.15"
 
 [lints]
 [lints.clippy]

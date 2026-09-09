@@ -8,8 +8,8 @@ use typst::{
 /// The two palettes used by the site.
 pub const COLORS: Colors = Colors {
     light: Palette {
-        fg: "#151515",
-        bg: "#d5d5d5",
+        fg: "#2b2b2b",
+        bg: "#eaeaea",
     },
     dark: Palette {
         fg: "#d5d5d5",
@@ -25,6 +25,12 @@ pub struct Colors {
 }
 
 impl Colors {
+    /// Returns the palette used by the light color scheme.
+    #[must_use]
+    pub const fn light_palette(self) -> Palette {
+        self.light
+    }
+
     /// Returns the palette used when rendering generated images.
     #[must_use]
     pub const fn default_palette(self) -> Palette {

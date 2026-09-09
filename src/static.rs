@@ -26,7 +26,8 @@ pub fn router() -> Router<SiteState> {
     }
 
     Router::new()
-        .route("/logo.svg", routing::get(logo_svg))
+        .route("/logo-light.svg", routing::get(logo_light_svg))
+        .route("/logo-dark.svg", routing::get(logo_dark_svg))
         .route("/favicon.ico", routing::get(favicon_ico))
         .route("/style.css", routing::get(style))
         .route("/og.png", routing::get(og_image))
@@ -65,11 +66,21 @@ pub struct Cached<'a>(pub &'a str);
 pub struct Cached<'a>(pub &'a str);
 
 #[instrument(level = "trace")]
-async fn logo_svg() -> (TypedHeader<ContentType>, &'static str) {
+async fn logo_light_svg() -> (TypedHeader<ContentType>, &'static str) {
     #[cfg(not(feature = "reload"))]
-    let logo = include_str!(concat!(env!("OUT_DIR"), "/logo.svg"));
+    let logo = include_str!(concat!(env!("OUT_DIR"), "/logo-light.svg"));
     #[cfg(feature = "reload")]
-    let logo = crate::assets::get().logo_svg.as_str();
+    let logo = crate::assets::get().logo_light_svg.as_str();
+
+    (TypedHeader(ContentType::from(mime::IMAGE_SVG)), logo)
+}
+
+#[instrument(level = "trace")]
+async fn logo_dark_svg() -> (TypedHeader<ContentType>, &'static str) {
+    #[cfg(not(feature = "reload"))]
+    let logo = include_str!(concat!(env!("OUT_DIR"), "/logo-dark.svg"));
+    #[cfg(feature = "reload")]
+    let logo = crate::assets::get().logo_dark_svg.as_str();
 
     (TypedHeader(ContentType::from(mime::IMAGE_SVG)), logo)
 }
