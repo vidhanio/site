@@ -13,6 +13,7 @@
     inputs.flake-parts.lib.mkFlake { inherit inputs; } (
       {
         inputs,
+        self,
         ...
       }:
       {
@@ -61,6 +62,7 @@
             };
             commonArgs = {
               inherit src;
+              GIT_COMMIT_HASH = self.rev or self.dirtyRev or "unknown";
               strictDeps = true;
               cargoExtraArgs = "--locked";
             };
