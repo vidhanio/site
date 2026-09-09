@@ -5,6 +5,8 @@ runs:
   steps:
     - name: free disk space
       uses: wimpysworld/nothing-but-nix@v9
+      with:
+        hatchet-protocol: carve
 
     - name: install nix
       uses: cachix/install-nix-action@v31
