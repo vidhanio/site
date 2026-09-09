@@ -34,13 +34,13 @@ work:
 
   - name: Flipp
     position: Associate Software Engineer
-    startDate: 2026-05-01
-    endDate: 2027-04-30
+    startDate: 2025-05-01
+    endDate: 2026-04-30
     highlights:
       - Led a comprehensive refactor of a critical advertising component and implemented the majority of the changes
       - Refactored backend request handling and introduced caching, reducing requests to some internal endpoints by up to 98%
       - Co-led the research and implementation of video advertising capabilities
-      - Supported teammates and encouraged the adoption of agentic development practices
+      - Pioneered and promoted agentic development practices within the team
 
 projects:
   - name: vidhan.io
