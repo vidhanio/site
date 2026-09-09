@@ -2,4 +2,4 @@
 
 #show: open-graph
 
-#text(size: 50pt)[#strong[\[v\]]vidhan.io]
+#wordmark(50pt)
