@@ -94,10 +94,18 @@ jobs:
       - name: check documentation
         run: cargo doc --locked --workspace --all-features --no-deps
 
-  check-nix:
-    name: check nix
+  build:
+    name: build
+
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
 
     runs-on: ubuntu-latest
+
+    env:
+      IMAGE: us-east1-docker.pkg.dev/vidhan-io/site/site
 
     steps:
       - name: checkout
@@ -108,8 +116,33 @@ jobs:
       - name: setup nix
         uses: ./.github/actions/setup-nix
 
-      - name: check flake
-        run: nix flake check
+      - name: build image
+        run: nix build .#docker
+
+      - name: login to Google Cloud
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        id: gcloud-auth
+        uses: google-github-actions/auth@v2
+        with:
+          token_format: access_token
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT }}
+
+      - name: login to Google Artifact Registry
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: us-east1-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.gcloud-auth.outputs.access_token }}
+
+      - name: push image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          docker load < result
+          docker tag "$IMAGE:latest" "$IMAGE:main"
+          docker tag "$IMAGE:latest" "$IMAGE:sha-${GITHUB_SHA::7}"
+          docker push --all-tags "$IMAGE"
 
   check-format:
     name: check format
@@ -129,71 +162,6 @@ jobs:
       - name: check formatting
         run: nix build .#checks.x86_64-linux.treefmt
 
-  build:
-    name: build
-
-    permissions:
-      actions: write
-      contents: read
-      id-token: write
-
-    runs-on: ubuntu-latest
-
-    needs:
-      - test
-      - test-docs
-      - check
-      - check-docs
-      - check-nix
-      - check-format
-
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
-    steps:
-      - name: checkout
-        uses: actions/checkout@v6
-        with:
-          lfs: true
-
-      - name: generate Docker metadata
-        id: docker-metadata
-        uses: docker/metadata-action@v5
-        with:
-          images: us-east1-docker.pkg.dev/vidhan-io/site/site
-          tags: |
-            type=ref,event=branch
-            type=sha
-          flavor: |
-            latest=true
-
-      - name: set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: login to Google Cloud
-        id: gcloud-auth
-        uses: google-github-actions/auth@v2
-        with:
-          token_format: access_token
-          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.SERVICE_ACCOUNT }}
-
-      - name: login to Google Artifact Registry
-        uses: docker/login-action@v3
-        with:
-          registry: us-east1-docker.pkg.dev
-          username: oauth2accesstoken
-          password: ${{ steps.gcloud-auth.outputs.access_token }}
-
-      - name: build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.docker-metadata.outputs.tags }}
-          labels: ${{ steps.docker-metadata.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
   deploy:
     name: deploy
 
@@ -208,7 +176,14 @@ jobs:
     runs-on: ubuntu-latest
 
     needs:
+      - test
+      - test-docs
+      - check
+      - check-docs
+      - check-format
       - build
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - name: login to Google Cloud

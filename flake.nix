@@ -65,6 +65,13 @@
               cargoExtraArgs = "--locked";
             };
             cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+            sitePackage = craneLib.buildPackage (
+              commonArgs
+              // {
+                inherit cargoArtifacts;
+                meta.mainProgram = "vidhan-site";
+              }
+            );
           in
           {
             _module.args.pkgs = import inputs.nixpkgs {
@@ -72,13 +79,24 @@
               overlays = [ inputs.rust-overlay.overlays.default ];
             };
 
-            packages.default = craneLib.buildPackage (
-              commonArgs
-              // {
-                inherit cargoArtifacts;
-                meta.mainProgram = "vidhan-site";
-              }
-            );
+            packages = {
+              default = sitePackage;
+
+              docker = pkgs.dockerTools.buildLayeredImage {
+                name = "us-east1-docker.pkg.dev/vidhan-io/site/site";
+                tag = "latest";
+
+                config = {
+                  Entrypoint = [ (pkgs.lib.getExe sitePackage) ];
+                  Env = [
+                    "IP=0.0.0.0"
+                    "PORT=8080"
+                    "PRODUCTION=true"
+                  ];
+                  ExposedPorts."8080/tcp" = { };
+                };
+              };
+            };
 
             checks = {
               clippy = craneLib.cargoClippy (
