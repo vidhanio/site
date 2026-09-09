@@ -62,8 +62,7 @@
             commonArgs = {
               inherit src;
               strictDeps = true;
-              nativeBuildInputs = [ pkgs.tailwindcss_4 ];
-              cargoExtraArgs = "--all-features --locked";
+              cargoExtraArgs = "--locked";
             };
             cargoArtifacts = craneLib.buildDepsOnly commonArgs;
           in
@@ -86,7 +85,7 @@
                 commonArgs
                 // {
                   inherit cargoArtifacts;
-                  cargoClippyExtraArgs = "--all-targets -- -D warnings";
+                  cargoClippyExtraArgs = "--all-targets --all-features -- -D warnings";
                 }
               );
 
@@ -94,7 +93,7 @@
                 commonArgs
                 // {
                   inherit cargoArtifacts;
-                  cargoTestExtraArgs = "--all-targets";
+                  cargoTestExtraArgs = "--all-targets --all-features";
                 }
               );
 
@@ -123,7 +122,6 @@
                 pkgs.cargo-edit
                 pkgs.nil
                 pkgs.prek
-                pkgs.tailwindcss_4
                 config.treefmt.build.wrapper
               ];
             };

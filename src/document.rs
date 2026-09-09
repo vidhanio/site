@@ -1,10 +1,4 @@
-use std::{
-    borrow::Cow,
-    convert::Infallible,
-    fmt::Debug,
-    sync::{Arc, LazyLock},
-    time::Duration,
-};
+use std::{borrow::Cow, convert::Infallible, fmt::Debug};
 
 use axum::{
     RequestPartsExt,
@@ -13,19 +7,12 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use hypertext::{Buffer, prelude::*};
-use moka::future::Cache;
-use rspotify::{
-    model::{FullTrack, PlayableItem},
-    prelude::OAuthClient,
-};
-use tracing::{error, trace};
 
 use crate::{ResponseResult, SiteResult, SiteState, r#static::Cached};
 
 #[derive(Debug, Clone)]
 pub struct DocumentRequest {
     path: Uri,
-    now_playing: Option<Arc<FullTrack>>,
 }
 
 impl DocumentRequest {
@@ -69,39 +56,10 @@ impl FromRequestParts<SiteState> for DocumentRequest {
 
     async fn from_request_parts(
         parts: &mut Parts,
-        state: &SiteState,
+        _state: &SiteState,
     ) -> Result<Self, Self::Rejection> {
-        static NOW_PLAYING_CACHE: LazyLock<Cache<(), Option<Arc<FullTrack>>>> =
-            LazyLock::new(|| {
-                Cache::builder()
-                    .time_to_live(Duration::from_secs(5))
-                    .build()
-            });
-
         let OriginalUri(path) = parts.extract().await?;
-        let now_playing = NOW_PLAYING_CACHE
-            .get_with((), async {
-                trace!("fetching now playing track from spotify");
-
-                state
-                    .spotify
-                    .current_user_playing_item()
-                    .await
-                    .inspect_err(|error| {
-                        error!(?error, "failed to get now playing track");
-                    })
-                    .ok()
-                    .and_then(|item| {
-                        if let PlayableItem::Track(track) = item?.item? {
-                            Some(Arc::new(track))
-                        } else {
-                            None
-                        }
-                    })
-            })
-            .await;
-
-        Ok(Self { path, now_playing })
+        Ok(Self { path })
     }
 }
 
@@ -154,7 +112,8 @@ impl<T: Renderable> Renderable for Document<T> {
 
                     title { "vidhan.io / " (self.details.title) }
                     meta name="description" content="vidhan's home on the internet.";
-                    meta name="theme-color" content=(env!("THEME_COLOR"));
+                    meta name="theme-color" content="#eaeaea" media="(prefers-color-scheme: light)";
+                    meta name="theme-color" content="#151515" media="(prefers-color-scheme: dark)";
 
                     meta name="og:title" content={
                         @if let Some(title) = &self.details.title {
@@ -182,61 +141,16 @@ impl<T: Renderable> Renderable for Document<T> {
                     link rel="icon" type="image/x-icon" href=(Cached("/favicon.ico"));
                 }
 
-                body ."
-                    text-vidhan bg-vidhan-white dark:bg-vidhan-black
-                    font-berkeley-mono p-body
-                " {
-                    nav ."flex items-center justify-between" {
-                        a #logo href="/" {
-                            object ."w-4 pointer-events-none" type="image/svg+xml" data=(Cached("/logo.svg")) {}
-                        }
-
-                        @if let Some(now_playing) = &self.request.now_playing {
-                            div #now-playing {
-                                a href=[now_playing.external_urls.get("spotify")] {
-                                    (now_playing.name)
-                                }
-                                " - "
-                                @for (i, artist) in now_playing.artists.iter().enumerate() {
-                                    a href=[artist.external_urls.get("spotify")] {
-                                        (artist.name)
-                                    }
-                                    @if i < now_playing.artists.len() - 1 {
-                                        ", "
-                                    }
-                                }
-                            }
-                        }
+                body {
+                    nav aria-label="site" {
+                        a href="/" { strong { "[v]" } }
                     }
-
-                    hr;
 
                     main { (self.details.content) }
 
-                    hr;
-
-                    footer ."text-center" {
-                        a #repository href="https://github.com/vidhanio/site" {
-                            "made with with rust and ❤️ by vidhan."
-                        }
-                        br;
-                        a #license href=(Cached("/LICENSE.txt")) {
-                            "site licensed under agpl-3.0."
-                        }
-                        br;
-                        span #ring {
-                            a href="https://ring.simonwu.dev/prev/vidhan" {
-                                "←"
-                            }
-                            " "
-                            a href="https://ring.simonwu.dev/random/vidhan" {
-                                "🎲"
-                            }
-                            " "
-                            a href="https://ring.simonwu.dev/next/vidhan" {
-                                "→"
-                            }
-                        }
+                    footer {
+                        a href="https://github.com/vidhanio/site" { "[source]" }
+                        a href="/LICENSE.txt" { "[license]" }
                     }
                 }
             }

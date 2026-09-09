@@ -2,8 +2,8 @@ use std::{
     collections::{HashMap, hash_map::Entry},
     error::Error,
     fs,
-    path::Path,
-    sync::{LazyLock, Mutex},
+    path::{Path, PathBuf},
+    sync::Mutex,
 };
 
 use time::{OffsetDateTime, UtcOffset};
@@ -19,59 +19,58 @@ use typst::{
 use typst_kit::fonts::FontStore;
 use typst_layout::PagedDocument;
 
-use crate::{CARGO_MANIFEST_DIR, FONTS_DIR};
-
-static FONTS: LazyLock<FontStore> = LazyLock::new(|| {
-    let mut fonts = FontStore::new();
-    fonts.extend(typst_kit::fonts::scan(&FONTS_DIR));
-    fonts
-});
-
-#[derive(Debug)]
 pub struct SiteWorld {
     library: LazyHash<Library>,
     main: Source,
     fs: FileSystem,
+    fonts: FontStore,
     now: OffsetDateTime,
 }
 
 impl SiteWorld {
     pub fn new(
+        project_root: impl AsRef<Path>,
         main_path: impl AsRef<Path>,
         inputs: impl IntoIterator<Item = (impl Into<Str>, impl IntoValue)>,
     ) -> FileResult<Self> {
+        let project_root = project_root.as_ref().to_owned();
         let main_path = main_path.as_ref();
-        let virtual_path =
-            VirtualPath::virtualize(&CARGO_MANIFEST_DIR, main_path).map_err(|_| {
-                FileError::Other(Some(eco_format!(
-                    "main file path `{}` is not within the project root `{}`",
-                    main_path.display(),
-                    CARGO_MANIFEST_DIR.display()
-                )))
-            })?;
+        let virtual_path = VirtualPath::virtualize(&project_root, main_path).map_err(|_| {
+            FileError::Other(Some(eco_format!(
+                "main file path `{}` is not within the project root `{}`",
+                main_path.display(),
+                project_root.display()
+            )))
+        })?;
         let main_file_id = FileId::new(RootedPath::new(VirtualRoot::Project, virtual_path));
         let main_file_contents =
-            fs::read_to_string(main_path).map_err(|e| FileError::from_io(e, main_path))?;
+            fs::read_to_string(main_path).map_err(|error| FileError::from_io(error, main_path))?;
+
+        let mut fonts = FontStore::new();
+        fonts.extend(typst_kit::fonts::scan(
+            &project_root.join("assets/static/fonts"),
+        ));
 
         Ok(Self {
+            fs: FileSystem::new(project_root),
             library: LazyHash::new(
                 Library::builder()
                     .with_inputs(
                         inputs
                             .into_iter()
-                            .map(|(k, v)| (k.into(), v.into_value()))
+                            .map(|(key, value)| (key.into(), value.into_value()))
                             .collect(),
                     )
                     .build(),
             ),
             main: Source::new(main_file_id, main_file_contents),
-            fs: FileSystem::new(),
+            fonts,
             now: OffsetDateTime::now_utc(),
         })
     }
 
     pub fn compile_document(&self) -> Result<PagedDocument, Box<dyn Error>> {
-        let warned = typst::compile::<PagedDocument>(&self);
+        let warned = typst::compile::<PagedDocument>(self);
 
         if !warned.warnings.is_empty() {
             return Err(diagnostic_error(warned.warnings));
@@ -87,7 +86,7 @@ impl World for SiteWorld {
     }
 
     fn book(&self) -> &LazyHash<FontBook> {
-        FONTS.book()
+        self.fonts.book()
     }
 
     fn main(&self) -> FileId {
@@ -107,7 +106,7 @@ impl World for SiteWorld {
     }
 
     fn font(&self, index: usize) -> Option<Font> {
-        FONTS.font(index)
+        self.fonts.font(index)
     }
 
     fn today(&self, offset: Option<Duration>) -> Option<Datetime> {
@@ -123,14 +122,15 @@ impl World for SiteWorld {
     }
 }
 
-#[derive(Debug)]
 struct FileSystem {
+    project_root: PathBuf,
     files: Mutex<HashMap<FileId, FileEntry>>,
 }
 
 impl FileSystem {
-    fn new() -> Self {
+    fn new(project_root: PathBuf) -> Self {
         Self {
+            project_root,
             files: Mutex::new(HashMap::new()),
         }
     }
@@ -147,17 +147,12 @@ impl FileSystem {
             Entry::Vacant(entry) => {
                 let path = id
                     .vpath()
-                    .realize(&CARGO_MANIFEST_DIR)
+                    .realize(&self.project_root)
                     .map_err(FileError::Realize)?;
-
-                let bytes = fs::read(&path).map_err(|e| FileError::from_io(e, &path))?;
-
+                let bytes = fs::read(&path).map_err(|error| FileError::from_io(error, &path))?;
                 let mut file_entry = FileEntry::new(bytes);
-
                 let result = f(&mut file_entry)?;
-
                 entry.insert(file_entry);
-
                 Ok(result)
             }
         }
@@ -172,7 +167,7 @@ impl FileSystem {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 struct FileEntry {
     bytes: Bytes,
     source: Option<Source>,
@@ -203,7 +198,7 @@ impl FileEntry {
 pub fn diagnostic_error(diagnostics: EcoVec<SourceDiagnostic>) -> Box<dyn Error> {
     diagnostics
         .iter()
-        .map(|d| format!("{d:?}"))
+        .map(|diagnostic| format!("{diagnostic:?}"))
         .collect::<Vec<_>>()
         .join("\n")
         .into()

@@ -1,24 +1,9 @@
-use std::{collections::HashMap, error::Error, fmt::Write, sync::LazyLock};
+use std::{collections::HashMap, error::Error, fmt::Write, fs, path::Path};
 
 use hypertext::Raw;
 use tree_sitter_highlight::{Highlight, HighlightConfiguration, HighlightEvent, Highlighter};
 
 pub struct HighlighterConfigurations(HashMap<&'static str, HighlightConfiguration>);
-
-pub static HIGHLIGHTER_CONFIGS: LazyLock<HighlighterConfigurations> = LazyLock::new(|| {
-    HighlighterConfigurations::new().expect("should be able to create highlighter configurations")
-});
-
-macro_rules! tree_sitter_query {
-    ($path:literal) => {
-        include_str!(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/assets/tree-sitter/queries/",
-            $path,
-            ".scm"
-        ))
-    };
-}
 
 impl HighlighterConfigurations {
     const HIGHLIGHT_NAMES: &[&str] = &[
@@ -75,7 +60,11 @@ impl HighlighterConfigurations {
         "variable.parameter",
     ];
 
-    fn new() -> Result<Self, Box<dyn Error>> {
+    pub(super) fn new(project_root: &Path) -> Result<Self, Box<dyn Error>> {
+        let css_extensions = fs::read_to_string(
+            project_root.join("assets/tree-sitter/queries/css/highlights.ext.scm"),
+        )?;
+
         [
             (
                 "rust",
@@ -98,20 +87,15 @@ impl HighlighterConfigurations {
             (
                 "css",
                 tree_sitter_css::LANGUAGE.into(),
-                &format!(
-                    "{}\n{}",
-                    tree_sitter_css::HIGHLIGHTS_QUERY,
-                    tree_sitter_query!("css/highlights.ext")
-                ),
+                &format!("{}\n{}", tree_sitter_css::HIGHLIGHTS_QUERY, css_extensions),
                 "",
             ),
         ]
         .into_iter()
-        .map(|(name, lang, highlights, injections)| {
-            let mut config = HighlightConfiguration::new(lang, name, highlights, injections, "")?;
-
+        .map(|(name, language, highlights, injections)| {
+            let mut config =
+                HighlightConfiguration::new(language, name, highlights, injections, "")?;
             config.configure(Self::HIGHLIGHT_NAMES);
-
             Ok((name, config))
         })
         .collect::<Result<_, _>>()
@@ -126,29 +110,26 @@ impl HighlighterConfigurations {
         };
 
         let mut highlighter = Highlighter::new();
-
         let mut highlights =
             highlighter.highlight(config, code.as_bytes(), None, None, |lang| self.0.get(lang))?;
 
         highlights
-            .try_fold(String::new(), |mut buf, event| {
+            .try_fold(String::new(), |mut output, event| {
                 match event? {
-                    HighlightEvent::HighlightStart(Highlight(idx)) => {
-                        _ = write!(
-                            buf,
+                    HighlightEvent::HighlightStart(Highlight(index)) => {
+                        write!(
+                            output,
                             r#"<span class="{}">"#,
-                            Self::HIGHLIGHT_NAMES[idx].replace('.', " ")
-                        );
+                            Self::HIGHLIGHT_NAMES[index].replace('.', " ")
+                        )?;
                     }
                     HighlightEvent::Source { start, end } => {
-                        html_escape::encode_text_minimal_to_string(&code[start..end], &mut buf);
+                        html_escape::encode_text_minimal_to_string(&code[start..end], &mut output);
                     }
-                    HighlightEvent::HighlightEnd => {
-                        buf.push_str("</span>");
-                    }
+                    HighlightEvent::HighlightEnd => output.push_str("</span>"),
                 }
 
-                Ok(buf)
+                Ok(output)
             })
             .map(Raw::dangerously_create)
     }

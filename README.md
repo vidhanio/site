@@ -18,3 +18,13 @@ my personal site, written in rust.
 - server-side syntax highlighting via tree-sitter, the same engine which powers syntax highlighting in full-fledged ides
 - resume (made with typst) built and included at compile-time, and served like a normal file
 - optimal caching of static assets which is automatically cache busted on commit via the git commit hash
+
+## development
+
+Run `cargo run --features reload` while working on the site. In this mode,
+`vidhan-site-assets` loads and processes the stylesheet, posts, media, fonts,
+resume, icons, and open graph images at runtime, so editing an asset does not
+make Cargo rerun the asset pipeline during compilation.
+
+Release builds use the default feature set. The build script processes the same
+assets through `vidhan-site-assets` and embeds the results in the executable.

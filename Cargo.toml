@@ -8,7 +8,7 @@ build = "build/main.rs"
 publish.workspace = true
 
 [workspace]
-members = ["."]
+members = [".", "vidhan-site-assets"]
 
 [workspace.package]
 authors = ["Vidhan Bhatt <me@vidhan.io>"]
@@ -19,8 +19,8 @@ publish = false
 
 [workspace.dependencies]
 hypertext.git = "https://github.com/vidhanio/hypertext"
-hypertext.branch = "rewrite"
 thiserror = "2"
+vidhan-site-assets = { path = "vidhan-site-assets" }
 
 [dependencies]
 aho-corasick = "1"
@@ -32,47 +32,20 @@ envy = "0.4"
 futures-util = { version = "0.3", default-features = false }
 hypertext = { workspace = true, features = ["axum"] }
 mime = "0.3"
-moka = { version = "0.12.16", features = ["future"] }
-rspotify = { version = "0.16", default-features = false, features = [
-  "client-reqwest",
-  "reqwest-rustls-tls",
-] }
 serde = { version = "1", features = ["derive"] }
 thiserror.workspace = true
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 tower-http = { version = "0.7", features = ["trace"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+vidhan-site-assets = { workspace = true, optional = true }
+
+[features]
+default = []
+reload = ["dep:vidhan-site-assets"]
 
 [build-dependencies]
-heck = "0.5"
-html-escape = "0.2"
-hypertext.workspace = true
-ico = "0.5"
-prettyplease = "0.3"
-proc-macro2 = "1"
-pulldown-cmark = "0.13"
-quote = "1"
-resvg = { version = "0.48", default-features = false }
-serde = { version = "1", features = ["derive"] }
-serde_yaml = "0.9"
-syn = { version = "3", default-features = false, features = ["parsing"] }
-time = "0.3"
-tree-sitter = "0.27"
-tree-sitter-css = "0.25"
-tree-sitter-highlight = "0.27"
-tree-sitter-html = "0.23"
-tree-sitter-java = "0.23"
-tree-sitter-rust = "0.24"
-typst = "0.15"
-typst-kit = { version = "0.15", default-features = false, features = [
-  "scan-fonts",
-] }
-typst-layout = "0.15"
-typst-pdf = "0.15"
-typst-render = "0.15"
-ureq = "3"
-which = "8"
+vidhan-site-assets.workspace = true
 
 [lints]
 [lints.clippy]

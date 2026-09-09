@@ -1,21 +1,23 @@
 //! vidhan's site.
 
+#[cfg(feature = "reload")]
+mod assets;
 mod config;
 mod document;
 mod error;
+mod markdown_link;
 mod pages;
 mod post;
 mod r#static;
 mod wozeify;
 
-use std::{io, sync::Arc};
+use std::io;
 
 use axum::{
     http::{Method, Uri},
     middleware,
     response::{IntoResponse, Response},
 };
-use rspotify::AuthCodeSpotify;
 use tokio::net::TcpListener;
 use tower_http::trace::TraceLayer;
 
@@ -43,12 +45,7 @@ impl IntoResponse for DocumentError {
     }
 }
 
-#[derive(Debug)]
-struct SiteStateInner {
-    spotify: AuthCodeSpotify,
-}
-
-type SiteState = Arc<SiteStateInner>;
+type SiteState = ();
 
 /// Serve the application.
 ///
@@ -56,11 +53,10 @@ type SiteState = Arc<SiteStateInner>;
 ///
 /// Returns an error if the application fails to start.
 pub async fn serve(config: Config) -> io::Result<()> {
-    let tcp_listener = TcpListener::bind(config.socket_addr()).await?;
-    let state = Arc::new(SiteStateInner {
-        spotify: config.spotify_client(),
-    });
+    #[cfg(feature = "reload")]
+    assets::initialize()?;
 
+    let tcp_listener = TcpListener::bind(config.socket_addr()).await?;
     let router = pages::router()
         .merge(r#static::router())
         .fallback(async |doc: DocumentRequest, uri: Uri| {
@@ -69,12 +65,8 @@ pub async fn serve(config: Config) -> io::Result<()> {
         .method_not_allowed_fallback(async |doc: DocumentRequest, uri: Uri, method: Method| {
             doc.build(SiteError::MethodNotAllowed(uri, method).into())
         })
-        .layer(middleware::map_response_with_state(
-            Arc::clone(&state),
-            wozeify::wozeify,
-        ))
-        .layer(TraceLayer::new_for_http())
-        .with_state(state);
+        .layer(middleware::map_response(wozeify::wozeify))
+        .layer(TraceLayer::new_for_http());
 
     axum::serve(tcp_listener, router).await
 }

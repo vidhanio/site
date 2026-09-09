@@ -1,4 +1,4 @@
-name: ci/cd
+name: CI/CD
 
 on:
   - push
@@ -27,7 +27,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: run tests
-        run: cargo test --all-features --all-targets
+        run: cargo test --locked --all-features --all-targets
 
   test-docs:
     name: test docs
@@ -47,7 +47,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: run doc tests
-        run: cargo test --doc --all-features
+        run: cargo test --locked --doc --all-features
 
   check:
     name: check
@@ -69,7 +69,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: check code
-        run: cargo clippy --all-targets --all-features -- -D warnings
+        run: cargo clippy --locked --all-targets --all-features -- -D warnings
 
   check-docs:
     name: check docs
@@ -92,7 +92,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: check documentation
-        run: cargo doc --workspace --all-features --no-deps
+        run: cargo doc --locked --workspace --all-features --no-deps
 
   check-nix:
     name: check nix
@@ -135,7 +135,6 @@ jobs:
     permissions:
       actions: write
       contents: read
-      packages: write
       id-token: write
 
     runs-on: ubuntu-latest
@@ -160,27 +159,15 @@ jobs:
         id: docker-metadata
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ghcr.io/vidhanio/site
-            us-east1-docker.pkg.dev/vidhan-io/site/site
+          images: us-east1-docker.pkg.dev/vidhan-io/site/site
           tags: |
             type=ref,event=branch
             type=sha
           flavor: |
             latest=true
 
-      - name: set up QEMU
-        uses: docker/setup-qemu-action@v3
-
       - name: set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: login to Google Cloud
         id: gcloud-auth

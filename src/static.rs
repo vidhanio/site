@@ -37,7 +37,7 @@ pub fn router() -> Router<SiteState> {
         .route("/LICENSE.txt", routing::get(license))
         .layer(middleware::map_response(
             async |Query(params): Query<CacheParams>, res: Response| {
-                if params.v.is_some() {
+                if params.v.is_some() && !cfg!(feature = "reload") {
                     let cc = CacheControl::new()
                         .with_public()
                         .with_immutable()
@@ -51,6 +51,7 @@ pub fn router() -> Router<SiteState> {
         ))
 }
 
+#[cfg(not(feature = "reload"))]
 #[derive(Debug, Clone, Copy, Renderable)]
 #[attribute(
     (self.0)
@@ -58,11 +59,19 @@ pub fn router() -> Router<SiteState> {
 )]
 pub struct Cached<'a>(pub &'a str);
 
+#[cfg(feature = "reload")]
+#[derive(Debug, Clone, Copy, Renderable)]
+#[attribute((self.0))]
+pub struct Cached<'a>(pub &'a str);
+
 #[instrument(level = "trace")]
 async fn logo_svg() -> (TypedHeader<ContentType>, &'static str) {
-    const LOGO_SVG: &str = include_str!(concat!(env!("OUT_DIR"), "/logo.svg"));
+    #[cfg(not(feature = "reload"))]
+    let logo = include_str!(concat!(env!("OUT_DIR"), "/logo.svg"));
+    #[cfg(feature = "reload")]
+    let logo = crate::assets::get().logo_svg.as_str();
 
-    (TypedHeader(ContentType::from(mime::IMAGE_SVG)), LOGO_SVG)
+    (TypedHeader(ContentType::from(mime::IMAGE_SVG)), logo)
 }
 
 #[instrument(level = "trace")]
@@ -73,23 +82,32 @@ async fn favicon_ico() -> (TypedHeader<ContentType>, &'static [u8]) {
             .expect("image/x-icon should be a valid MIME type")
     });
 
-    const FAVICON_ICO: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/favicon.ico"));
+    #[cfg(not(feature = "reload"))]
+    let favicon = include_bytes!(concat!(env!("OUT_DIR"), "/favicon.ico")).as_slice();
+    #[cfg(feature = "reload")]
+    let favicon = crate::assets::get().favicon.as_slice();
 
-    (TypedHeader(X_ICON.clone().into()), FAVICON_ICO)
+    (TypedHeader(X_ICON.clone().into()), favicon)
 }
 
 #[instrument(level = "trace")]
 async fn style() -> Css<&'static str> {
-    const STYLE_CSS: &str = include_str!(concat!(env!("OUT_DIR"), "/style.css"));
+    #[cfg(not(feature = "reload"))]
+    let css = include_str!(concat!(env!("OUT_DIR"), "/style.css"));
+    #[cfg(feature = "reload")]
+    let css = crate::assets::get().style.as_str();
 
-    Css(STYLE_CSS)
+    Css(css)
 }
 
 #[instrument(level = "trace")]
 async fn og_image() -> ResponseResult<(TypedHeader<ContentType>, &'static [u8])> {
-    const OG_IMAGE: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/og.png"));
+    #[cfg(not(feature = "reload"))]
+    let image = include_bytes!(concat!(env!("OUT_DIR"), "/og.png")).as_slice();
+    #[cfg(feature = "reload")]
+    let image = crate::assets::get().og_image.as_slice();
 
-    Ok((TypedHeader(mime::IMAGE_PNG.into()), OG_IMAGE))
+    Ok((TypedHeader(mime::IMAGE_PNG.into()), image))
 }
 
 #[instrument(level = "trace")]
@@ -100,10 +118,11 @@ async fn post_og_image(
     doc.try_respond(|| {
         let post = Post::get(slug)?;
 
-        Ok((TypedHeader(mime::IMAGE_PNG.into()), post.image))
+        Ok((TypedHeader(mime::IMAGE_PNG.into()), post.image()))
     })
 }
 
+#[cfg(not(feature = "reload"))]
 include!(concat!(env!("OUT_DIR"), "/media.rs"));
 
 #[instrument(level = "trace")]
@@ -111,9 +130,23 @@ async fn media(
     doc: DocumentRequest,
     Path(media): Path<String>,
 ) -> ResponseResult<(TypedHeader<ContentType>, &'static [u8])> {
-    doc.try_respond(|| media::get(&media).ok_or(SiteError::MediaNotFound(media)))
+    doc.try_respond(|| {
+        #[cfg(not(feature = "reload"))]
+        {
+            self::media::get(&media).ok_or(SiteError::MediaNotFound(media))
+        }
+
+        #[cfg(feature = "reload")]
+        {
+            let asset = crate::assets::get()
+                .media(&media)
+                .ok_or(SiteError::MediaNotFound(media))?;
+            Ok((content_type(asset.content_type), asset.bytes.as_slice()))
+        }
+    })
 }
 
+#[cfg(not(feature = "reload"))]
 include!(concat!(env!("OUT_DIR"), "/fonts.rs"));
 
 #[instrument(level = "trace")]
@@ -121,7 +154,20 @@ async fn fonts(
     doc: DocumentRequest,
     Path(font): Path<String>,
 ) -> ResponseResult<(TypedHeader<ContentType>, &'static [u8])> {
-    doc.try_respond(|| fonts::get(&font).ok_or(SiteError::FontNotFound(font)))
+    doc.try_respond(|| {
+        #[cfg(not(feature = "reload"))]
+        {
+            self::fonts::get(&font).ok_or(SiteError::FontNotFound(font))
+        }
+
+        #[cfg(feature = "reload")]
+        {
+            let asset = crate::assets::get()
+                .font(&font)
+                .ok_or(SiteError::FontNotFound(font))?;
+            Ok((content_type(asset.content_type), asset.bytes.as_slice()))
+        }
+    })
 }
 
 #[instrument(level = "debug")]
@@ -130,13 +176,24 @@ async fn resume() -> (
     TypedHeader<ContentType>,
     &'static [u8],
 ) {
-    const RESUME_BYTES: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/resume.pdf"));
+    #[cfg(not(feature = "reload"))]
+    let resume = include_bytes!(concat!(env!("OUT_DIR"), "/resume.pdf")).as_slice();
+    #[cfg(feature = "reload")]
+    let resume = crate::assets::get().resume.as_slice();
 
     (
         TypedHeader(ContentDisposition::inline()),
         TypedHeader(mime::APPLICATION_PDF.into()),
-        RESUME_BYTES,
+        resume,
     )
+}
+
+#[cfg(feature = "reload")]
+fn content_type(value: &str) -> TypedHeader<ContentType> {
+    let mime = value
+        .parse::<Mime>()
+        .expect("asset MIME type should be valid");
+    TypedHeader(ContentType::from(mime))
 }
 
 #[instrument(level = "debug")]

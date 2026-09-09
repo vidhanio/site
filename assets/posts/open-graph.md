@@ -2,7 +2,7 @@
 date: 2024-01-01
 ---
 
-# how i added customized open graph image generation to my rust blog!
+# open graph on my blog
 
 **update (2025-07-14):** this post is now outdated, as i have switched to using [typst](https://typst.app) for open graph image generation.
 

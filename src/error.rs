@@ -11,9 +11,6 @@ pub enum SiteError {
     #[error("axum error")]
     Axum(#[from] axum::Error),
 
-    #[error("spotify error")]
-    Spotify(#[from] rspotify::ClientError),
-
     #[error("post not found: \"{0}\"")]
     PostNotFound(String),
 
@@ -33,7 +30,7 @@ pub enum SiteError {
 impl SiteError {
     const fn status_code(&self) -> StatusCode {
         match self {
-            Self::Axum(_) | Self::Spotify(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::Axum(_) => StatusCode::INTERNAL_SERVER_ERROR,
             Self::PostNotFound(_)
             | Self::MediaNotFound(_)
             | Self::FontNotFound(_)
