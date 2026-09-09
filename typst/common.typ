@@ -12,9 +12,7 @@
   fill: COLORS.fg,
 )[\[v\]]
 
-#let wordmark(size) = {
-  text(size: size)[*[v]*idhan.io]
-}
+#let wordmark(size) = text(size: size)[*[v]*idhan.io]
 
 #let open-graph(body) = {
   set text(
