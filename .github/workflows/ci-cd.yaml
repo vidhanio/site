@@ -130,7 +130,7 @@ jobs:
 
       - name: login to Google Artifact Registry
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: us-east1-docker.pkg.dev
           username: oauth2accesstoken
