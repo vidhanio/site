@@ -24,7 +24,7 @@
   --background: var(--base06);
   --foreground: var(--base02);
   --inline-code-background: var(--base05);
-  --muted: var(--base04);
+  --muted: var(--base03);
 
   color-scheme: light dark;
   color: var(--foreground);
@@ -39,7 +39,7 @@
     --background: var(--base00);
     --foreground: var(--base05);
     --inline-code-background: var(--base01);
-    --muted: var(--base02);
+    --muted: var(--base03);
   }
 }
 
