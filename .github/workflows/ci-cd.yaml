@@ -157,7 +157,7 @@ jobs:
 
       - name: generate Docker metadata
         id: docker-metadata
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: us-east1-docker.pkg.dev/vidhan-io/site/site
           tags: |
