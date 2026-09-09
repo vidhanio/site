@@ -110,7 +110,13 @@ impl<T: Renderable> Renderable for Document<T> {
                     meta name="viewport" content="width=device-width, initial-scale=1.0";
                     meta charset="utf-8";
 
-                    title { "vidhan.io / " (self.details.title) }
+                    title {
+                        @if let Some(title) = &self.details.title {
+                            "vidhan.io / " (title)
+                        } @else {
+                            "vidhan.io"
+                        }
+                    }
                     meta name="description" content="vidhan's home on the internet.";
                     meta name="theme-color" content="#eaeaea" media="(prefers-color-scheme: light)";
                     meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)";
