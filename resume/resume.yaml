@@ -70,11 +70,12 @@ projects:
       - Created for use as an HTML template engine in my personal website
       - Uses Rust's type system to ensure that HTML tags and attributes are valid
       - Uses GitHub Actions for continuous integration
-      - Published as an open-source project/library, and has accumulated 100+ stars on GitHub and is used in 10+ other websites
+      - Published as an open-source project/library, and has accumulated almost 300 stars on GitHub and is used in 10+ other websites
 
 skills:
   - name: Programming Languages
     keywords:
+      - Nix
       - Rust
       - Go
       - JavaScript
@@ -91,6 +92,9 @@ skills:
 
   - name: Frameworks/Databases
     keywords:
+      - llama.cpp
+      - Agent Client Protocol
+      - Discord API
       - React
       - Next.js
       - Node.js
@@ -100,8 +104,9 @@ skills:
       - MongoDB
       - Sled
 
-  - name: Continuous Integration/Continuous Development
+  - name: DevOps
     keywords:
+      - NixOS
       - Docker
       - Git
       - GitHub
