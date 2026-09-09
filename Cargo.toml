@@ -8,7 +8,7 @@ build = "build/main.rs"
 publish.workspace = true
 
 [workspace]
-members = [".", "vidhan-site-assets"]
+members = [".", "assets"]
 
 [workspace.package]
 authors = ["Vidhan Bhatt <me@vidhan.io>"]
@@ -20,7 +20,7 @@ publish = false
 [workspace.dependencies]
 hypertext.git = "https://github.com/vidhanio/hypertext"
 thiserror = "2"
-vidhan-site-assets = { path = "vidhan-site-assets" }
+vidhan-site-assets = { path = "assets" }
 
 [dependencies]
 aho-corasick = "1"

@@ -5,7 +5,7 @@ FROM chef AS planner
 COPY ./Cargo.toml ./Cargo.lock ./
 COPY ./src ./src
 COPY ./build ./build
-COPY ./vidhan-site-assets ./vidhan-site-assets
+COPY ./assets ./assets
 RUN cargo chef prepare
 
 FROM chef AS builder

@@ -22,7 +22,7 @@ my personal site, written in rust.
 ## development
 
 Run `cargo run --features reload` while working on the site. In this mode,
-`vidhan-site-assets` loads and processes the stylesheet, posts, media, fonts,
+The `vidhan-site-assets` crate in `assets/` loads and processes the stylesheet, posts, media, fonts,
 resume, icons, and open graph images at runtime, so editing an asset does not
 make Cargo rerun the asset pipeline during compilation.
 
