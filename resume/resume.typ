@@ -79,7 +79,9 @@
   (
     link("mailto:" + resume.basics.email, resume.basics.email),
     link("https://" + resume.basics.url, resume.basics.url),
-    ..resume.basics.profiles.map(p => link(p.url)[*\[#lower(p.network)\]* #p.username]),
+    ..resume.basics.profiles.map(p => link(
+      p.url,
+    )[*\[#lower(p.network)\]* #p.username]),
   ).join(" | ")
 )
 
