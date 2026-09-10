@@ -22,9 +22,9 @@ my personal site, written in rust.
 ## development
 
 Run `cargo run --features reload` while working on the site. In this mode,
-The `vidhan-site-assets` crate in `assets/` loads and processes the stylesheet, posts, media, fonts,
-resume, icons, and open graph images at runtime, so editing an asset does not
-make Cargo rerun the asset pipeline during compilation.
+the `vidhan-site-assets` crate in `assets/` reloads and processes the stylesheet,
+posts, media, fonts, resume, icons, and open graph images for every request, so
+asset edits are visible without rebuilding or restarting the server.
 
 Release builds use the default feature set. The build script processes the same
 assets through `vidhan-site-assets` and embeds the results in the executable.

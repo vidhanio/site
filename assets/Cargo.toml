@@ -11,13 +11,12 @@ heck = "0.5"
 html-escape = "0.2"
 hypertext.workspace = true
 ico = "0.5"
-prettyplease = "0.3"
 pulldown-cmark = "0.13"
-quote = "1"
 resvg = { version = "0.48", default-features = false }
 serde = { version = "1", features = ["derive"] }
+png = "0.18"
 serde_yaml = "0.9"
-syn = { version = "3", default-features = false, features = ["parsing"] }
+thiserror.workspace = true
 time = "0.3"
 tree-sitter = "0.27"
 tree-sitter-css = "0.25"

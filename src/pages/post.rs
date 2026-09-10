@@ -3,11 +3,15 @@ use tracing::instrument;
 
 use crate::{
     ResponseResult,
+    assets::{Assets, Post},
     document::{Document, DocumentDetails, DocumentRequest},
-    post::Post,
 };
 
 #[instrument(level = "debug", skip(doc), err(Debug))]
-pub async fn get(doc: DocumentRequest, Path(slug): Path<String>) -> ResponseResult<Document<Post>> {
-    doc.try_build(|| Post::get(slug).map(DocumentDetails::from))
+pub async fn get(
+    doc: DocumentRequest,
+    assets: Assets,
+    Path(slug): Path<String>,
+) -> ResponseResult<Document<Post>> {
+    doc.try_build(|| assets.post(slug).map(DocumentDetails::from))
 }

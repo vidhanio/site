@@ -46,6 +46,9 @@ reload = ["dep:vidhan-site-assets"]
 
 [build-dependencies]
 vidhan-site-assets.workspace = true
+prettyplease = "0.3"
+quote = "1"
+syn = { version = "3", default-features = false, features = ["parsing"] }
 
 [lints]
 [lints.clippy]

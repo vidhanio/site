@@ -8,7 +8,7 @@ use axum::{
 };
 use hypertext::{Buffer, prelude::*};
 
-use crate::{ResponseResult, SiteResult, SiteState, r#static::Cached};
+use crate::{ResponseResult, SiteResult, SiteState, assets::Cached};
 
 #[derive(Debug, Clone)]
 pub struct DocumentRequest {

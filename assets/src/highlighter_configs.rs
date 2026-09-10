@@ -1,7 +1,9 @@
-use std::{collections::HashMap, error::Error, fmt::Write, fs, path::Path};
+use std::{collections::HashMap, fmt::Write, fs, path::Path};
 
 use hypertext::Raw;
 use tree_sitter_highlight::{Highlight, HighlightConfiguration, HighlightEvent, Highlighter};
+
+use crate::Error;
 
 pub struct HighlighterConfigurations(HashMap<&'static str, HighlightConfiguration>);
 
@@ -60,7 +62,7 @@ impl HighlighterConfigurations {
         "variable.parameter",
     ];
 
-    pub(super) fn new(project_root: &Path) -> Result<Self, Box<dyn Error>> {
+    pub(super) fn new(project_root: &Path) -> Result<Self, Error> {
         let css_extensions = fs::read_to_string(
             project_root.join("assets/tree-sitter/queries/css/highlights.ext.scm"),
         )?;
@@ -102,7 +104,7 @@ impl HighlighterConfigurations {
         .map(Self)
     }
 
-    pub fn highlight(&self, language: &str, code: &str) -> Result<Raw<String>, Box<dyn Error>> {
+    pub fn highlight(&self, language: &str, code: &str) -> Result<Raw<String>, Error> {
         let Some(config) = self.0.get(language) else {
             return Ok(Raw::dangerously_create(
                 html_escape::encode_text_minimal(code).into_owned(),

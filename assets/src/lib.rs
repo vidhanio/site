@@ -1,11 +1,10 @@
 #![expect(missing_docs)]
 
 mod colors;
+mod error;
 mod highlighter_configs;
 mod post;
 mod typst_world;
-
-pub mod build;
 
 use std::{
     collections::BTreeMap,
@@ -14,6 +13,7 @@ use std::{
 };
 
 pub use colors::{COLORS, Colors, Palette};
+pub use error::Error;
 use highlighter_configs::HighlighterConfigurations;
 use ico::{IconDir, IconDirEntry, IconImage, ResourceType};
 use post::Post;
@@ -66,7 +66,7 @@ pub type Assets = LoadedAssets;
 /// # Errors
 ///
 /// Returns an error when an asset cannot be read, parsed, or generated.
-pub fn load(project_root: impl AsRef<Path>) -> Result<LoadedAssets, Box<dyn std::error::Error>> {
+pub fn load(project_root: impl AsRef<Path>) -> Result<LoadedAssets, Error> {
     LoadedAssets::load(project_root)
 }
 
@@ -76,7 +76,7 @@ impl LoadedAssets {
     /// # Errors
     ///
     /// Returns an error when an asset cannot be read, parsed, or generated.
-    pub fn load(project_root: impl AsRef<Path>) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn load(project_root: impl AsRef<Path>) -> Result<Self, Error> {
         let project_root = project_root.as_ref();
         let commit_hash = git_commit_hash(project_root);
         let highlighters = HighlighterConfigurations::new(project_root)?;
@@ -123,29 +123,25 @@ fn read_posts(
     project_root: &Path,
     commit_hash: &str,
     highlighters: &HighlighterConfigurations,
-) -> Result<Vec<ProcessedPost>, Box<dyn std::error::Error>> {
-    let mut posts = fs::read_dir(project_root.join("assets/posts"))?
-        .map(|entry| {
-            let path = entry?.path();
-            if !path.is_file() {
-                return Err(format!(
-                    "posts directory should only contain files, found: {}",
-                    path.display()
-                )
-                .into());
-            }
-            if path.extension().and_then(std::ffi::OsStr::to_str) != Some("md") {
-                return Err(format!("unsupported post extension: {}", path.display()).into());
-            }
-            let slug = path
-                .file_stem()
-                .and_then(std::ffi::OsStr::to_str)
-                .ok_or_else(|| format!("invalid post filename: {}", path.display()))?
-                .to_owned();
-            let markdown = fs::read_to_string(&path)?;
-            Post::new(&slug, &markdown, commit_hash, highlighters)
-        })
-        .collect::<Result<Vec<_>, Box<dyn std::error::Error>>>()?
+) -> Result<Vec<ProcessedPost>, Error> {
+    let mut posts = Vec::new();
+    for entry in fs::read_dir(project_root.join("assets/posts"))? {
+        let path = entry?.path();
+        if !path.is_file() {
+            return Err(Error::InvalidPath(path));
+        }
+        if path.extension().and_then(std::ffi::OsStr::to_str) != Some("md") {
+            return Err(Error::UnsupportedContentType(path));
+        }
+        let slug = path
+            .file_stem()
+            .and_then(std::ffi::OsStr::to_str)
+            .ok_or_else(|| Error::InvalidPath(path.clone()))?
+            .to_owned();
+        let markdown = fs::read_to_string(&path)?;
+        posts.push(Post::new(&slug, &markdown, commit_hash, highlighters)?);
+    }
+    let mut posts = posts
         .into_iter()
         .map(|post| post.process(project_root))
         .collect::<Result<Vec<_>, _>>()?;
@@ -154,9 +150,7 @@ fn read_posts(
     Ok(posts)
 }
 
-fn read_media(
-    project_root: &Path,
-) -> Result<BTreeMap<String, BinaryAsset>, Box<dyn std::error::Error>> {
+fn read_media(project_root: &Path) -> Result<BTreeMap<String, BinaryAsset>, Error> {
     read_binary_assets(
         project_root.join("assets/media"),
         |extension| match extension {
@@ -167,9 +161,7 @@ fn read_media(
     )
 }
 
-fn read_fonts(
-    project_root: &Path,
-) -> Result<BTreeMap<String, BinaryAsset>, Box<dyn std::error::Error>> {
+fn read_fonts(project_root: &Path) -> Result<BTreeMap<String, BinaryAsset>, Error> {
     read_binary_assets(
         project_root.join("assets/static/fonts"),
         |extension| match extension {
@@ -183,50 +175,55 @@ fn read_fonts(
 fn read_binary_assets(
     directory: PathBuf,
     content_type: impl Fn(&str) -> Option<&'static str>,
-) -> Result<BTreeMap<String, BinaryAsset>, Box<dyn std::error::Error>> {
-    fs::read_dir(directory)?
-        .map(|entry| {
-            let path = entry?.path();
-            if !path.is_file() {
-                return Err(format!(
-                    "asset directory should only contain files: {}",
-                    path.display()
-                )
-                .into());
-            }
-            let name = path
-                .file_name()
-                .and_then(std::ffi::OsStr::to_str)
-                .ok_or_else(|| format!("invalid asset filename: {}", path.display()))?;
-            let extension = path
-                .extension()
-                .and_then(std::ffi::OsStr::to_str)
-                .unwrap_or_default();
-            let Some(content_type) = content_type(extension) else {
-                return Ok(None);
-            };
-            Ok(Some((
-                name.to_owned(),
-                BinaryAsset {
-                    content_type,
-                    bytes: fs::read(path)?,
-                },
-            )))
-        })
-        .collect::<Result<Vec<_>, Box<dyn std::error::Error>>>()
-        .map(|assets| assets.into_iter().flatten().collect())
+) -> Result<BTreeMap<String, BinaryAsset>, Error> {
+    let mut assets = BTreeMap::new();
+    for entry in fs::read_dir(directory)? {
+        let path = entry?.path();
+        if !path.is_file() {
+            return Err(Error::InvalidPath(path));
+        }
+        let name = path
+            .file_name()
+            .and_then(std::ffi::OsStr::to_str)
+            .ok_or_else(|| Error::InvalidPath(path.clone()))?
+            .to_owned();
+        let extension = path
+            .extension()
+            .and_then(std::ffi::OsStr::to_str)
+            .unwrap_or_default();
+        let Some(content_type) = content_type(extension) else {
+            continue;
+        };
+        assets.insert(
+            name,
+            BinaryAsset {
+                content_type,
+                bytes: fs::read(path)?,
+            },
+        );
+    }
+    Ok(assets)
 }
 
-fn open_graph_image(project_root: &Path) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+fn open_graph_image(project_root: &Path) -> Result<Vec<u8>, Error> {
     let document = SiteWorld::new(
         project_root,
         project_root.join("typst/og/global.typ"),
         [("colors", COLORS.default_palette().typst_dict())],
     )?
     .compile_document()?;
-    let [page] = document.pages() else {
-        return Err("expected exactly one page in open graph document".into());
-    };
+    let page = document.pages().first().ok_or(Error::PageCount {
+        document: "global open graph image",
+        expected: 1,
+        actual: 0,
+    })?;
+    if document.pages().len() != 1 {
+        return Err(Error::PageCount {
+            document: "global open graph image",
+            expected: 1,
+            actual: document.pages().len(),
+        });
+    }
     Ok(typst_render::render(
         page,
         &typst_render::RenderOptions {
@@ -237,20 +234,29 @@ fn open_graph_image(project_root: &Path) -> Result<Vec<u8>, Box<dyn std::error::
     .encode_png()?)
 }
 
-fn logo_svg(project_root: &Path, palette: Palette) -> Result<String, Box<dyn std::error::Error>> {
+fn logo_svg(project_root: &Path, palette: Palette) -> Result<String, Error> {
     let document = SiteWorld::new(
         project_root,
         project_root.join("typst/logo.typ"),
         [("colors", palette.typst_dict())],
     )?
     .compile_document()?;
-    let [page] = document.pages() else {
-        return Err("expected exactly one page in logo document".into());
-    };
+    let page = document.pages().first().ok_or(Error::PageCount {
+        document: "logo",
+        expected: 1,
+        actual: 0,
+    })?;
+    if document.pages().len() != 1 {
+        return Err(Error::PageCount {
+            document: "logo",
+            expected: 1,
+            actual: document.pages().len(),
+        });
+    }
     Ok(typst_svg::svg(page, &typst_svg::SvgOptions::default()))
 }
 
-fn resume_bytes(project_root: &Path) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+fn resume_bytes(project_root: &Path) -> Result<Vec<u8>, Error> {
     let document = SiteWorld::new(
         project_root,
         project_root.join("resume/resume.typ"),
@@ -260,7 +266,7 @@ fn resume_bytes(project_root: &Path) -> Result<Vec<u8>, Box<dyn std::error::Erro
     typst_pdf::pdf(&document, &PdfOptions::default()).map_err(diagnostic_error)
 }
 
-fn favicon_bytes(svg_data: &str) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+fn favicon_bytes(svg_data: &str) -> Result<Vec<u8>, Error> {
     let svg = Tree::from_str(svg_data, &Options::default())?;
     let svg_size = svg.size().width();
     let mut ico = IconDir::new(ResourceType::Icon);

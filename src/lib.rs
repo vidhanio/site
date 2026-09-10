@@ -1,14 +1,11 @@
 //! vidhan's site.
 
-#[cfg(feature = "reload")]
 mod assets;
 mod config;
 mod document;
 mod error;
-mod markdown_link;
 mod pages;
 mod post;
-mod r#static;
 mod wozeify;
 
 use std::io;
@@ -53,12 +50,9 @@ type SiteState = ();
 ///
 /// Returns an error if the application fails to start.
 pub async fn serve(config: Config) -> io::Result<()> {
-    #[cfg(feature = "reload")]
-    assets::initialize()?;
-
     let tcp_listener = TcpListener::bind(config.socket_addr()).await?;
     let router = pages::router()
-        .merge(r#static::router())
+        .merge(assets::router())
         .fallback(async |doc: DocumentRequest, uri: Uri| {
             doc.build(SiteError::PageNotFound(uri).into())
         })

@@ -1,6 +1,5 @@
 use std::{
     collections::{HashMap, hash_map::Entry},
-    error::Error,
     fs,
     path::{Path, PathBuf},
     sync::Mutex,
@@ -10,7 +9,7 @@ use time::{OffsetDateTime, UtcOffset};
 use typst::{
     Library, LibraryExt, World,
     diag::{FileError, FileResult, SourceDiagnostic},
-    ecow::{EcoVec, eco_format},
+    ecow::EcoVec,
     foundations::{Bytes, Datetime, Duration, IntoValue, Str},
     syntax::{FileId, RootedPath, Source, VirtualPath, VirtualRoot},
     text::{Font, FontBook},
@@ -18,6 +17,8 @@ use typst::{
 };
 use typst_kit::fonts::FontStore;
 use typst_layout::PagedDocument;
+
+use crate::Error;
 
 pub struct SiteWorld {
     library: LazyHash<Library>,
@@ -32,19 +33,13 @@ impl SiteWorld {
         project_root: impl AsRef<Path>,
         main_path: impl AsRef<Path>,
         inputs: impl IntoIterator<Item = (impl Into<Str>, impl IntoValue)>,
-    ) -> FileResult<Self> {
+    ) -> Result<Self, Error> {
         let project_root = project_root.as_ref().to_owned();
         let main_path = main_path.as_ref();
-        let virtual_path = VirtualPath::virtualize(&project_root, main_path).map_err(|_| {
-            FileError::Other(Some(eco_format!(
-                "main file path `{}` is not within the project root `{}`",
-                main_path.display(),
-                project_root.display()
-            )))
-        })?;
+        let virtual_path = VirtualPath::virtualize(&project_root, main_path)
+            .map_err(|_| Error::InvalidPath(main_path.to_owned()))?;
         let main_file_id = FileId::new(RootedPath::new(VirtualRoot::Project, virtual_path));
-        let main_file_contents =
-            fs::read_to_string(main_path).map_err(|error| FileError::from_io(error, main_path))?;
+        let main_file_contents = fs::read_to_string(main_path)?;
 
         let mut fonts = FontStore::new();
         fonts.extend(typst_kit::fonts::scan(
@@ -69,7 +64,7 @@ impl SiteWorld {
         })
     }
 
-    pub fn compile_document(&self) -> Result<PagedDocument, Box<dyn Error>> {
+    pub fn compile_document(&self) -> Result<PagedDocument, Error> {
         let warned = typst::compile::<PagedDocument>(self);
 
         if !warned.warnings.is_empty() {
@@ -195,11 +190,12 @@ impl FileEntry {
 }
 
 #[expect(clippy::needless_pass_by_value)]
-pub fn diagnostic_error(diagnostics: EcoVec<SourceDiagnostic>) -> Box<dyn Error> {
-    diagnostics
-        .iter()
-        .map(|diagnostic| format!("{diagnostic:?}"))
-        .collect::<Vec<_>>()
-        .join("\n")
-        .into()
+pub fn diagnostic_error(diagnostics: EcoVec<SourceDiagnostic>) -> Error {
+    Error::Typst {
+        diagnostics: diagnostics
+            .iter()
+            .map(|diagnostic| format!("{diagnostic:?}"))
+            .collect::<Vec<_>>()
+            .join("\n"),
+    }
 }

@@ -1,20 +1,24 @@
-use hypertext::prelude::*;
+use std::borrow::Cow;
+
+use hypertext::{Buffer, prelude::*};
 use tracing::instrument;
 
 use crate::{
+    assets::Assets,
     document::{Document, DocumentDetails, DocumentRequest},
-    markdown_link::MarkdownLink,
-    post::Post,
 };
 
 #[instrument(level = "debug")]
-pub async fn get(doc: DocumentRequest) -> Document<Home> {
-    doc.clone().build(DocumentDetails::from_content(Home))
+pub async fn get(doc: DocumentRequest, assets: Assets) -> Document<Home> {
+    doc.build(DocumentDetails::from_content(Home(assets)))
 }
 
-#[renderable(pub)]
-fn home() -> impl Renderable {
-    maud! {
+#[derive(Debug)]
+pub struct Home(Assets);
+
+impl Renderable for Home {
+    fn render_to(&self, output: &mut Buffer) {
+        maud! {
         section #about {
             p {
                 "hi, i'm vidhan. welcome to my personal website."
@@ -29,14 +33,14 @@ fn home() -> impl Renderable {
             }
             p {
                 "reach out via "
-                (MarkdownLink::new("email", "mailto:me@vidhan.io"))
+                (markdown_link("email", "mailto:me@vidhan.io"))
                 " or "
-                (MarkdownLink::new("@vidhanio", "https://x.com/vidhanio"))
+                (markdown_link("@vidhanio", "https://x.com/vidhanio"))
                 "."
             }
 
             span #resume {
-                (MarkdownLink::new("resume", "/resume.pdf"))
+                (markdown_link("resume", "/resume.pdf"))
             }
         }
 
@@ -44,14 +48,7 @@ fn home() -> impl Renderable {
             h2 { "posts" }
 
             ul {
-                @for post in Post::all() {
-                    li {
-                        (MarkdownLink::new(
-                            post.title(),
-                            format!("/post/{}", post.slug()),
-                        ))
-                    }
-                }
+                (post_links(&self.0))
             }
         }
 
@@ -65,16 +62,47 @@ fn home() -> impl Renderable {
             }
         }
 
+        }
+        .render_to(output);
+    }
+}
+fn post_links(assets: &Assets) -> impl Renderable + '_ {
+    maud! {
+        @for (slug, title) in assets.posts() {
+            li {
+                (markdown_link(
+                    title,
+                    format!("/post/{slug}"),
+                ))
+            }
+        }
     }
 }
 
 #[renderable]
 fn project(name: &'static str) -> impl Renderable {
     maud! {
-        (MarkdownLink::new(
+        (markdown_link(
             name,
             format!("https://github.com/vidhanio/{name}"),
         ))
+    }
+}
+
+fn markdown_link<'a>(
+    label: impl Into<Cow<'a, str>>,
+    href: impl Into<Cow<'a, str>>,
+) -> impl Renderable + 'a {
+    let label = label.into();
+    let href = href.into();
+
+    maud! {
+        a .markdown-link href=(href) {
+            strong { "[" (label) "]" }
+            "("
+            span .markdown-link-destination { (href) }
+            ")"
+        }
     }
 }
 
