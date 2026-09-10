@@ -13,14 +13,14 @@ basics:
 
 education:
   - institution: McMaster University
-    studyType: Bachelor
-    area: Computer Science
+    degree: Bachelor of Computer Science
     startDate: 2022-09-01
-    courses:
-      - Data Structures & Algorithms
-      - Computer Architecture
-      - Software Development (Python, Haskell, Java, C, Elm)
-    score: 3.98/4.0
+    highlights:
+      - title: Coursework
+        content: Data Structures & Algorithms, Operating Systems, Computer Architecture, Databases & SQL, Computer Networks & Security, Concurrent Systems, Compilers, Programming Languages, Software Engineering, Data Mining, Automata & Computability
+      - title: Technical Foundations
+        content: Algorithm design & complexity analysis, object-oriented and functional programming, multithreading & synchronization, relational database design, TCP/IP networking, compiler construction, software correctness
+    score: 3.83/4.0
 
 work:
   - name: Sun Life
@@ -56,12 +56,11 @@ projects:
       - Uses Typst to generate this very resume automatically and serve it as a static asset
       - Parses markdown blog posts and renders them as HTML
       - Uses tree-sitter to provide powerful IDE-like syntax highlighting for blog posts
-      - Implements industry-standard testing and continuous integration using GitHub Actions
       - Published as an open-source project/example of a website in Rust, and has accumulated 50+ stars on GitHub
 
   - name: hypertext
     url: https://github.com/vidhanio/hypertext
-    description: A blazing fast type-checked HTML macro library for rust.
+    description: A blazing fast type-checked HTML macro library for Rust.
     startDate: 2024-01-07
     keywords:
       - Rust
@@ -69,7 +68,6 @@ projects:
     highlights:
       - Created for use as an HTML template engine in my personal website
       - Uses Rust's type system to ensure that HTML tags and attributes are valid
-      - Uses GitHub Actions for continuous integration
       - Published as an open-source project/library, and has accumulated almost 300 stars on GitHub and is used in 10+ other websites
 
 skills:
@@ -90,7 +88,7 @@ skills:
       - C
       - Elm
 
-  - name: Frameworks/Databases
+  - name: Frameworks & Databases
     keywords:
       - llama.cpp
       - Agent Client Protocol

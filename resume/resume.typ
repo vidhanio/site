@@ -1,7 +1,7 @@
 #set text(font: "Berkeley Mono", size: 0.9em)
 #set page(margin: 0.5in)
 
-#set list(indent: 1em, marker: "*")
+#set list(indent: 1em, marker: "-")
 
 #let resume = yaml("resume.yaml")
 
@@ -75,25 +75,22 @@
 
 #resume.basics.label
 
-#link("mailto:" + resume.basics.email, resume.basics.email) |
-#link("https://" + resume.basics.url, resume.basics.url)
-
 #(
-  resume
-    .basics
-    .profiles
-    .map(p => link(p.url)[*\[#lower(p.network)\]* #p.username])
-    .join(" | ")
+  (
+    link("mailto:" + resume.basics.email, resume.basics.email),
+    link("https://" + resume.basics.url, resume.basics.url),
+    ..resume.basics.profiles.map(p => link(p.url)[*\[#lower(p.network)\]* #p.username]),
+  ).join(" | ")
 )
 
 #section("Education", resume.education, e => {
   (
     name: e.institution,
     note: "GPA: " + e.score,
-    description: e.studyType + " of " + e.area,
+    description: e.degree,
     start: e.startDate,
     end: e.at("endDate", default: none),
-    body: e.courses,
+    body: e.highlights.map(h => [*#h.title*: #h.content]),
   )
 })
 
