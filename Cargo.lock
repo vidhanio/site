@@ -1229,7 +1229,7 @@ dependencies = [
 [[package]]
 name = "hypertext"
 version = "0.12.1"
-source = "git+https://github.com/vidhanio/hypertext#2dae6b9049809e176a6e228bb5bbe2f41b4f4128"
+source = "git+https://github.com/vidhanio/hypertext#2503132722562d0b8b8bf6745cdbf9ccef47c283"
 dependencies = [
  "axum-core",
  "bon",
@@ -1242,7 +1242,7 @@ dependencies = [
 [[package]]
 name = "hypertext-macros"
 version = "0.12.1"
-source = "git+https://github.com/vidhanio/hypertext#2dae6b9049809e176a6e228bb5bbe2f41b4f4128"
+source = "git+https://github.com/vidhanio/hypertext#2503132722562d0b8b8bf6745cdbf9ccef47c283"
 dependencies = [
  "html-escape",
  "proc-macro2",
